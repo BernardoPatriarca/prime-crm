@@ -1,0 +1,113 @@
+:host {
+  display: contents;
+}
+
+.app-sidebar-dock {
+  position: relative;
+  flex: 0 0 auto;
+  width: 280px;
+  height: 100%;
+  transition: width var(--pc-duration) var(--pc-ease);
+}
+
+.app-sidebar-dock--icon,
+.app-sidebar-dock--overlay {
+  width: 72px;
+}
+
+.app-sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-right: 1px solid var(--p-content-border-color, #dde2ea);
+  background: var(--p-content-background, #ffffff);
+  transition: width var(--pc-duration) var(--pc-ease),
+    box-shadow var(--pc-duration) var(--pc-ease);
+}
+
+.app-sidebar--overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1100;
+  width: 280px;
+  box-shadow: var(--pc-shadow-lg);
+}
+
+.app-sidebar__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1099;
+  background: rgb(15 23 42 / 42%);
+  backdrop-filter: blur(2px);
+  animation: pc-fade-in var(--pc-duration) var(--pc-ease-out) both;
+}
+
+.app-sidebar__toggle {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5rem 0.6rem;
+  flex: 0 0 auto;
+  transition: justify-content var(--pc-duration) var(--pc-ease);
+}
+
+.app-sidebar--collapsed .app-sidebar__toggle {
+  justify-content: center;
+  padding: 0.5rem 0;
+}
+
+.app-sidebar__nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0 0.6rem 1rem;
+  transition: padding var(--pc-duration) var(--pc-ease);
+}
+
+.app-sidebar--collapsed .app-sidebar__nav {
+  padding: 0 0.5rem 1rem;
+}
+
+.app-sidebar--collapsed {
+  ::ng-deep .app-sidebar__menu {
+    .p-panelmenu-header-link,
+    .p-panelmenu-item-link {
+      justify-content: center;
+      gap: 0;
+      padding: 0.65rem 0;
+    }
+
+    .p-panelmenu-header-link:hover,
+    .p-panelmenu-item-link:hover {
+      transform: none;
+    }
+
+    .p-panelmenu-header-label,
+    .p-panelmenu-item-label,
+    .p-badge {
+      flex: 0 0 0;
+      max-width: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    svg[data-p-icon="chevron-down"],
+    svg[data-p-icon="chevron-right"] {
+      display: none;
+    }
+
+    .p-panelmenu-header-icon,
+    .p-panelmenu-item-icon {
+      font-size: 1.15rem;
+      width: auto;
+    }
+
+    .p-panelmenu-content-container {
+      display: none;
+    }
+  }
+}

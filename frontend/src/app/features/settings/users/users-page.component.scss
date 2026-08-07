@@ -1,0 +1,24 @@
+.user-identity {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.user-identity__name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:host ::ng-deep .user-identity__avatar {
+  width: 2rem;
+  height: 2rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex: none;
+  background: var(--pc-brand-gradient);
+  color: #ffffff;
+  box-shadow: var(--pc-shadow-xs);
+}

@@ -1,0 +1,94 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'settingsPages.generalSettings.title' | translate }}</h1>
+      <p>{{ 'settingsPages.generalSettings.description' | translate }}</p>
+    </div>
+  </div>
+
+  <div class="settings-surface">
+    <p-table [value]="settings()" [loading]="loading()" dataKey="id" responsiveLayout="scroll" data-testid="system-settings-table">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'settingsPages.generalSettings.columns.key' | translate }}</th>
+          <th>{{ 'settingsPages.generalSettings.columns.description' | translate }}</th>
+          <th>{{ 'settingsPages.generalSettings.columns.value' | translate }}</th>
+          @if (canEdit()) {
+            <th class="col-actions">{{ 'settingsPages.generalSettings.columns.actions' | translate }}</th>
+          }
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-setting>
+        <tr>
+          <td><code class="code-chip">{{ setting.settingKey }}</code></td>
+          <td class="cell-muted">{{ setting.description || '-' }}</td>
+          <td class="setting-value">{{ setting.settingValue }}</td>
+          @if (canEdit()) {
+            <td>
+              <div class="row-actions">
+                <p-button
+                  icon="pi pi-pencil"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="secondary"
+                  [pTooltip]="'common.actions.edit' | translate"
+                  tooltipPosition="top"
+                  [ariaLabel]="'common.actions.edit' | translate"
+                  (onClick)="openEditDialog(setting)"
+                  [attr.data-testid]="'system-setting-edit-' + setting.settingKey"
+                />
+              </div>
+            </td>
+          }
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4">
+            <div class="table-empty-state" data-testid="system-settings-empty">
+              <i class="pi pi-cog"></i>
+              <p>{{ 'settingsPages.generalSettings.emptyState' | translate }}</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<p-dialog
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '28rem' }"
+  [breakpoints]="{ '1024px': '90vw', '767px': '95vw' }"
+  [header]="'settingsPages.generalSettings.dialog.title' | translate"
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+    <div class="field">
+      <label>{{ 'settingsPages.generalSettings.columns.key' | translate }}</label>
+      <input pInputText type="text" [value]="editingSetting()?.settingKey" disabled fluid />
+    </div>
+
+    <div class="field">
+      <label for="setting-value">{{ 'settingsPages.generalSettings.columns.value' | translate }}</label>
+      <input id="setting-value" pInputText type="text" formControlName="value" fluid data-testid="system-setting-value-input" />
+      @if (form.controls.value.invalid && form.controls.value.touched) {
+        <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+      }
+    </div>
+
+    <div class="dialog-footer">
+      <p-button [label]="'common.actions.cancel' | translate" severity="secondary" [text]="true" type="button" (onClick)="closeDialog()" />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="saving()"
+        data-testid="system-setting-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>

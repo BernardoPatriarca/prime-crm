@@ -1,0 +1,235 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'settingsPages.domainValues.title' | translate }}</h1>
+      <p>{{ 'settingsPages.domainValues.description' | translate: { tipo: domainTypeLabel() } }}</p>
+    </div>
+    @if (canCreate()) {
+      <p-button
+        icon="pi pi-plus"
+        [label]="'settingsPages.domainValues.newButton' | translate"
+        (onClick)="openCreateDialog()"
+        data-testid="domain-values-new-button"
+      />
+    }
+  </div>
+
+  <app-generic-table
+    [items]="values()"
+    [totalRecords]="total()"
+    [loading]="loading()"
+    [columnsCount]="8"
+    emptyIcon="pi-tags"
+    emptyMessageKey="settingsPages.domainValues.emptyState"
+    (queryChange)="onQueryChange($event)"
+    (rowReorder)="onRowReorder($event)"
+  >
+    <ng-template #header>
+      <tr>
+        <th style="width: 3rem"></th>
+        <th pSortableColumn="name">
+          {{ 'settingsPages.domainValues.columns.name' | translate }}
+          <p-sortIcon field="name" />
+        </th>
+        <th pSortableColumn="code">
+          {{ 'settingsPages.domainValues.columns.code' | translate }}
+          <p-sortIcon field="code" />
+        </th>
+        @if (domainType()?.supportsColor ?? true) {
+          <th>{{ 'settingsPages.domainValues.columns.color' | translate }}</th>
+        }
+        @if (domainType()?.supportsIcon ?? true) {
+          <th>{{ 'settingsPages.domainValues.columns.icon' | translate }}</th>
+        }
+        <th pSortableColumn="displayOrder">
+          {{ 'settingsPages.domainValues.columns.order' | translate }}
+          <p-sortIcon field="displayOrder" />
+        </th>
+        <th>{{ 'settingsPages.domainValues.columns.status' | translate }}</th>
+        <th class="col-actions">{{ 'settingsPages.domainValues.columns.actions' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-item let-rowIndex="rowIndex">
+      <tr [pReorderableRow]="rowIndex" [pReorderableRowDisabled]="!!lastQuery.search">
+        <td>
+          <i class="pi pi-bars" pReorderableRowHandle></i>
+        </td>
+        <td class="cell-strong">{{ item.name }}</td>
+        <td>
+          @if (item.code) {
+            <code class="code-chip">{{ item.code }}</code>
+          } @else {
+            <span class="cell-muted">-</span>
+          }
+        </td>
+        @if (domainType()?.supportsColor ?? true) {
+          <td>
+            @if (item.color) {
+              <span class="color-swatch" [style.background]="item.color"></span>
+            } @else {
+              <span class="cell-muted">-</span>
+            }
+          </td>
+        }
+        @if (domainType()?.supportsIcon ?? true) {
+          <td>
+            @if (item.icon) {
+              <span class="icon-preview"><i class="pi {{ item.icon }}"></i></span>
+            } @else {
+              <span class="cell-muted">-</span>
+            }
+          </td>
+        }
+        <td class="cell-muted">{{ item.displayOrder }}</td>
+        <td>
+          <p-tag
+            [severity]="item.active ? 'success' : 'danger'"
+            [value]="(item.active ? 'common.status.active' : 'common.status.inactive') | translate"
+          />
+        </td>
+        <td>
+          <div class="row-actions">
+            @if (canEdit()) {
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'common.actions.edit' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.edit' | translate"
+                (onClick)="openEditDialog(item)"
+                [attr.data-testid]="'domain-value-edit-' + item.id"
+              />
+            }
+            @if (canDelete()) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                [pTooltip]="'common.actions.delete' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.delete' | translate"
+                (onClick)="confirmDelete(item)"
+                [attr.data-testid]="'domain-value-delete-' + item.id"
+              />
+            }
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </app-generic-table>
+</div>
+
+<p-dialog
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '32rem' }"
+  [breakpoints]="{ '1024px': '90vw', '767px': '95vw' }"
+  [header]="(editingValue() ? 'settingsPages.domainValues.dialog.editTitle' : 'settingsPages.domainValues.dialog.newTitle') | translate"
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+    <div class="field">
+      <label for="dv-name">{{ 'settingsPages.domainValues.dialog.nameLabel' | translate }}</label>
+      <input
+        id="dv-name"
+        pInputText
+        type="text"
+        formControlName="name"
+        [placeholder]="'settingsPages.domainValues.dialog.namePlaceholder' | translate"
+        fluid
+        data-testid="domain-value-name-input"
+      />
+      @if (form.controls.name.invalid && form.controls.name.touched) {
+        <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="dv-code">{{ 'settingsPages.domainValues.dialog.codeLabel' | translate }}</label>
+      <input
+        id="dv-code"
+        pInputText
+        type="text"
+        formControlName="code"
+        [placeholder]="'settingsPages.domainValues.dialog.codePlaceholder' | translate"
+        fluid
+      />
+    </div>
+
+    <div class="field">
+      <label for="dv-description">{{ 'settingsPages.domainValues.dialog.descriptionLabel' | translate }}</label>
+      <textarea
+        id="dv-description"
+        pTextarea
+        rows="3"
+        formControlName="description"
+        [placeholder]="'settingsPages.domainValues.dialog.descriptionPlaceholder' | translate"
+        fluid
+      ></textarea>
+    </div>
+
+    <div class="field-row">
+      @if (domainType()?.supportsColor ?? true) {
+        <div class="field">
+          <label for="dv-color">{{ 'settingsPages.domainValues.dialog.colorLabel' | translate }}</label>
+          <div class="color-field">
+            <p-colorPicker formControlName="color" inputId="dv-color" format="hex" />
+            <span class="color-field__value">{{ form.controls.color.value || '-' }}</span>
+          </div>
+        </div>
+      }
+      <div class="field">
+        <label for="dv-order">{{ 'settingsPages.domainValues.dialog.orderLabel' | translate }}</label>
+        <p-inputnumber inputId="dv-order" formControlName="displayOrder" [showButtons]="true" [min]="0" fluid />
+      </div>
+    </div>
+
+    @if (domainType()?.supportsIcon ?? true) {
+      <div class="field">
+        <label for="dv-icon">{{ 'settingsPages.domainValues.dialog.iconLabel' | translate }}</label>
+        <div class="icon-field">
+          <p-select
+            inputId="dv-icon"
+            formControlName="icon"
+            [options]="iconOptions"
+            [showClear]="true"
+            [placeholder]="'settingsPages.domainValues.dialog.iconPlaceholder' | translate"
+            fluid
+          >
+            <ng-template pTemplate="selectedItem" let-selected>
+              <span class="icon-option"><i class="pi {{ selected }}"></i>{{ selected }}</span>
+            </ng-template>
+            <ng-template pTemplate="item" let-option>
+              <span class="icon-option"><i class="pi {{ option }}"></i>{{ option }}</span>
+            </ng-template>
+          </p-select>
+          @if (form.controls.icon.value) {
+            <span class="icon-preview icon-preview--lg"><i class="pi {{ form.controls.icon.value }}"></i></span>
+          }
+        </div>
+      </div>
+    }
+
+    <div class="field field-inline">
+      <p-toggleswitch formControlName="active" inputId="dv-active" />
+      <label for="dv-active">{{ 'settingsPages.domainValues.dialog.activeLabel' | translate }}</label>
+    </div>
+
+    <div class="dialog-footer">
+      <p-button [label]="'common.actions.cancel' | translate" severity="secondary" [text]="true" type="button" (onClick)="closeDialog()" />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="saving()"
+        data-testid="domain-value-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>

@@ -1,0 +1,44 @@
+.template-identity {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.template-identity__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+  border-radius: var(--p-border-radius-md, 8px);
+  background: color-mix(in srgb, var(--p-primary-color, #1e5eff) 10%, transparent);
+  color: var(--p-primary-color, #1e5eff);
+  transition: transform var(--pc-duration) var(--pc-ease);
+}
+
+tr:hover .template-identity__icon {
+  transform: scale(1.08);
+}
+
+.template-identity__name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.template-subject {
+  max-width: 22rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.template-content {
+  font-family: ui-monospace, "SFMono-Regular", "Menlo", monospace;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  resize: vertical;
+}

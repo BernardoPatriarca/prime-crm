@@ -1,0 +1,311 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'settingsPages.users.title' | translate }}</h1>
+      <p>{{ 'settingsPages.users.description' | translate }}</p>
+    </div>
+    @if (canCreate()) {
+      <p-button
+        icon="pi pi-plus"
+        [label]="'settingsPages.users.newButton' | translate"
+        (onClick)="openCreateDialog()"
+        data-testid="users-new-button"
+      />
+    }
+  </div>
+
+  <app-generic-table
+    [items]="users()"
+    [totalRecords]="total()"
+    [loading]="loading()"
+    [columnsCount]="6"
+    emptyIcon="pi-users"
+    emptyMessageKey="settingsPages.users.emptyState"
+    (queryChange)="onQueryChange($event)"
+  >
+    <div tableActions>
+      <p-select
+        [ngModel]="statusFilter()"
+        (ngModelChange)="onStatusFilterChange($event)"
+        [options]="statuses"
+        [showClear]="true"
+        [placeholder]="'settingsPages.users.statusFilterPlaceholder' | translate"
+        data-testid="users-status-filter"
+      >
+        <ng-template pTemplate="selectedItem" let-selected>
+          {{ 'common.status.' + selected | translate }}
+        </ng-template>
+        <ng-template pTemplate="item" let-status>
+          {{ 'common.status.' + status | translate }}
+        </ng-template>
+      </p-select>
+    </div>
+
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="name">
+          {{ 'settingsPages.users.columns.name' | translate }}
+          <p-sortIcon field="name" />
+        </th>
+        <th>{{ 'settingsPages.users.columns.email' | translate }}</th>
+        <th>{{ 'settingsPages.users.columns.login' | translate }}</th>
+        <th>{{ 'settingsPages.users.columns.roles' | translate }}</th>
+        <th>{{ 'settingsPages.users.columns.status' | translate }}</th>
+        <th class="col-actions">{{ 'settingsPages.users.columns.actions' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-item>
+      <tr>
+        <td>
+          <div class="user-identity">
+            <p-avatar [label]="initials(item.name)" shape="circle" styleClass="user-identity__avatar" />
+            <span class="user-identity__name">{{ item.name }}</span>
+          </div>
+        </td>
+        <td class="cell-muted">{{ item.email }}</td>
+        <td class="cell-muted">{{ item.login }}</td>
+        <td>
+          @if (item.roles.length) {
+            <div class="chip-list">
+              @for (role of item.roles; track role.id) {
+                <p-tag severity="secondary" [value]="role.name" [rounded]="true" />
+              }
+            </div>
+          } @else {
+            <span class="cell-muted">-</span>
+          }
+        </td>
+        <td>
+          <p-tag [severity]="statusSeverity(item.status)" [value]="('common.status.' + item.status) | translate" />
+        </td>
+        <td>
+          <div class="row-actions">
+            @if (canEdit()) {
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'common.actions.edit' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.edit' | translate"
+                (onClick)="openEditDialog(item)"
+                [attr.data-testid]="'user-edit-' + item.id"
+              />
+              <p-button
+                icon="pi pi-key"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'common.actions.resetPassword' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.resetPassword' | translate"
+                (onClick)="openResetPasswordDialog(item)"
+                [attr.data-testid]="'user-reset-password-' + item.id"
+              />
+              @if (item.id !== currentUserId()) {
+                @if (item.status !== 'ACTIVE') {
+                  <p-button
+                    icon="pi pi-check"
+                    severity="success"
+                    [text]="true"
+                    [rounded]="true"
+                    [pTooltip]="'common.actions.activate' | translate"
+                    tooltipPosition="top"
+                    [ariaLabel]="'common.actions.activate' | translate"
+                    (onClick)="changeStatus(item, 'ACTIVE')"
+                  />
+                }
+                @if (item.status === 'ACTIVE') {
+                  <p-button
+                    icon="pi pi-ban"
+                    severity="warn"
+                    [text]="true"
+                    [rounded]="true"
+                    [pTooltip]="'common.actions.deactivate' | translate"
+                    tooltipPosition="top"
+                    [ariaLabel]="'common.actions.deactivate' | translate"
+                    (onClick)="changeStatus(item, 'INACTIVE')"
+                  />
+                }
+                @if (item.status !== 'BLOCKED') {
+                  <p-button
+                    icon="pi pi-lock"
+                    severity="danger"
+                    [text]="true"
+                    [rounded]="true"
+                    [pTooltip]="'common.actions.block' | translate"
+                    tooltipPosition="top"
+                    [ariaLabel]="'common.actions.block' | translate"
+                    (onClick)="changeStatus(item, 'BLOCKED')"
+                  />
+                }
+              }
+            }
+            @if (canDelete() && item.id !== currentUserId()) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                [pTooltip]="'common.actions.delete' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.delete' | translate"
+                (onClick)="confirmDelete(item)"
+              />
+            }
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </app-generic-table>
+</div>
+
+<p-dialog
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '32rem' }"
+  [breakpoints]="{ '1024px': '90vw', '767px': '95vw' }"
+  [header]="(editingUser() ? 'settingsPages.users.dialog.editTitle' : 'settingsPages.users.dialog.newTitle') | translate"
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+    <div class="field">
+      <label for="user-name">{{ 'settingsPages.users.dialog.nameLabel' | translate }}</label>
+      <input id="user-name" pInputText type="text" formControlName="name" fluid data-testid="user-name-input" />
+      @if (form.controls.name.invalid && form.controls.name.touched) {
+        <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+      }
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="user-email">{{ 'settingsPages.users.dialog.emailLabel' | translate }}</label>
+        <input id="user-email" pInputText type="email" formControlName="email" fluid data-testid="user-email-input" />
+        @if (form.controls.email.invalid && form.controls.email.touched) {
+          <small class="field-error">{{ 'common.validation.email' | translate }}</small>
+        }
+      </div>
+      <div class="field">
+        <label for="user-login">{{ 'settingsPages.users.dialog.loginLabel' | translate }}</label>
+        <input id="user-login" pInputText type="text" formControlName="login" fluid data-testid="user-login-input" />
+        @if (form.controls.login.invalid && form.controls.login.touched) {
+          <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+        }
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="user-phone">{{ 'settingsPages.users.dialog.phoneLabel' | translate }}</label>
+      <input id="user-phone" pInputText type="text" formControlName="phone" fluid />
+    </div>
+
+    @if (!editingUser()) {
+      <div class="field">
+        <label for="user-password">{{ 'settingsPages.users.dialog.passwordLabel' | translate }}</label>
+        <p-password
+          inputId="user-password"
+          formControlName="password"
+          [toggleMask]="true"
+          [feedback]="false"
+          fluid
+          data-testid="user-password-input"
+        />
+        @if (form.controls.password.invalid && form.controls.password.touched) {
+          <small class="field-error">{{ 'common.validation.minLength' | translate: { min: 8 } }}</small>
+        }
+      </div>
+    }
+
+    @if (editingUser()) {
+      <div class="field">
+        <label for="user-roles">{{ 'settingsPages.users.dialog.rolesLabel' | translate }}</label>
+        <p-multiselect
+          inputId="user-roles"
+          formControlName="roleIds"
+          [options]="roles()"
+          optionLabel="name"
+          optionValue="id"
+          [placeholder]="'settingsPages.users.dialog.rolesPlaceholder' | translate"
+          display="chip"
+          fluid
+          data-testid="user-roles-select"
+        />
+      </div>
+    }
+
+    <div class="dialog-footer">
+      <p-button [label]="'common.actions.cancel' | translate" severity="secondary" [text]="true" type="button" (onClick)="closeDialog()" />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="saving()"
+        data-testid="user-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>
+
+<p-dialog
+  [visible]="resetPasswordDialogVisible()"
+  (visibleChange)="resetPasswordDialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '26rem' }"
+  [breakpoints]="{ '1024px': '90vw', '767px': '95vw' }"
+  [header]="'settingsPages.users.resetPasswordDialog.title' | translate"
+>
+  <form [formGroup]="resetPasswordForm" (ngSubmit)="submitResetPassword()" class="dialog-form">
+    <div class="field">
+      <label for="reset-new-password">{{ 'settingsPages.users.resetPasswordDialog.newPasswordLabel' | translate }}</label>
+      <p-password
+        inputId="reset-new-password"
+        formControlName="newPassword"
+        [toggleMask]="true"
+        [feedback]="false"
+        fluid
+        data-testid="reset-password-new-input"
+      />
+      @if (resetPasswordForm.controls.newPassword.invalid && resetPasswordForm.controls.newPassword.touched) {
+        <small class="field-error">{{ 'common.validation.minLength' | translate: { min: 8 } }}</small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="reset-confirm-password">{{ 'settingsPages.users.resetPasswordDialog.confirmPasswordLabel' | translate }}</label>
+      <p-password
+        inputId="reset-confirm-password"
+        formControlName="confirmPassword"
+        [toggleMask]="true"
+        [feedback]="false"
+        fluid
+        data-testid="reset-password-confirm-input"
+      />
+      @if (resetPasswordForm.errors?.['passwordMismatch'] && resetPasswordForm.controls.confirmPassword.touched) {
+        <small class="field-error">{{ 'settingsPages.users.resetPasswordDialog.mismatch' | translate }}</small>
+      }
+    </div>
+
+    <div class="dialog-footer">
+      <p-button
+        [label]="'common.actions.cancel' | translate"
+        severity="secondary"
+        [text]="true"
+        type="button"
+        (onClick)="closeResetPasswordDialog()"
+      />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="resettingPassword()"
+        data-testid="reset-password-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>

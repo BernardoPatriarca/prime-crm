@@ -1,0 +1,19 @@
+.role-identity {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.role-identity__icon {
+  color: var(--p-primary-color, #1e5eff);
+  font-size: 1rem;
+  flex: none;
+}
+
+.role-identity__name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

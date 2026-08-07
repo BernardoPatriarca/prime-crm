@@ -1,0 +1,235 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'settingsPages.customFields.title' | translate }}</h1>
+      <p>{{ 'settingsPages.customFields.description' | translate }}</p>
+    </div>
+    @if (canCreate()) {
+      <p-button
+        icon="pi pi-plus"
+        [label]="'settingsPages.customFields.newButton' | translate"
+        (onClick)="openCreateDialog()"
+        data-testid="custom-fields-new-button"
+      />
+    }
+  </div>
+
+  <app-generic-table
+    [items]="fields()"
+    [totalRecords]="total()"
+    [loading]="loading()"
+    [columnsCount]="7"
+    emptyIcon="pi-list"
+    emptyMessageKey="settingsPages.customFields.emptyState"
+    (queryChange)="onQueryChange($event)"
+  >
+    <div tableActions>
+      <p-iconfield iconPosition="left">
+        <p-inputicon class="pi pi-filter" />
+        <input
+          pInputText
+          type="text"
+          [ngModel]="targetEntityFilter()"
+          (ngModelChange)="onTargetEntityFilterChange($event)"
+          [placeholder]="'settingsPages.customFields.targetEntityFilterPlaceholder' | translate"
+          [attr.aria-label]="'settingsPages.customFields.targetEntityFilterPlaceholder' | translate"
+          data-testid="custom-fields-target-entity-filter"
+        />
+      </p-iconfield>
+    </div>
+
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="targetEntity">
+          {{ 'settingsPages.customFields.columns.targetEntity' | translate }}
+          <p-sortIcon field="targetEntity" />
+        </th>
+        <th pSortableColumn="label">
+          {{ 'settingsPages.customFields.columns.label' | translate }}
+          <p-sortIcon field="label" />
+        </th>
+        <th>{{ 'settingsPages.customFields.columns.fieldKey' | translate }}</th>
+        <th>{{ 'settingsPages.customFields.columns.fieldType' | translate }}</th>
+        <th>{{ 'settingsPages.customFields.columns.required' | translate }}</th>
+        <th>{{ 'settingsPages.customFields.columns.status' | translate }}</th>
+        <th class="col-actions">{{ 'settingsPages.customFields.columns.actions' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-item>
+      <tr>
+        <td>
+          <p-tag severity="secondary" icon="pi pi-database" [rounded]="true" [value]="item.targetEntity" />
+        </td>
+        <td class="cell-strong">{{ item.label }}</td>
+        <td><code class="code-chip">{{ item.fieldKey }}</code></td>
+        <td>
+          <span class="field-type">
+            <i class="pi" [ngClass]="fieldTypeIcon(item.fieldType)"></i>
+            {{ item.fieldType }}
+          </span>
+        </td>
+        <td>
+          <p-tag
+            [severity]="item.required ? 'warn' : 'secondary'"
+            [value]="(item.required ? 'common.yes' : 'common.no') | translate"
+          />
+        </td>
+        <td>
+          <p-tag
+            [severity]="item.active ? 'success' : 'danger'"
+            [value]="(item.active ? 'common.status.active' : 'common.status.inactive') | translate"
+          />
+        </td>
+        <td>
+          <div class="row-actions">
+            @if (canEdit()) {
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'common.actions.edit' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.edit' | translate"
+                (onClick)="openEditDialog(item)"
+              />
+            }
+            @if (canDelete()) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                [pTooltip]="'common.actions.delete' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.delete' | translate"
+                (onClick)="confirmDelete(item)"
+              />
+            }
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </app-generic-table>
+</div>
+
+<p-dialog
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '32rem' }"
+  [breakpoints]="{ '1024px': '90vw', '767px': '95vw' }"
+  [header]="(editingField() ? 'settingsPages.customFields.dialog.editTitle' : 'settingsPages.customFields.dialog.newTitle') | translate"
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+    <div class="field">
+      <label for="cf-target-entity">{{ 'settingsPages.customFields.dialog.targetEntityLabel' | translate }}</label>
+      <input
+        id="cf-target-entity"
+        pInputText
+        type="text"
+        formControlName="targetEntity"
+        [placeholder]="'settingsPages.customFields.dialog.targetEntityPlaceholder' | translate"
+        fluid
+        data-testid="custom-field-target-entity-input"
+      />
+      @if (form.controls.targetEntity.invalid && form.controls.targetEntity.touched) {
+        <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+      }
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="cf-field-key">{{ 'settingsPages.customFields.dialog.fieldKeyLabel' | translate }}</label>
+        <input id="cf-field-key" pInputText type="text" formControlName="fieldKey" fluid data-testid="custom-field-key-input" />
+        @if (form.controls.fieldKey.invalid && form.controls.fieldKey.touched) {
+          <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+        }
+      </div>
+      <div class="field">
+        <label for="cf-field-type">{{ 'settingsPages.customFields.dialog.fieldTypeLabel' | translate }}</label>
+        <p-select inputId="cf-field-type" formControlName="fieldType" [options]="fieldTypes" fluid />
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="cf-label">{{ 'settingsPages.customFields.dialog.labelLabel' | translate }}</label>
+      <input id="cf-label" pInputText type="text" formControlName="label" fluid data-testid="custom-field-label-input" />
+      @if (form.controls.label.invalid && form.controls.label.touched) {
+        <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+      }
+    </div>
+
+    @if (showOptionsEditor()) {
+      <div class="field">
+        <label>{{ 'settingsPages.customFields.dialog.optionsLabel' | translate }}</label>
+        <div class="options-editor">
+          @for (control of optionsArray.controls; track $index) {
+            <div class="options-editor__row" [formGroup]="control">
+              <input
+                pInputText
+                type="text"
+                formControlName="key"
+                [placeholder]="'settingsPages.customFields.dialog.optionKeyPlaceholder' | translate"
+              />
+              <input
+                pInputText
+                type="text"
+                formControlName="value"
+                [placeholder]="'settingsPages.customFields.dialog.optionValuePlaceholder' | translate"
+              />
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                type="button"
+                [ariaLabel]="'common.actions.delete' | translate"
+                (onClick)="removeOption($index)"
+              />
+            </div>
+          }
+          <p-button
+            icon="pi pi-plus"
+            [label]="'settingsPages.customFields.dialog.addOption' | translate"
+            severity="secondary"
+            [text]="true"
+            size="small"
+            type="button"
+            (onClick)="addOption()"
+          />
+        </div>
+      </div>
+    }
+
+    <div class="field-row">
+      <div class="field">
+        <label for="cf-order">{{ 'settingsPages.customFields.dialog.orderLabel' | translate }}</label>
+        <p-inputnumber inputId="cf-order" formControlName="displayOrder" [min]="0" fluid />
+      </div>
+      <div class="field field-inline">
+        <p-toggleswitch formControlName="required" inputId="cf-required" />
+        <label for="cf-required">{{ 'settingsPages.customFields.dialog.requiredLabel' | translate }}</label>
+      </div>
+    </div>
+
+    <div class="field field-inline">
+      <p-toggleswitch formControlName="active" inputId="cf-active" />
+      <label for="cf-active">{{ 'settingsPages.customFields.dialog.activeLabel' | translate }}</label>
+    </div>
+
+    <div class="dialog-footer">
+      <p-button [label]="'common.actions.cancel' | translate" severity="secondary" [text]="true" type="button" (onClick)="closeDialog()" />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="saving()"
+        data-testid="custom-field-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>

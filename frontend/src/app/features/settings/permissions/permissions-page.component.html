@@ -1,0 +1,59 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'settingsPages.permissions.title' | translate }}</h1>
+      <p>{{ 'settingsPages.permissions.description' | translate }}</p>
+    </div>
+    @if (!loading() && groups().length) {
+      <p-tag severity="secondary" icon="pi pi-shield" [rounded]="true" [value]="countLabel(totalPermissions())" />
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="permissions-grid">
+      @for (placeholder of skeletonCards; track placeholder) {
+        <div class="permissions-card">
+          <div class="permissions-card__header">
+            <p-skeleton shape="circle" size="2.25rem" />
+            <p-skeleton width="8rem" height="0.9rem" borderRadius="4px" />
+          </div>
+          <div class="permissions-card__list">
+            @for (line of skeletonLines; track line) {
+              <p-skeleton height="2.25rem" borderRadius="8px" />
+            }
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (groups().length === 0) {
+    <div class="table-empty-state" data-testid="permissions-empty">
+      <i class="pi pi-shield"></i>
+      <p>{{ 'settingsPages.permissions.emptyState' | translate }}</p>
+    </div>
+  } @else {
+    <div class="permissions-grid pc-stagger">
+      @for (group of groups(); track group.module) {
+        <section class="permissions-card pc-hover-lift">
+          <header class="permissions-card__header">
+            <span class="permissions-card__icon"><i class="pi pi-shield"></i></span>
+            <h2>{{ group.module }}</h2>
+            <p-tag severity="secondary" [rounded]="true" [value]="countLabel(group.permissions.length)" />
+          </header>
+          <ul class="permissions-card__list">
+            @for (permission of group.permissions; track permission.id) {
+              <li class="permissions-card__item">
+                <p-tag [severity]="severityFor(permission.action)" [value]="permission.action" />
+                <div class="permissions-card__text">
+                  <span class="permissions-card__code">{{ permission.code }}</span>
+                  @if (permission.description) {
+                    <span class="permissions-card__description">{{ permission.description }}</span>
+                  }
+                </div>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+  }
+</div>

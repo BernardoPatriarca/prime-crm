@@ -1,0 +1,57 @@
+<ng-template #menu>
+  <p-panelMenu [model]="menuItems()" [multiple]="true" styleClass="app-sidebar__menu" />
+</ng-template>
+
+@if (layoutStore.isMobile()) {
+  <p-drawer
+    [visible]="layoutStore.mobileDrawerOpen()"
+    (visibleChange)="layoutStore.setMobileDrawerOpen($event)"
+    position="left"
+    [modal]="true"
+    [dismissible]="true"
+    [header]="'app.name' | translate"
+    styleClass="app-sidebar__drawer"
+    [ariaCloseLabel]="'topbar.menu.close' | translate"
+    data-testid="sidebar-drawer"
+  >
+    <nav class="app-sidebar__nav">
+      <ng-container *ngTemplateOutlet="menu" />
+    </nav>
+  </p-drawer>
+} @else {
+  @if (layoutStore.sidebarOverlay()) {
+    <div
+      class="app-sidebar__backdrop"
+      (click)="layoutStore.closeTransientSidebar()"
+      data-testid="sidebar-backdrop"
+    ></div>
+  }
+
+  <div
+    class="app-sidebar-dock"
+    [class.app-sidebar-dock--icon]="layoutStore.sidebarIconMode()"
+    [class.app-sidebar-dock--overlay]="layoutStore.sidebarOverlay()"
+  >
+    <aside
+      class="app-sidebar"
+      [class.app-sidebar--collapsed]="layoutStore.sidebarIconMode()"
+      [class.app-sidebar--overlay]="layoutStore.sidebarOverlay()"
+    >
+      <div class="app-sidebar__toggle">
+        <p-button
+          [icon]="layoutStore.sidebarIconMode() ? 'pi pi-angle-right' : 'pi pi-angle-left'"
+          [text]="true"
+          [rounded]="true"
+          severity="secondary"
+          (onClick)="layoutStore.toggleSidebar()"
+          [attr.aria-label]="'topbar.menu.toggle' | translate"
+          data-testid="sidebar-toggle"
+        />
+      </div>
+
+      <nav class="app-sidebar__nav">
+        <ng-container *ngTemplateOutlet="menu" />
+      </nav>
+    </aside>
+  </div>
+}

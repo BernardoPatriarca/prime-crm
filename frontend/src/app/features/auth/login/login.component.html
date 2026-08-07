@@ -1,0 +1,79 @@
+<div class="login-page">
+  <aside class="login-brand-panel">
+    <div class="login-brand-panel__glow login-brand-panel__glow--one"></div>
+    <div class="login-brand-panel__glow login-brand-panel__glow--two"></div>
+    <div class="login-brand-panel__grid"></div>
+
+    <div class="login-brand-panel__content">
+      <div class="login-wordmark">
+        <span class="login-wordmark__mark"><i class="pi pi-verified"></i></span>
+        <span class="login-wordmark__text">{{ 'app.name' | translate }}</span>
+      </div>
+
+      <p class="login-slogan">{{ 'app.slogan' | translate }}</p>
+    </div>
+  </aside>
+
+  <main class="login-form-panel">
+    <p-card styleClass="login-card">
+      <div class="login-brand login-brand--compact">
+        <span class="login-wordmark__mark"><i class="pi pi-verified"></i></span>
+        <span>{{ 'app.name' | translate }}</span>
+      </div>
+
+      <h1 class="login-title">{{ 'auth.login.title' | translate }}</h1>
+      <p class="login-subtitle">{{ 'auth.login.subtitle' | translate }}</p>
+
+      @if (errorMessage(); as message) {
+        <p-message severity="error" styleClass="login-alert" data-testid="login-error">
+          {{ message }}
+        </p-message>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="login-form">
+        <div class="field">
+          <label for="usernameOrEmail">{{ 'auth.login.usernameLabel' | translate }}</label>
+          <input
+            id="usernameOrEmail"
+            type="text"
+            pInputText
+            formControlName="usernameOrEmail"
+            [placeholder]="'auth.login.usernamePlaceholder' | translate"
+            fluid
+            data-testid="login-username"
+          />
+          @if (form.controls.usernameOrEmail.invalid && form.controls.usernameOrEmail.touched) {
+            <small class="field-error">{{ 'auth.login.usernameRequired' | translate }}</small>
+          }
+        </div>
+
+        <div class="field">
+          <label for="password">{{ 'auth.login.passwordLabel' | translate }}</label>
+          <p-password
+            inputId="password"
+            formControlName="password"
+            [placeholder]="'auth.login.passwordPlaceholder' | translate"
+            [feedback]="false"
+            [toggleMask]="true"
+            fluid
+            data-testid="login-password"
+          />
+          @if (form.controls.password.invalid && form.controls.password.touched) {
+            <small class="field-error">{{ 'auth.login.passwordRequired' | translate }}</small>
+          }
+        </div>
+
+        <p-button
+          type="submit"
+          [label]="'auth.login.submit' | translate"
+          icon="pi pi-arrow-right"
+          iconPos="right"
+          [loading]="submitting()"
+          styleClass="login-submit"
+          fluid
+          data-testid="login-submit"
+        />
+      </form>
+    </p-card>
+  </main>
+</div>

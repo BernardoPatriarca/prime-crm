@@ -1,0 +1,8 @@
+@if (loadingStore.isLoading()) {
+  <p-progressBar mode="indeterminate" [style]="{ height: '3px' }" styleClass="pc-global-progress" />
+}
+
+<p-toast />
+<p-confirmDialog />
+
+<router-outlet />

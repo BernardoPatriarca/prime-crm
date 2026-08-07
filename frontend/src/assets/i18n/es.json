@@ -1,0 +1,499 @@
+{
+  "app": {
+    "name": "Prime CRM",
+    "slogan": "Gestión de relaciones inteligente, desde el primer contacto hasta el cierre."
+  },
+  "common": {
+    "accessDenied": {
+      "title": "Acceso denegado",
+      "message": "No tienes permiso para acceder a esta pantalla."
+    },
+    "unsavedChanges": {
+      "title": "Cambios sin guardar",
+      "message": "Hay cambios sin guardar en esta pantalla. ¿Seguro que deseas salir sin guardar?",
+      "accept": "Salir sin guardar",
+      "reject": "Seguir editando"
+    },
+    "errors": {
+      "networkTitle": "Fallo de conexión",
+      "networkMessage": "No fue posible conectar con el servidor. Verifica tu conexión e inténtalo de nuevo.",
+      "genericTitle": "Ocurrió un error",
+      "genericMessage": "No fue posible completar la operación. Inténtalo de nuevo."
+    },
+    "comingSoon": "Próximamente",
+    "underConstruction": {
+      "title": "En construcción",
+      "message": "Esta pantalla se implementará en una próxima fase del proyecto."
+    },
+    "actions": {
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "close": "Cerrar",
+      "new": "Nuevo",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "activate": "Activar",
+      "deactivate": "Desactivar",
+      "block": "Bloquear",
+      "manage": "Gestionar",
+      "manageStages": "Gestionar Etapas",
+      "managePermissions": "Gestionar Permisos",
+      "manageRoles": "Gestionar Perfiles",
+      "resetPassword": "Restablecer Contraseña",
+      "back": "Volver",
+      "apply": "Aplicar",
+      "clearFilters": "Limpiar Filtros"
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "ACTIVE": "Activo",
+      "INACTIVE": "Inactivo",
+      "BLOCKED": "Bloqueado"
+    },
+    "table": {
+      "searchPlaceholder": "Buscar...",
+      "empty": "No se encontraron registros.",
+      "pageReport": "{first} - {last} de {totalRecords}"
+    },
+    "confirmDelete": {
+      "title": "Confirmar eliminación",
+      "message": "¿Seguro que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
+      "accept": "Eliminar",
+      "reject": "Cancelar"
+    },
+    "validation": {
+      "required": "Campo obligatorio",
+      "maxLength": "Máximo de {{max}} caracteres",
+      "email": "Correo electrónico inválido",
+      "minLength": "Mínimo de {{min}} caracteres",
+      "min": "Valor mínimo: {{min}}",
+      "max": "Valor máximo: {{max}}"
+    },
+    "yes": "Sí",
+    "no": "No",
+    "notInformed": "No informado",
+    "never": "Nunca"
+  },
+  "auth": {
+    "login": {
+      "title": "Bienvenido de nuevo",
+      "subtitle": "Inicia sesión con tus credenciales para acceder a Prime CRM",
+      "usernameLabel": "Usuario o correo electrónico",
+      "usernamePlaceholder": "Ingresa tu usuario o correo electrónico",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Ingresa tu contraseña",
+      "submit": "Ingresar",
+      "usernameRequired": "El usuario o correo electrónico es obligatorio",
+      "passwordRequired": "La contraseña es obligatoria",
+      "success": "Sesión iniciada correctamente",
+      "genericError": "No fue posible iniciar sesión",
+      "invalidCredentials": "Credenciales inválidas. Verifica tu usuario y contraseña e inténtalo de nuevo.",
+      "userNotActive": "Tu usuario está inactivo o bloqueado. Contacta a un administrador del sistema.",
+      "connectionError": "No fue posible conectar con el servidor. Verifica que el backend esté activo e inténtalo de nuevo.",
+      "serverError": "El servidor no pudo procesar el inicio de sesión. Inténtalo de nuevo en unos instantes."
+    }
+  },
+  "topbar": {
+    "workspace": {
+      "label": "Espacio de trabajo",
+      "default": "Espacio de Trabajo Principal"
+    },
+    "search": {
+      "placeholder": "Buscar en todo el sistema..."
+    },
+    "menu": {
+      "toggle": "Alternar menú de navegación",
+      "close": "Cerrar menú de navegación"
+    },
+    "notifications": {
+      "label": "Notificaciones",
+      "empty": "Sin notificaciones"
+    },
+    "newButton": {
+      "label": "Nuevo",
+      "lead": "Nuevo Lead",
+      "customer": "Nuevo Cliente",
+      "opportunity": "Nueva Oportunidad",
+      "task": "Nueva Tarea"
+    },
+    "userMenu": {
+      "editProfile": "Editar Perfil",
+      "changePassword": "Cambiar Contraseña",
+      "preferences": "Preferencias",
+      "theme": {
+        "label": "Tema",
+        "light": "Tema Claro",
+        "dark": "Tema Oscuro"
+      },
+      "language": {
+        "label": "Idioma",
+        "ptBR": "Portugués (Brasil)",
+        "en": "Inglés",
+        "es": "Español"
+      },
+      "helpCenter": "Centro de Ayuda",
+      "logout": "Cerrar sesión"
+    }
+  },
+  "sidebar": {
+    "dashboard": "Panel",
+    "settings": {
+      "root": "Configuración",
+      "generalRegistries": {
+        "root": "Registros Generales",
+        "clientType": "Tipo de Cliente",
+        "personType": "Tipo de Persona",
+        "companyType": "Tipo de Empresa",
+        "marketSegment": "Segmentos de Mercado",
+        "activityBranch": "Rubros de Actividad",
+        "leadOrigin": "Orígenes del Lead",
+        "lossReason": "Motivos de Pérdida",
+        "winReason": "Motivos de Ganancia",
+        "status": "Estados",
+        "priority": "Prioridades",
+        "taskType": "Tipos de Tarea",
+        "category": "Categorías",
+        "tag": "Etiquetas",
+        "team": "Equipos",
+        "position": "Cargos",
+        "department": "Departamentos"
+      },
+      "pipelines": "Pipelines",
+      "customFields": "Campos Personalizados",
+      "templates": "Plantillas",
+      "generalSettings": "Configuración General",
+      "holidays": "Feriados",
+      "users": "Usuarios",
+      "roles": "Perfiles",
+      "permissions": "Permisos"
+    },
+    "modules": {
+      "root": "Módulos",
+      "customers": "Clientes",
+      "leads": "Leads",
+      "opportunities": "Oportunidades",
+      "finance": "Finanzas"
+    },
+    "comingSoon": "Próximamente"
+  },
+  "dashboard": {
+    "title": "Panel",
+    "phaseNotice": "El panel completo con indicadores e informes se entregará en la Fase 6 del proyecto.",
+    "greeting": "Hola, {{name}}",
+    "subtitle": "Aquí está el resumen de tu operación comercial.",
+    "demoNotice": "Las tarjetas siguientes son de muestra y aún no presentan datos reales.",
+    "placeholderTag": "Disponible en la Fase 6",
+    "metrics": {
+      "leads": {
+        "label": "Nuevos leads",
+        "hint": "Leads captados en el período"
+      },
+      "opportunities": {
+        "label": "Oportunidades abiertas",
+        "hint": "Negocios en curso en el embudo"
+      },
+      "customers": {
+        "label": "Clientes activos",
+        "hint": "Cuentas con relación en curso"
+      },
+      "revenue": {
+        "label": "Ingresos previstos",
+        "hint": "Valor ponderado del embudo"
+      },
+      "tasks": {
+        "label": "Tareas pendientes",
+        "hint": "Actividades asignadas a ti"
+      },
+      "conversion": {
+        "label": "Tasa de conversión",
+        "hint": "Leads que se convirtieron en clientes"
+      }
+    }
+  },
+  "settingsPages": {
+    "domainValues": {
+      "title": "Registros Generales",
+      "description": "Gestión de los valores del dominio \"{{tipo}}\".",
+      "newButton": "Nuevo Valor",
+      "emptyState": "Todavía no hay valores registrados para este dominio.",
+      "columns": {
+        "name": "Nombre",
+        "code": "Código",
+        "color": "Color",
+        "icon": "Ícono",
+        "order": "Orden",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "dialog": {
+        "newTitle": "Nuevo Valor",
+        "editTitle": "Editar Valor",
+        "nameLabel": "Nombre",
+        "namePlaceholder": "Ingresa el nombre",
+        "codeLabel": "Código",
+        "codePlaceholder": "Código interno (opcional)",
+        "descriptionLabel": "Descripción",
+        "descriptionPlaceholder": "Descripción (opcional)",
+        "colorLabel": "Color",
+        "iconLabel": "Ícono",
+        "iconPlaceholder": "Selecciona un ícono",
+        "orderLabel": "Orden de visualización",
+        "activeLabel": "Activo"
+      },
+      "messages": {
+        "created": "Valor creado correctamente.",
+        "updated": "Valor actualizado correctamente.",
+        "deleted": "Valor eliminado correctamente.",
+        "reordered": "Orden actualizado correctamente."
+      }
+    },
+    "pipelines": {
+      "title": "Pipelines",
+      "description": "Gestión de embudos de ventas y sus etapas.",
+      "newButton": "Nuevo Pipeline",
+      "emptyState": "Todavía no hay pipelines registrados.",
+      "columns": {
+        "name": "Nombre",
+        "businessType": "Tipo de Negocio",
+        "stages": "Etapas",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "dialog": {
+        "newTitle": "Nuevo Pipeline",
+        "editTitle": "Editar Pipeline",
+        "nameLabel": "Nombre",
+        "businessTypeLabel": "Tipo de Negocio",
+        "businessTypePlaceholder": "Ej.: Comercio, Industria, Servicios (opcional)",
+        "activeLabel": "Activo"
+      },
+      "messages": {
+        "created": "Pipeline creado correctamente.",
+        "updated": "Pipeline actualizado correctamente.",
+        "deleted": "Pipeline eliminado correctamente."
+      },
+      "stages": {
+        "title": "Etapas del Pipeline",
+        "newButton": "Nueva Etapa",
+        "emptyState": "Todavía no hay etapas registradas para este pipeline.",
+        "reorderHint": "Arrastra las etapas para reordenarlas.",
+        "columns": {
+          "name": "Nombre",
+          "probability": "Probabilidad",
+          "slaDays": "SLA (días)",
+          "color": "Color",
+          "requiresLossReason": "Requiere Motivo de Pérdida",
+          "actions": "Acciones"
+        },
+        "dialog": {
+          "newTitle": "Nueva Etapa",
+          "editTitle": "Editar Etapa",
+          "nameLabel": "Nombre",
+          "probabilityLabel": "Probabilidad Predeterminada",
+          "slaDaysLabel": "SLA (días)",
+          "orderLabel": "Orden de visualización",
+          "colorLabel": "Color",
+          "requiresLossReasonLabel": "Requiere un motivo de pérdida al salir de esta etapa"
+        },
+        "messages": {
+          "created": "Etapa creada correctamente.",
+          "updated": "Etapa actualizada correctamente.",
+          "deleted": "Etapa eliminada correctamente.",
+          "reordered": "Orden de las etapas actualizado correctamente."
+        }
+      }
+    },
+    "customFields": {
+      "title": "Campos Personalizados",
+      "description": "Gestión de campos personalizados por entidad.",
+      "newButton": "Nuevo Campo",
+      "emptyState": "Todavía no hay campos personalizados registrados.",
+      "targetEntityFilterPlaceholder": "Filtrar por entidad (ej.: CLIENTE, LEAD)",
+      "columns": {
+        "targetEntity": "Entidad",
+        "label": "Etiqueta",
+        "fieldKey": "Clave del Campo",
+        "fieldType": "Tipo",
+        "required": "Obligatorio",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "dialog": {
+        "newTitle": "Nuevo Campo Personalizado",
+        "editTitle": "Editar Campo Personalizado",
+        "targetEntityLabel": "Entidad",
+        "targetEntityPlaceholder": "Todavía no existen entidades de negocio en esta fase del proyecto; ingresa un identificador libre (ej.: CLIENTE, LEAD)",
+        "fieldKeyLabel": "Clave del Campo",
+        "fieldTypeLabel": "Tipo de Campo",
+        "labelLabel": "Etiqueta",
+        "optionsLabel": "Opciones",
+        "optionKeyPlaceholder": "Valor interno",
+        "optionValuePlaceholder": "Etiqueta mostrada",
+        "addOption": "Agregar Opción",
+        "orderLabel": "Orden de visualización",
+        "requiredLabel": "Obligatorio",
+        "activeLabel": "Activo"
+      },
+      "messages": {
+        "created": "Campo creado correctamente.",
+        "updated": "Campo actualizado correctamente.",
+        "deleted": "Campo eliminado correctamente."
+      }
+    },
+    "templates": {
+      "title": "Plantillas",
+      "description": "Gestión de plantillas de mensajes y documentos.",
+      "newButton": "Nueva Plantilla",
+      "emptyState": "Todavía no hay plantillas registradas.",
+      "typeFilterPlaceholder": "Filtrar por tipo",
+      "columns": {
+        "name": "Nombre",
+        "type": "Tipo",
+        "subject": "Asunto",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "dialog": {
+        "newTitle": "Nueva Plantilla",
+        "editTitle": "Editar Plantilla",
+        "typeLabel": "Tipo",
+        "nameLabel": "Nombre",
+        "subjectLabel": "Asunto",
+        "subjectPlaceholder": "Obligatorio solo para plantillas de correo electrónico",
+        "subjectRequiredForEmail": "El asunto es obligatorio para plantillas de correo electrónico",
+        "contentLabel": "Contenido",
+        "activeLabel": "Activo"
+      },
+      "messages": {
+        "created": "Plantilla creada correctamente.",
+        "updated": "Plantilla actualizada correctamente.",
+        "deleted": "Plantilla eliminada correctamente."
+      }
+    },
+    "generalSettings": {
+      "title": "Configuración General",
+      "description": "Parámetros generales de funcionamiento del sistema.",
+      "emptyState": "No hay configuraciones disponibles.",
+      "columns": {
+        "key": "Clave",
+        "description": "Descripción",
+        "value": "Valor",
+        "actions": "Acciones"
+      },
+      "dialog": {
+        "title": "Editar Configuración"
+      },
+      "messages": {
+        "updated": "Configuración actualizada correctamente."
+      }
+    },
+    "holidays": {
+      "title": "Feriados",
+      "description": "Gestión del calendario de feriados.",
+      "newButton": "Nuevo Feriado",
+      "emptyState": "Todavía no hay feriados registrados.",
+      "yearFilterPlaceholder": "Filtrar por año",
+      "columns": {
+        "date": "Fecha",
+        "name": "Nombre",
+        "national": "Nacional",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "dialog": {
+        "newTitle": "Nuevo Feriado",
+        "editTitle": "Editar Feriado",
+        "dateLabel": "Fecha",
+        "nameLabel": "Nombre",
+        "nationalLabel": "Feriado nacional",
+        "activeLabel": "Activo"
+      },
+      "messages": {
+        "created": "Feriado creado correctamente.",
+        "updated": "Feriado actualizado correctamente.",
+        "deleted": "Feriado eliminado correctamente."
+      }
+    },
+    "users": {
+      "title": "Usuarios",
+      "description": "Gestión de usuarios del sistema.",
+      "newButton": "Nuevo Usuario",
+      "emptyState": "Todavía no hay usuarios registrados.",
+      "statusFilterPlaceholder": "Filtrar por estado",
+      "columns": {
+        "name": "Nombre",
+        "email": "Correo electrónico",
+        "login": "Usuario",
+        "roles": "Perfiles",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "dialog": {
+        "newTitle": "Nuevo Usuario",
+        "editTitle": "Editar Usuario",
+        "nameLabel": "Nombre",
+        "emailLabel": "Correo electrónico",
+        "loginLabel": "Usuario",
+        "phoneLabel": "Teléfono",
+        "passwordLabel": "Contraseña",
+        "rolesLabel": "Perfiles",
+        "rolesPlaceholder": "Selecciona los perfiles"
+      },
+      "messages": {
+        "created": "Usuario creado correctamente.",
+        "updated": "Usuario actualizado correctamente.",
+        "deleted": "Usuario eliminado correctamente.",
+        "statusUpdated": "Estado del usuario actualizado correctamente.",
+        "passwordReset": "Contraseña restablecida correctamente."
+      },
+      "resetPasswordDialog": {
+        "title": "Restablecer Contraseña",
+        "newPasswordLabel": "Nueva Contraseña",
+        "confirmPasswordLabel": "Confirmar Nueva Contraseña",
+        "mismatch": "Las contraseñas no coinciden"
+      }
+    },
+    "roles": {
+      "title": "Perfiles",
+      "description": "Gestión de perfiles de acceso.",
+      "newButton": "Nuevo Perfil",
+      "emptyState": "Todavía no hay perfiles registrados.",
+      "columns": {
+        "name": "Nombre",
+        "description": "Descripción",
+        "permissionsCount": "Permisos",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "dialog": {
+        "newTitle": "Nuevo Perfil",
+        "editTitle": "Editar Perfil",
+        "nameLabel": "Nombre",
+        "descriptionLabel": "Descripción",
+        "activeLabel": "Activo"
+      },
+      "messages": {
+        "created": "Perfil creado correctamente.",
+        "updated": "Perfil actualizado correctamente.",
+        "deleted": "Perfil eliminado correctamente."
+      },
+      "permissionsDialog": {
+        "title": "Permisos del Perfil",
+        "messages": {
+          "updated": "Permisos actualizados correctamente."
+        }
+      }
+    },
+    "permissions": {
+      "title": "Permisos",
+      "description": "Catálogo de permisos del sistema.",
+      "emptyState": "No hay permisos registrados.",
+      "columns": {
+        "code": "Código",
+        "action": "Acción",
+        "description": "Descripción"
+      }
+    }
+  }
+}

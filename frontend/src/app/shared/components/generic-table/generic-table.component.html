@@ -1,0 +1,74 @@
+<div class="generic-table">
+  <div class="generic-table__toolbar">
+    @if (searchable()) {
+      <p-iconfield iconPosition="left" class="generic-table__search" data-testid="generic-table-search">
+        <p-inputicon class="pi pi-search" />
+        <input
+          pInputText
+          type="text"
+          [ngModel]="searchTerm()"
+          (ngModelChange)="onSearchInput($event)"
+          [placeholder]="searchPlaceholderKey() | translate"
+          [attr.aria-label]="searchPlaceholderKey() | translate"
+        />
+      </p-iconfield>
+    }
+    <div class="generic-table__toolbar-end">
+      <ng-content select="[tableActions]" />
+    </div>
+  </div>
+
+  <div class="generic-table__surface pc-enter-fade">
+    <p-table
+      [value]="items()"
+      [lazy]="true"
+      [lazyLoadOnInit]="false"
+      (onLazyLoad)="onLazyLoad($event)"
+      [paginator]="true"
+      [rows]="rows()"
+      [rowsPerPageOptions]="rowsPerPageOptions()"
+      [totalRecords]="totalRecords()"
+      [loading]="loading()"
+      [dataKey]="dataKey()"
+      [showCurrentPageReport]="true"
+      [currentPageReportTemplate]="'common.table.pageReport' | translate"
+      (onRowReorder)="onRowReorder($event)"
+      responsiveLayout="scroll"
+      data-testid="generic-table"
+    >
+      <ng-template pTemplate="header">
+        <ng-container *ngTemplateOutlet="headerTemplate() ?? null; injector: templateInjector() ?? null" />
+      </ng-template>
+      <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+        <ng-container
+          *ngTemplateOutlet="
+            bodyTemplate() ?? null;
+            context: { $implicit: item, rowIndex: rowIndex };
+            injector: templateInjector() ?? null
+          "
+        />
+      </ng-template>
+      <ng-template pTemplate="loadingbody">
+        @for (row of skeletonRows; track row) {
+          <tr class="generic-table__skeleton-row" data-testid="generic-table-skeleton" aria-hidden="true">
+            @for (column of skeletonColumns(); track column) {
+              <td>
+                <p-skeleton height="0.95rem" [width]="column === 0 ? '80%' : '60%'" borderRadius="4px" />
+              </td>
+            }
+          </tr>
+        }
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="columnsCount()">
+            <div class="table-empty-state" data-testid="generic-table-empty">
+              <i class="pi" [ngClass]="emptyIcon()"></i>
+              <p>{{ emptyMessageKey() | translate }}</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

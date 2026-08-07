@@ -1,0 +1,67 @@
+<header class="app-topbar" [class.app-topbar--scrolled]="scrolled()">
+  @if (layoutStore.isMobile()) {
+    <p-button
+      icon="pi pi-bars"
+      [text]="true"
+      [rounded]="true"
+      severity="secondary"
+      (onClick)="layoutStore.toggleSidebar()"
+      [attr.aria-label]="'topbar.menu.toggle' | translate"
+      data-testid="topbar-menu-toggle"
+    />
+  }
+
+  <div class="app-topbar__brand">
+    <span class="app-topbar__brand-mark"><i class="pi pi-verified"></i></span>
+    <span class="app-topbar__brand-name">Prime CRM</span>
+  </div>
+
+  <p-select
+    class="app-topbar__workspace"
+    [options]="workspaceOptions"
+    [ngModel]="selectedWorkspace"
+    optionLabel="label"
+    optionValue="value"
+    [disabled]="true"
+    data-testid="workspace-select"
+  />
+
+  <p-iconfield class="app-topbar__search">
+    <p-inputicon class="pi pi-search" />
+    <input type="text" pInputText [placeholder]="'topbar.search.placeholder' | translate" data-testid="global-search" />
+  </p-iconfield>
+
+  <div class="app-topbar__spacer"></div>
+
+  <p-overlayBadge value="0" severity="danger" class="app-topbar__notifications" data-testid="notifications-badge">
+    <p-button icon="pi pi-bell" [text]="true" [rounded]="true" severity="secondary" [attr.aria-label]="'topbar.notifications.label' | translate" />
+  </p-overlayBadge>
+
+  <p-splitButton
+    [label]="layoutStore.isMobile() ? undefined : ('topbar.newButton.label' | translate)"
+    icon="pi pi-plus"
+    [model]="newButtonItems()"
+    severity="primary"
+    data-testid="new-split-button"
+  />
+
+  <button
+    type="button"
+    class="app-topbar__user-trigger"
+    [class.app-topbar__user-trigger--open]="userMenuOpen()"
+    (click)="userMenu.toggle($event)"
+    data-testid="user-menu-trigger"
+  >
+    <p-avatar [label]="userInitials()" shape="circle" size="normal" styleClass="app-topbar__avatar" />
+    <span class="app-topbar__user-name">{{ sessionStore.user()?.name }}</span>
+    <i class="pi pi-angle-down app-topbar__user-caret"></i>
+  </button>
+  <p-tieredMenu
+    #userMenu
+    [model]="userMenuItems()"
+    [popup]="true"
+    appendTo="body"
+    (onShow)="userMenuOpen.set(true)"
+    (onHide)="userMenuOpen.set(false)"
+  />
+</header>
