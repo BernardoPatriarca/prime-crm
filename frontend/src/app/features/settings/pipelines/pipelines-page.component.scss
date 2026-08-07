@@ -1,0 +1,32 @@
+.pipeline-identity {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.pipeline-identity__dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  flex: none;
+}
+
+.pipeline-identity__dot {
+  width: 0.4rem;
+  height: 0.9rem;
+  border-radius: 999px;
+  display: inline-block;
+  transition: transform var(--pc-duration) var(--pc-ease);
+}
+
+tr:hover .pipeline-identity__dot {
+  transform: scaleY(1.2);
+}
+
+.pipeline-identity__name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -1,0 +1,152 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'settingsPages.roles.title' | translate }}</h1>
+      <p>{{ 'settingsPages.roles.description' | translate }}</p>
+    </div>
+    @if (canCreate()) {
+      <p-button
+        icon="pi pi-plus"
+        [label]="'settingsPages.roles.newButton' | translate"
+        (onClick)="openCreateDialog()"
+        data-testid="roles-new-button"
+      />
+    }
+  </div>
+
+  <app-generic-table
+    [items]="roles()"
+    [totalRecords]="total()"
+    [loading]="loading()"
+    [columnsCount]="5"
+    emptyIcon="pi-id-card"
+    emptyMessageKey="settingsPages.roles.emptyState"
+    (queryChange)="onQueryChange($event)"
+  >
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="name">
+          {{ 'settingsPages.roles.columns.name' | translate }}
+          <p-sortIcon field="name" />
+        </th>
+        <th>{{ 'settingsPages.roles.columns.description' | translate }}</th>
+        <th>{{ 'settingsPages.roles.columns.permissionsCount' | translate }}</th>
+        <th>{{ 'settingsPages.roles.columns.status' | translate }}</th>
+        <th class="col-actions">{{ 'settingsPages.roles.columns.actions' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-item>
+      <tr>
+        <td>
+          <div class="role-identity">
+            <i class="pi pi-id-card role-identity__icon"></i>
+            <span class="role-identity__name">{{ item.name }}</span>
+          </div>
+        </td>
+        <td class="cell-muted">{{ item.description || '-' }}</td>
+        <td>
+          <p-tag
+            severity="info"
+            icon="pi pi-key"
+            [rounded]="true"
+            [value]="countLabel(item.permissions.length)"
+          />
+        </td>
+        <td>
+          <p-tag
+            [severity]="item.active ? 'success' : 'danger'"
+            [value]="(item.active ? 'common.status.active' : 'common.status.inactive') | translate"
+          />
+        </td>
+        <td>
+          <div class="row-actions">
+            @if (canEdit()) {
+              <p-button
+                icon="pi pi-key"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'common.actions.managePermissions' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.managePermissions' | translate"
+                (onClick)="openPermissionsDialog(item)"
+                [attr.data-testid]="'role-permissions-' + item.id"
+              />
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'common.actions.edit' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.edit' | translate"
+                (onClick)="openEditDialog(item)"
+              />
+            }
+            @if (canDelete()) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                [pTooltip]="'common.actions.delete' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.delete' | translate"
+                (onClick)="confirmDelete(item)"
+              />
+            }
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </app-generic-table>
+</div>
+
+<p-dialog
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '30rem' }"
+  [breakpoints]="{ '1024px': '90vw', '767px': '95vw' }"
+  [header]="(editingRole() ? 'settingsPages.roles.dialog.editTitle' : 'settingsPages.roles.dialog.newTitle') | translate"
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+    <div class="field">
+      <label for="role-name">{{ 'settingsPages.roles.dialog.nameLabel' | translate }}</label>
+      <input id="role-name" pInputText type="text" formControlName="name" fluid data-testid="role-name-input" />
+      @if (form.controls.name.invalid && form.controls.name.touched) {
+        <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="role-description">{{ 'settingsPages.roles.dialog.descriptionLabel' | translate }}</label>
+      <textarea id="role-description" pTextarea rows="3" formControlName="description" fluid></textarea>
+    </div>
+
+    <div class="field field-inline">
+      <p-toggleswitch formControlName="active" inputId="role-active" />
+      <label for="role-active">{{ 'settingsPages.roles.dialog.activeLabel' | translate }}</label>
+    </div>
+
+    <div class="dialog-footer">
+      <p-button [label]="'common.actions.cancel' | translate" severity="secondary" [text]="true" type="button" (onClick)="closeDialog()" />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="saving()"
+        data-testid="role-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>
+
+<app-role-permissions-dialog
+  [visible]="permissionsDialogVisible()"
+  [role]="permissionsRole()"
+  (visibleChange)="onPermissionsDialogVisibleChange($event)"
+/>

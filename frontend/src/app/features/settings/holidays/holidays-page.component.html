@@ -1,0 +1,160 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'settingsPages.holidays.title' | translate }}</h1>
+      <p>{{ 'settingsPages.holidays.description' | translate }}</p>
+    </div>
+    @if (canCreate()) {
+      <p-button
+        icon="pi pi-plus"
+        [label]="'settingsPages.holidays.newButton' | translate"
+        (onClick)="openCreateDialog()"
+        data-testid="holidays-new-button"
+      />
+    }
+  </div>
+
+  <app-generic-table
+    [items]="holidays()"
+    [totalRecords]="total()"
+    [loading]="loading()"
+    [columnsCount]="5"
+    emptyIcon="pi-calendar"
+    emptyMessageKey="settingsPages.holidays.emptyState"
+    (queryChange)="onQueryChange($event)"
+  >
+    <div tableActions>
+      <p-inputnumber
+        [ngModel]="yearFilter()"
+        (ngModelChange)="onYearFilterChange($event)"
+        [placeholder]="'settingsPages.holidays.yearFilterPlaceholder' | translate"
+        [useGrouping]="false"
+        inputStyleClass="holidays-year-input"
+        data-testid="holidays-year-filter"
+      />
+    </div>
+
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="holidayDate">
+          {{ 'settingsPages.holidays.columns.date' | translate }}
+          <p-sortIcon field="holidayDate" />
+        </th>
+        <th pSortableColumn="name">
+          {{ 'settingsPages.holidays.columns.name' | translate }}
+          <p-sortIcon field="name" />
+        </th>
+        <th>{{ 'settingsPages.holidays.columns.national' | translate }}</th>
+        <th>{{ 'settingsPages.holidays.columns.status' | translate }}</th>
+        <th class="col-actions">{{ 'settingsPages.holidays.columns.actions' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-item>
+      <tr>
+        <td>
+          <div class="holiday-date">
+            <span class="holiday-date__day">{{ dayOf(item.holidayDate) }}</span>
+            <span class="holiday-date__rest">{{ monthYearOf(item.holidayDate) }}</span>
+          </div>
+        </td>
+        <td class="cell-strong">{{ item.name }}</td>
+        <td>
+          <p-tag
+            [severity]="item.national ? 'info' : 'secondary'"
+            [icon]="item.national ? 'pi pi-globe' : 'pi pi-map-marker'"
+            [value]="(item.national ? 'common.yes' : 'common.no') | translate"
+          />
+        </td>
+        <td>
+          <p-tag
+            [severity]="item.active ? 'success' : 'danger'"
+            [value]="(item.active ? 'common.status.active' : 'common.status.inactive') | translate"
+          />
+        </td>
+        <td>
+          <div class="row-actions">
+            @if (canEdit()) {
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'common.actions.edit' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.edit' | translate"
+                (onClick)="openEditDialog(item)"
+              />
+            }
+            @if (canDelete()) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                [pTooltip]="'common.actions.delete' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.delete' | translate"
+                (onClick)="confirmDelete(item)"
+              />
+            }
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </app-generic-table>
+</div>
+
+<p-dialog
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '28rem' }"
+  [breakpoints]="{ '1024px': '90vw', '767px': '95vw' }"
+  [header]="(editingHoliday() ? 'settingsPages.holidays.dialog.editTitle' : 'settingsPages.holidays.dialog.newTitle') | translate"
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+    <div class="field">
+      <label for="holiday-date">{{ 'settingsPages.holidays.dialog.dateLabel' | translate }}</label>
+      <p-datepicker
+        inputId="holiday-date"
+        formControlName="holidayDate"
+        dateFormat="dd/mm/yy"
+        [showIcon]="true"
+        fluid
+        data-testid="holiday-date-input"
+      />
+    </div>
+
+    <div class="field">
+      <label for="holiday-name">{{ 'settingsPages.holidays.dialog.nameLabel' | translate }}</label>
+      <input id="holiday-name" pInputText type="text" formControlName="name" fluid data-testid="holiday-name-input" />
+      @if (form.controls.name.invalid && form.controls.name.touched) {
+        <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+      }
+    </div>
+
+    <div class="field field-inline">
+      <p-checkbox formControlName="national" [binary]="true" inputId="holiday-national" />
+      <label for="holiday-national">{{ 'settingsPages.holidays.dialog.nationalLabel' | translate }}</label>
+    </div>
+
+    <div class="field field-inline">
+      <p-toggleswitch formControlName="active" inputId="holiday-active" />
+      <label for="holiday-active">{{ 'settingsPages.holidays.dialog.activeLabel' | translate }}</label>
+    </div>
+
+    <div class="dialog-footer">
+      <p-button [label]="'common.actions.cancel' | translate" severity="secondary" [text]="true" type="button" (onClick)="closeDialog()" />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="saving()"
+        data-testid="holiday-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>

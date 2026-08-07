@@ -1,0 +1,28 @@
+.cell-strong {
+  font-weight: 600;
+}
+
+.holiday-date {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.holiday-date__day {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--p-primary-color, #1e5eff);
+  font-variant-numeric: tabular-nums;
+}
+
+.holiday-date__rest {
+  font-size: 0.8125rem;
+  color: var(--p-text-muted-color, #6b7280);
+  font-variant-numeric: tabular-nums;
+}
+
+:host ::ng-deep .holidays-year-input {
+  width: 5.5rem;
+  text-align: center;
+}

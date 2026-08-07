@@ -1,0 +1,162 @@
+.app-topbar {
+  position: relative;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 64px;
+  padding: 0 1.25rem;
+  border-bottom: 1px solid var(--p-content-border-color, #dde2ea);
+  background: var(--pc-surface-glass);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  transition: box-shadow var(--pc-duration) var(--pc-ease),
+    border-color var(--pc-duration) var(--pc-ease),
+    background-color var(--pc-duration) var(--pc-ease);
+}
+
+.app-topbar--scrolled {
+  box-shadow: var(--pc-shadow-sm);
+  border-bottom-color: transparent;
+}
+
+.app-topbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: var(--p-text-color, #1f2937);
+}
+
+.app-topbar__brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9px;
+  background: var(--pc-brand-gradient);
+  color: #ffffff;
+  box-shadow: var(--pc-shadow-xs);
+  transition: transform var(--pc-duration) var(--pc-ease),
+    box-shadow var(--pc-duration) var(--pc-ease);
+
+  i {
+    font-size: 1.05rem;
+  }
+}
+
+.app-topbar__brand:hover .app-topbar__brand-mark {
+  transform: translateY(-1px);
+  box-shadow: var(--pc-shadow-sm);
+}
+
+.app-topbar__workspace {
+  min-width: 200px;
+}
+
+.app-topbar__search {
+  min-width: 260px;
+  flex: 0 1 320px;
+
+  input {
+    transition: box-shadow var(--pc-duration) var(--pc-ease),
+      border-color var(--pc-duration) var(--pc-ease),
+      background-color var(--pc-duration) var(--pc-ease);
+  }
+}
+
+.app-topbar__spacer {
+  flex: 1 1 auto;
+}
+
+.app-topbar__notifications {
+  display: inline-flex;
+
+  ::ng-deep .p-badge {
+    font-weight: 700;
+    box-shadow: 0 0 0 2px var(--p-content-background, #ffffff);
+  }
+}
+
+.app-topbar__user-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  padding: 0.3rem 0.55rem;
+  border-radius: 999px;
+  color: inherit;
+  font: inherit;
+  transition: background-color var(--pc-duration-fast) var(--pc-ease),
+    border-color var(--pc-duration-fast) var(--pc-ease);
+
+  &:hover,
+  &--open {
+    background: var(--p-highlight-background, rgb(30 94 255 / 8%));
+    border-color: var(--p-content-border-color, #dde2ea);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px rgb(30 94 255 / 16%);
+    border-color: var(--p-primary-color, #1e5eff);
+  }
+}
+
+::ng-deep .p-avatar.app-topbar__avatar {
+  background: var(--pc-brand-gradient);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  box-shadow: var(--pc-shadow-xs);
+}
+
+.app-topbar__user-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-topbar__user-caret {
+  font-size: 0.75rem;
+  color: var(--p-text-muted-color, #6b7280);
+  transition: transform var(--pc-duration) var(--pc-ease);
+}
+
+.app-topbar__user-trigger--open .app-topbar__user-caret {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 900px) {
+  .app-topbar__workspace,
+  .app-topbar__search {
+    display: none;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .app-topbar {
+    gap: 0.25rem;
+    padding: 0 0.5rem;
+  }
+
+  .app-topbar__brand-name,
+  .app-topbar__user-name,
+  .app-topbar__user-caret {
+    display: none;
+  }
+
+  .app-topbar__user-trigger {
+    padding: 0.2rem;
+  }
+}

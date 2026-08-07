@@ -1,0 +1,499 @@
+{
+  "app": {
+    "name": "Prime CRM",
+    "slogan": "Smart relationship management, from first contact to close."
+  },
+  "common": {
+    "accessDenied": {
+      "title": "Access denied",
+      "message": "You do not have permission to access this screen."
+    },
+    "unsavedChanges": {
+      "title": "Unsaved changes",
+      "message": "There are unsaved changes on this screen. Are you sure you want to leave without saving?",
+      "accept": "Leave without saving",
+      "reject": "Keep editing"
+    },
+    "errors": {
+      "networkTitle": "Connection failed",
+      "networkMessage": "Could not connect to the server. Check your connection and try again.",
+      "genericTitle": "Something went wrong",
+      "genericMessage": "The operation could not be completed. Please try again."
+    },
+    "comingSoon": "Coming soon",
+    "underConstruction": {
+      "title": "Under construction",
+      "message": "This screen will be implemented in an upcoming phase of the project."
+    },
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "close": "Close",
+      "new": "New",
+      "edit": "Edit",
+      "delete": "Delete",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "block": "Block",
+      "manage": "Manage",
+      "manageStages": "Manage Stages",
+      "managePermissions": "Manage Permissions",
+      "manageRoles": "Manage Roles",
+      "resetPassword": "Reset Password",
+      "back": "Back",
+      "apply": "Apply",
+      "clearFilters": "Clear Filters"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "BLOCKED": "Blocked"
+    },
+    "table": {
+      "searchPlaceholder": "Search...",
+      "empty": "No records found.",
+      "pageReport": "{first} - {last} of {totalRecords}"
+    },
+    "confirmDelete": {
+      "title": "Confirm deletion",
+      "message": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+      "accept": "Delete",
+      "reject": "Cancel"
+    },
+    "validation": {
+      "required": "This field is required",
+      "maxLength": "Maximum of {{max}} characters",
+      "email": "Invalid email address",
+      "minLength": "Minimum of {{min}} characters",
+      "min": "Minimum value: {{min}}",
+      "max": "Maximum value: {{max}}"
+    },
+    "yes": "Yes",
+    "no": "No",
+    "notInformed": "Not informed",
+    "never": "Never"
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in with your credentials to access Prime CRM",
+      "usernameLabel": "Username or email",
+      "usernamePlaceholder": "Enter your username or email",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "submit": "Sign in",
+      "usernameRequired": "Username or email is required",
+      "passwordRequired": "Password is required",
+      "success": "Signed in successfully",
+      "genericError": "Unable to sign in",
+      "invalidCredentials": "Invalid credentials. Check your username and password and try again.",
+      "userNotActive": "Your account is inactive or blocked. Contact a system administrator.",
+      "connectionError": "Could not reach the server. Make sure the backend is running and try again.",
+      "serverError": "The server could not process the sign-in. Please try again shortly."
+    }
+  },
+  "topbar": {
+    "workspace": {
+      "label": "Workspace",
+      "default": "Main Workspace"
+    },
+    "search": {
+      "placeholder": "Search the entire system..."
+    },
+    "menu": {
+      "toggle": "Toggle navigation menu",
+      "close": "Close navigation menu"
+    },
+    "notifications": {
+      "label": "Notifications",
+      "empty": "No notifications"
+    },
+    "newButton": {
+      "label": "New",
+      "lead": "New Lead",
+      "customer": "New Customer",
+      "opportunity": "New Opportunity",
+      "task": "New Task"
+    },
+    "userMenu": {
+      "editProfile": "Edit Profile",
+      "changePassword": "Change Password",
+      "preferences": "Preferences",
+      "theme": {
+        "label": "Theme",
+        "light": "Light Theme",
+        "dark": "Dark Theme"
+      },
+      "language": {
+        "label": "Language",
+        "ptBR": "Portuguese (Brazil)",
+        "en": "English",
+        "es": "Spanish"
+      },
+      "helpCenter": "Help Center",
+      "logout": "Sign out"
+    }
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "settings": {
+      "root": "Settings",
+      "generalRegistries": {
+        "root": "General Registries",
+        "clientType": "Client Type",
+        "personType": "Person Type",
+        "companyType": "Company Type",
+        "marketSegment": "Market Segments",
+        "activityBranch": "Business Lines",
+        "leadOrigin": "Lead Sources",
+        "lossReason": "Loss Reasons",
+        "winReason": "Win Reasons",
+        "status": "Status",
+        "priority": "Priorities",
+        "taskType": "Task Types",
+        "category": "Categories",
+        "tag": "Tags",
+        "team": "Teams",
+        "position": "Job Titles",
+        "department": "Departments"
+      },
+      "pipelines": "Pipelines",
+      "customFields": "Custom Fields",
+      "templates": "Templates",
+      "generalSettings": "General Settings",
+      "holidays": "Holidays",
+      "users": "Users",
+      "roles": "Roles",
+      "permissions": "Permissions"
+    },
+    "modules": {
+      "root": "Modules",
+      "customers": "Customers",
+      "leads": "Leads",
+      "opportunities": "Opportunities",
+      "finance": "Finance"
+    },
+    "comingSoon": "Coming soon"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "phaseNotice": "The full dashboard with metrics and reports will be delivered in Phase 6 of the project.",
+    "greeting": "Hello, {{name}}",
+    "subtitle": "Here is the summary of your sales operation.",
+    "demoNotice": "The cards below are placeholders and do not show real data yet.",
+    "placeholderTag": "Available in Phase 6",
+    "metrics": {
+      "leads": {
+        "label": "New leads",
+        "hint": "Leads captured in the period"
+      },
+      "opportunities": {
+        "label": "Open opportunities",
+        "hint": "Deals currently in the pipeline"
+      },
+      "customers": {
+        "label": "Active customers",
+        "hint": "Accounts with an ongoing relationship"
+      },
+      "revenue": {
+        "label": "Forecast revenue",
+        "hint": "Weighted pipeline value"
+      },
+      "tasks": {
+        "label": "Pending tasks",
+        "hint": "Activities assigned to you"
+      },
+      "conversion": {
+        "label": "Conversion rate",
+        "hint": "Leads that became customers"
+      }
+    }
+  },
+  "settingsPages": {
+    "domainValues": {
+      "title": "General Registries",
+      "description": "Manage the values of the \"{{tipo}}\" domain.",
+      "newButton": "New Value",
+      "emptyState": "No values registered for this domain yet.",
+      "columns": {
+        "name": "Name",
+        "code": "Code",
+        "color": "Color",
+        "icon": "Icon",
+        "order": "Order",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "dialog": {
+        "newTitle": "New Value",
+        "editTitle": "Edit Value",
+        "nameLabel": "Name",
+        "namePlaceholder": "Enter the name",
+        "codeLabel": "Code",
+        "codePlaceholder": "Internal code (optional)",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Description (optional)",
+        "colorLabel": "Color",
+        "iconLabel": "Icon",
+        "iconPlaceholder": "Select an icon",
+        "orderLabel": "Display order",
+        "activeLabel": "Active"
+      },
+      "messages": {
+        "created": "Value created successfully.",
+        "updated": "Value updated successfully.",
+        "deleted": "Value deleted successfully.",
+        "reordered": "Order updated successfully."
+      }
+    },
+    "pipelines": {
+      "title": "Pipelines",
+      "description": "Manage sales pipelines and their stages.",
+      "newButton": "New Pipeline",
+      "emptyState": "No pipelines registered yet.",
+      "columns": {
+        "name": "Name",
+        "businessType": "Business Type",
+        "stages": "Stages",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "dialog": {
+        "newTitle": "New Pipeline",
+        "editTitle": "Edit Pipeline",
+        "nameLabel": "Name",
+        "businessTypeLabel": "Business Type",
+        "businessTypePlaceholder": "E.g.: Retail, Manufacturing, Services (optional)",
+        "activeLabel": "Active"
+      },
+      "messages": {
+        "created": "Pipeline created successfully.",
+        "updated": "Pipeline updated successfully.",
+        "deleted": "Pipeline deleted successfully."
+      },
+      "stages": {
+        "title": "Pipeline Stages",
+        "newButton": "New Stage",
+        "emptyState": "No stages registered for this pipeline yet.",
+        "reorderHint": "Drag the stages to reorder them.",
+        "columns": {
+          "name": "Name",
+          "probability": "Probability",
+          "slaDays": "SLA (days)",
+          "color": "Color",
+          "requiresLossReason": "Requires Loss Reason",
+          "actions": "Actions"
+        },
+        "dialog": {
+          "newTitle": "New Stage",
+          "editTitle": "Edit Stage",
+          "nameLabel": "Name",
+          "probabilityLabel": "Default Probability",
+          "slaDaysLabel": "SLA (days)",
+          "orderLabel": "Display order",
+          "colorLabel": "Color",
+          "requiresLossReasonLabel": "Requires a loss reason when leaving this stage"
+        },
+        "messages": {
+          "created": "Stage created successfully.",
+          "updated": "Stage updated successfully.",
+          "deleted": "Stage deleted successfully.",
+          "reordered": "Stage order updated successfully."
+        }
+      }
+    },
+    "customFields": {
+      "title": "Custom Fields",
+      "description": "Manage custom fields per entity.",
+      "newButton": "New Field",
+      "emptyState": "No custom fields registered yet.",
+      "targetEntityFilterPlaceholder": "Filter by entity (e.g.: CUSTOMER, LEAD)",
+      "columns": {
+        "targetEntity": "Entity",
+        "label": "Label",
+        "fieldKey": "Field Key",
+        "fieldType": "Type",
+        "required": "Required",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "dialog": {
+        "newTitle": "New Custom Field",
+        "editTitle": "Edit Custom Field",
+        "targetEntityLabel": "Entity",
+        "targetEntityPlaceholder": "No business entities exist yet at this project phase; type a free identifier (e.g.: CUSTOMER, LEAD)",
+        "fieldKeyLabel": "Field Key",
+        "fieldTypeLabel": "Field Type",
+        "labelLabel": "Label",
+        "optionsLabel": "Options",
+        "optionKeyPlaceholder": "Internal value",
+        "optionValuePlaceholder": "Displayed label",
+        "addOption": "Add Option",
+        "orderLabel": "Display order",
+        "requiredLabel": "Required",
+        "activeLabel": "Active"
+      },
+      "messages": {
+        "created": "Field created successfully.",
+        "updated": "Field updated successfully.",
+        "deleted": "Field deleted successfully."
+      }
+    },
+    "templates": {
+      "title": "Templates",
+      "description": "Manage message and document templates.",
+      "newButton": "New Template",
+      "emptyState": "No templates registered yet.",
+      "typeFilterPlaceholder": "Filter by type",
+      "columns": {
+        "name": "Name",
+        "type": "Type",
+        "subject": "Subject",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "dialog": {
+        "newTitle": "New Template",
+        "editTitle": "Edit Template",
+        "typeLabel": "Type",
+        "nameLabel": "Name",
+        "subjectLabel": "Subject",
+        "subjectPlaceholder": "Required only for email templates",
+        "subjectRequiredForEmail": "Subject is required for email templates",
+        "contentLabel": "Content",
+        "activeLabel": "Active"
+      },
+      "messages": {
+        "created": "Template created successfully.",
+        "updated": "Template updated successfully.",
+        "deleted": "Template deleted successfully."
+      }
+    },
+    "generalSettings": {
+      "title": "General Settings",
+      "description": "General system configuration parameters.",
+      "emptyState": "No settings available.",
+      "columns": {
+        "key": "Key",
+        "description": "Description",
+        "value": "Value",
+        "actions": "Actions"
+      },
+      "dialog": {
+        "title": "Edit Setting"
+      },
+      "messages": {
+        "updated": "Setting updated successfully."
+      }
+    },
+    "holidays": {
+      "title": "Holidays",
+      "description": "Manage the holiday calendar.",
+      "newButton": "New Holiday",
+      "emptyState": "No holidays registered yet.",
+      "yearFilterPlaceholder": "Filter by year",
+      "columns": {
+        "date": "Date",
+        "name": "Name",
+        "national": "National",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "dialog": {
+        "newTitle": "New Holiday",
+        "editTitle": "Edit Holiday",
+        "dateLabel": "Date",
+        "nameLabel": "Name",
+        "nationalLabel": "National holiday",
+        "activeLabel": "Active"
+      },
+      "messages": {
+        "created": "Holiday created successfully.",
+        "updated": "Holiday updated successfully.",
+        "deleted": "Holiday deleted successfully."
+      }
+    },
+    "users": {
+      "title": "Users",
+      "description": "Manage system users.",
+      "newButton": "New User",
+      "emptyState": "No users registered yet.",
+      "statusFilterPlaceholder": "Filter by status",
+      "columns": {
+        "name": "Name",
+        "email": "Email",
+        "login": "Login",
+        "roles": "Roles",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "dialog": {
+        "newTitle": "New User",
+        "editTitle": "Edit User",
+        "nameLabel": "Name",
+        "emailLabel": "Email",
+        "loginLabel": "Login",
+        "phoneLabel": "Phone",
+        "passwordLabel": "Password",
+        "rolesLabel": "Roles",
+        "rolesPlaceholder": "Select roles"
+      },
+      "messages": {
+        "created": "User created successfully.",
+        "updated": "User updated successfully.",
+        "deleted": "User deleted successfully.",
+        "statusUpdated": "User status updated successfully.",
+        "passwordReset": "Password reset successfully."
+      },
+      "resetPasswordDialog": {
+        "title": "Reset Password",
+        "newPasswordLabel": "New Password",
+        "confirmPasswordLabel": "Confirm New Password",
+        "mismatch": "Passwords do not match"
+      }
+    },
+    "roles": {
+      "title": "Roles",
+      "description": "Manage access roles.",
+      "newButton": "New Role",
+      "emptyState": "No roles registered yet.",
+      "columns": {
+        "name": "Name",
+        "description": "Description",
+        "permissionsCount": "Permissions",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "dialog": {
+        "newTitle": "New Role",
+        "editTitle": "Edit Role",
+        "nameLabel": "Name",
+        "descriptionLabel": "Description",
+        "activeLabel": "Active"
+      },
+      "messages": {
+        "created": "Role created successfully.",
+        "updated": "Role updated successfully.",
+        "deleted": "Role deleted successfully."
+      },
+      "permissionsDialog": {
+        "title": "Role Permissions",
+        "messages": {
+          "updated": "Permissions updated successfully."
+        }
+      }
+    },
+    "permissions": {
+      "title": "Permissions",
+      "description": "System permission catalog.",
+      "emptyState": "No permissions registered.",
+      "columns": {
+        "code": "Code",
+        "action": "Action",
+        "description": "Description"
+      }
+    }
+  }
+}

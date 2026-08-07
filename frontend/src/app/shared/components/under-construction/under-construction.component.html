@@ -1,0 +1,7 @@
+<div class="uc-state pc-enter">
+  <span class="uc-state__icon"><i class="pi pi-wrench"></i></span>
+  <h2 class="uc-state__title">{{ titleKey() | translate }}</h2>
+  <p class="uc-state__description">{{ descriptionKey() | translate: descriptionParams() }}</p>
+  <p-tag severity="info" icon="pi pi-hammer" [rounded]="true" [value]="'common.underConstruction.title' | translate" />
+  <p class="uc-state__message">{{ 'common.underConstruction.message' | translate }}</p>
+</div>

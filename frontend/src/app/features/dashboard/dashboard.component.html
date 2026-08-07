@@ -1,0 +1,38 @@
+<section class="dashboard">
+  <header class="dashboard__header pc-enter">
+    <div class="dashboard__heading">
+      <h1>{{ 'dashboard.greeting' | translate: { name: firstName() } }}</h1>
+      <p>{{ 'dashboard.subtitle' | translate }}</p>
+    </div>
+    <p-tag severity="info" icon="pi pi-clock" [value]="'dashboard.placeholderTag' | translate" />
+  </header>
+
+  <p-message severity="info" icon="pi pi-info-circle" styleClass="dashboard__notice pc-enter-fade">
+    {{ 'dashboard.demoNotice' | translate }}
+  </p-message>
+
+  <div class="dashboard__metrics pc-stagger">
+    @for (metric of metrics; track metric.key) {
+      <p-card styleClass="dashboard__metric pc-hover-lift">
+        <div class="dashboard__metric-top">
+          <span class="dashboard__metric-icon"><i [class]="metric.icon"></i></span>
+          <p-tag severity="secondary" [value]="'dashboard.placeholderTag' | translate" />
+        </div>
+
+        <p class="dashboard__metric-value" aria-hidden="true">&mdash;</p>
+        <p class="dashboard__metric-label">{{ 'dashboard.metrics.' + metric.key + '.label' | translate }}</p>
+        <p class="dashboard__metric-hint">{{ 'dashboard.metrics.' + metric.key + '.hint' | translate }}</p>
+      </p-card>
+    }
+  </div>
+
+  <p-card styleClass="dashboard__phase pc-enter">
+    <div class="dashboard__phase-content">
+      <span class="dashboard__phase-icon"><i class="pi pi-compass"></i></span>
+      <div>
+        <h2>{{ 'dashboard.title' | translate }}</h2>
+        <p>{{ 'dashboard.phaseNotice' | translate }}</p>
+      </div>
+    </div>
+  </p-card>
+</section>

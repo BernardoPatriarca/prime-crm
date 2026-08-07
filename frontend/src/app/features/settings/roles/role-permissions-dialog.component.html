@@ -1,0 +1,62 @@
+<p-dialog
+  [visible]="visible()"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '48rem' }"
+  [breakpoints]="{ '1024px': '90vw', '767px': '95vw' }"
+  [header]="('settingsPages.roles.permissionsDialog.title' | translate) + ' - ' + (role()?.name ?? '')"
+>
+  @if (!loading() && groups().length === 0) {
+    <div class="table-empty-state" data-testid="role-permissions-empty">
+      <i class="pi pi-shield"></i>
+      <p>{{ 'settingsPages.permissions.emptyState' | translate }}</p>
+    </div>
+  } @else {
+    <div class="permissions-matrix">
+      @for (group of groups(); track group.module) {
+        <section class="permissions-matrix__group">
+          <header class="permissions-matrix__group-header">
+            <p-checkbox
+              [binary]="true"
+              [ngModel]="isGroupFullySelected(group)"
+              (ngModelChange)="toggleGroup(group, $event)"
+              [inputId]="'group-' + group.module"
+            />
+            <label [for]="'group-' + group.module">{{ group.module }}</label>
+            <p-tag
+              [severity]="selectedCount(group) ? 'info' : 'secondary'"
+              [rounded]="true"
+              [value]="selectedCount(group) + '/' + group.permissions.length"
+            />
+          </header>
+          <div class="permissions-matrix__items">
+            @for (permission of group.permissions; track permission.id) {
+              <div class="permissions-matrix__item" [class.permissions-matrix__item--on]="isSelected(permission.id)">
+                <p-checkbox
+                  [binary]="true"
+                  [ngModel]="isSelected(permission.id)"
+                  (ngModelChange)="toggle(permission.id, $event)"
+                  [inputId]="'perm-' + permission.id"
+                />
+                <label [for]="'perm-' + permission.id">{{ permission.action }}</label>
+              </div>
+            }
+          </div>
+        </section>
+      }
+    </div>
+  }
+
+  <div class="dialog-footer">
+    <p-button [label]="'common.actions.cancel' | translate" severity="secondary" [text]="true" (onClick)="close()" />
+    <p-button
+      icon="pi pi-check"
+      [label]="'common.actions.save' | translate"
+      [loading]="saving()"
+      (onClick)="save()"
+      data-testid="role-permissions-save-button"
+    />
+  </div>
+</p-dialog>

@@ -1,0 +1,48 @@
+.cell-strong {
+  font-weight: 600;
+}
+
+.code-chip {
+  font-family: ui-monospace, "SFMono-Regular", "Menlo", monospace;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--p-border-radius-sm, 6px);
+  background: color-mix(in srgb, var(--p-text-color, #1f2937) 6%, transparent);
+  color: var(--p-text-muted-color, #6b7280);
+}
+
+.field-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8125rem;
+  color: var(--p-text-muted-color, #6b7280);
+
+  i {
+    color: var(--p-primary-color, #1e5eff);
+  }
+}
+
+.options-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px dashed var(--p-content-border-color, #dde2ea);
+  border-radius: var(--p-border-radius-md, 8px);
+  align-items: flex-start;
+}
+
+.options-editor__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  width: 100%;
+  animation: pc-fade-in var(--pc-duration) var(--pc-ease-out) both;
+}
+
+.options-editor__row input {
+  flex: 1;
+  min-width: 0;
+}

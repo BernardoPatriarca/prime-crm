@@ -1,0 +1,15 @@
+<div class="app-shell">
+  <app-topbar class="app-shell__topbar" [scrolled]="contentScrolled()" />
+  <div class="app-shell__body">
+    <app-sidebar class="app-shell__sidebar" />
+    <main #content class="app-shell__content" (scroll)="onContentScroll($event)">
+      <div
+        class="app-shell__route"
+        [class.app-shell__route--a]="routeAnimationKey() % 2 === 0"
+        [class.app-shell__route--b]="routeAnimationKey() % 2 === 1"
+      >
+        <router-outlet />
+      </div>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,59 @@
+.cell-strong {
+  font-weight: 600;
+}
+
+.code-chip {
+  font-family: ui-monospace, "SFMono-Regular", "Menlo", monospace;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--p-border-radius-sm, 6px);
+  background: color-mix(in srgb, var(--p-text-color, #1f2937) 6%, transparent);
+  color: var(--p-text-muted-color, #6b7280);
+}
+
+.icon-preview {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: var(--p-border-radius-md, 8px);
+  background: color-mix(in srgb, var(--p-primary-color, #1e5eff) 10%, transparent);
+  color: var(--p-primary-color, #1e5eff);
+  transition: transform var(--pc-duration) var(--pc-ease);
+
+  &--lg {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.15rem;
+    flex: none;
+  }
+}
+
+tr:hover .icon-preview {
+  transform: scale(1.1);
+}
+
+.color-field,
+.icon-field {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.icon-field p-select {
+  flex: 1;
+  min-width: 0;
+}
+
+.color-field__value {
+  font-size: 0.8125rem;
+  color: var(--p-text-muted-color, #6b7280);
+  text-transform: uppercase;
+}
+
+:host ::ng-deep .icon-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}

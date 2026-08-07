@@ -1,0 +1,63 @@
+.settings-surface {
+  background: var(--p-content-background, #ffffff);
+  border: 1px solid var(--p-content-border-color, #dde2ea);
+  border-radius: var(--p-content-border-radius, 12px);
+  box-shadow: var(--pc-shadow-sm);
+  overflow: hidden;
+}
+
+.cell-muted {
+  color: var(--p-text-muted-color, #6b7280);
+}
+
+.code-chip {
+  font-family: ui-monospace, "SFMono-Regular", "Menlo", monospace;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--p-border-radius-sm, 6px);
+  background: color-mix(in srgb, var(--p-text-color, #1f2937) 6%, transparent);
+  color: var(--p-text-muted-color, #6b7280);
+}
+
+.setting-value {
+  font-weight: 600;
+}
+
+:host ::ng-deep {
+  .p-datatable-thead > tr > th {
+    background: color-mix(in srgb, var(--p-text-color, #1f2937) 4%, var(--p-content-background, #ffffff));
+    color: var(--p-text-muted-color, #6b7280);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+    padding: 0.85rem 1rem;
+    white-space: nowrap;
+    border-width: 0 0 1px;
+    border-color: var(--p-content-border-color, #dde2ea);
+  }
+
+  .p-datatable-tbody > tr {
+    transition: background-color var(--pc-duration-fast) var(--pc-ease);
+
+    > td {
+      padding: 0.7rem 1rem;
+      vertical-align: middle;
+      border-width: 0 0 1px;
+      border-color: color-mix(in srgb, var(--p-content-border-color, #dde2ea) 60%, transparent);
+    }
+
+    &:last-child > td,
+    &.p-datatable-emptymessage > td {
+      border-bottom: none;
+    }
+
+    &:not(.p-datatable-emptymessage):hover {
+      background: var(--p-highlight-background, rgba(30, 94, 255, 0.08));
+    }
+  }
+
+  .col-actions {
+    width: 1%;
+  }
+}
