@@ -1,0 +1,61 @@
+.board-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.1rem;
+}
+
+.board-toolbar .p-select {
+  min-width: 14rem;
+}
+
+.board-toolbar__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem;
+  margin-right: auto;
+}
+
+.board-toolbar__metric {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--p-text-muted-color, #6b7280);
+}
+
+.board-toolbar__metric--strong {
+  font-weight: 700;
+  color: var(--p-primary-color, #1e5eff);
+}
+
+.view-panel--hidden {
+  display: none;
+}
+
+.view-toggle__option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+.reason-intro {
+  margin: 0;
+  color: var(--p-text-muted-color, #6b7280);
+  font-size: 0.925rem;
+}
+
+@media (max-width: 767.98px) {
+  .board-toolbar .p-select {
+    min-width: 100%;
+  }
+
+  .board-toolbar__summary {
+    order: 3;
+    width: 100%;
+  }
+}

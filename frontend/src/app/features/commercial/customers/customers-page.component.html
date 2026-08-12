@@ -1,0 +1,589 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ titleKey() | translate }}</h1>
+      <p>{{ descriptionKey() | translate }}</p>
+    </div>
+    @if (canCreate()) {
+      <p-button
+        icon="pi pi-plus"
+        [label]="newButtonKey() | translate"
+        (onClick)="openCreateDialog()"
+        data-testid="customers-new-button"
+      />
+    }
+  </div>
+
+  <app-generic-table
+    [items]="customers()"
+    [totalRecords]="total()"
+    [loading]="loading()"
+    [columnsCount]="8"
+    emptyIcon="pi-building"
+    [emptyMessageKey]="emptyStateKey()"
+    searchPlaceholderKey="commercialPages.customers.searchPlaceholder"
+    (queryChange)="onQueryChange($event)"
+  >
+    <div tableActions class="filter-bar">
+      @if (!lockedPersonType()) {
+        <p-select
+          [ngModel]="personTypeFilter()"
+          (ngModelChange)="personTypeFilter.set($event); onFilterChange()"
+          [options]="personTypeOptions()"
+          optionLabel="label"
+          optionValue="value"
+          [showClear]="true"
+          [placeholder]="'commercialPages.customers.filters.personType' | translate"
+          data-testid="customers-person-type-filter"
+        />
+      }
+      <p-select
+        [ngModel]="clientTypeFilter()"
+        (ngModelChange)="clientTypeFilter.set($event); onFilterChange()"
+        [options]="clientTypes()"
+        optionLabel="name"
+        optionValue="id"
+        [showClear]="true"
+        [filter]="true"
+        filterBy="name"
+        [placeholder]="'commercialPages.customers.filters.clientType' | translate"
+        data-testid="customers-client-type-filter"
+      />
+      <p-select
+        [ngModel]="segmentFilter()"
+        (ngModelChange)="segmentFilter.set($event); onFilterChange()"
+        [options]="segments()"
+        optionLabel="name"
+        optionValue="id"
+        [showClear]="true"
+        [filter]="true"
+        filterBy="name"
+        [placeholder]="'commercialPages.customers.filters.segment' | translate"
+        data-testid="customers-segment-filter"
+      />
+      <p-select
+        [ngModel]="activeFilter()"
+        (ngModelChange)="activeFilter.set($event); onFilterChange()"
+        [options]="activeOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"
+        [placeholder]="'commercialPages.customers.filters.status' | translate"
+        data-testid="customers-active-filter"
+      />
+      <p-button
+        icon="pi pi-filter-slash"
+        severity="secondary"
+        [text]="true"
+        [pTooltip]="'common.actions.clearFilters' | translate"
+        tooltipPosition="top"
+        [ariaLabel]="'common.actions.clearFilters' | translate"
+        (onClick)="clearFilters()"
+        data-testid="customers-clear-filters"
+      />
+    </div>
+
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="code">
+          {{ 'commercialPages.customers.columns.code' | translate }}
+          <p-sortIcon field="code" />
+        </th>
+        <th pSortableColumn="name">
+          {{ 'commercialPages.customers.columns.name' | translate }}
+          <p-sortIcon field="name" />
+        </th>
+        <th>{{ 'commercialPages.customers.columns.document' | translate }}</th>
+        <th>{{ 'commercialPages.customers.columns.personType' | translate }}</th>
+        <th>{{ 'commercialPages.customers.columns.city' | translate }}</th>
+        <th>{{ 'commercialPages.customers.columns.owner' | translate }}</th>
+        <th>{{ 'commercialPages.customers.columns.status' | translate }}</th>
+        <th class="col-actions">{{ 'commercialPages.customers.columns.actions' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-item>
+      <tr>
+        <td class="cell-code">{{ item.code }}</td>
+        <td>
+          <div class="cell-identity">
+            <span class="cell-strong">{{ item.name }}</span>
+            @if (item.tradeName) {
+              <span class="cell-muted">{{ item.tradeName }}</span>
+            }
+          </div>
+        </td>
+        <td class="cell-muted cell-numeric">{{ item.document ? (item.document | document) : '-' }}</td>
+        <td>
+          <p-tag
+            [severity]="item.personType === 'JURIDICA' ? 'info' : 'secondary'"
+            [icon]="item.personType === 'JURIDICA' ? 'pi pi-building' : 'pi pi-user'"
+            [value]="('commercialPages.customers.personType.' + item.personType) | translate"
+          />
+        </td>
+        <td class="cell-muted">{{ location(item) }}</td>
+        <td class="cell-muted">{{ item.owner?.name ?? '-' }}</td>
+        <td>
+          <div class="chip-list">
+            <p-tag
+              [severity]="item.active ? 'success' : 'danger'"
+              [value]="(item.active ? 'common.status.active' : 'common.status.inactive') | translate"
+            />
+            @if (item.status) {
+              <span class="domain-chip" [style]="chipStyle(item.status.color)">{{ item.status.name }}</span>
+            }
+          </div>
+        </td>
+        <td>
+          <div class="row-actions">
+            @if (canEdit()) {
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'common.actions.edit' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.edit' | translate"
+                (onClick)="openEditDialog(item)"
+                [attr.data-testid]="'customer-edit-' + item.id"
+              />
+            }
+            @if (canDelete()) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                [pTooltip]="'common.actions.delete' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.delete' | translate"
+                (onClick)="confirmDelete(item)"
+                [attr.data-testid]="'customer-delete-' + item.id"
+              />
+            }
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </app-generic-table>
+</div>
+
+<p-dialog
+  appendTo="body"
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '54rem' }"
+  [breakpoints]="{ '1024px': '92vw', '767px': '96vw' }"
+  [header]="(editingCustomer() ? 'commercialPages.customers.dialog.editTitle' : 'commercialPages.customers.dialog.newTitle') | translate"
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+    @if (editingCustomer()) {
+      <p-tag
+        severity="secondary"
+        icon="pi pi-hashtag"
+        [value]="editingCustomer()!.code"
+        [pTooltip]="'commercialPages.customers.dialog.codeHint' | translate"
+        tooltipPosition="right"
+      />
+    }
+
+    <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
+      <p-tablist>
+        <p-tab value="general">{{ 'commercialPages.customers.dialog.tabs.general' | translate }}</p-tab>
+        <p-tab value="contact">{{ 'commercialPages.customers.dialog.tabs.contact' | translate }}</p-tab>
+        <p-tab value="address">{{ 'commercialPages.customers.dialog.tabs.address' | translate }}</p-tab>
+        <p-tab value="commercial">{{ 'commercialPages.customers.dialog.tabs.commercial' | translate }}</p-tab>
+      </p-tablist>
+
+      <p-tabpanels>
+        <p-tabpanel value="general">
+          <div class="form-grid">
+            <div class="field field-span-2">
+              <label for="customer-name">{{ 'commercialPages.customers.dialog.nameLabel' | translate }}</label>
+              <input id="customer-name" pInputText type="text" formControlName="name" fluid data-testid="customer-name-input" />
+              @if (form.controls.name.invalid && form.controls.name.touched) {
+                <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+              }
+            </div>
+
+            <div class="field field-span-2">
+              <label for="customer-trade-name">{{ 'commercialPages.customers.dialog.tradeNameLabel' | translate }}</label>
+              <input id="customer-trade-name" pInputText type="text" formControlName="tradeName" fluid />
+            </div>
+
+            <div class="field">
+              <label for="customer-person-type">{{ 'commercialPages.customers.dialog.personTypeLabel' | translate }}</label>
+              @if (lockedPersonType()) {
+                <p-tag
+                  severity="info"
+                  icon="pi pi-building"
+                  [value]="('commercialPages.customers.personType.' + lockedPersonType()) | translate"
+                />
+              } @else {
+                <p-select
+                  inputId="customer-person-type"
+                  formControlName="personType"
+                  [options]="personTypeOptions()"
+                  optionLabel="label"
+                  optionValue="value"
+                  fluid
+                  data-testid="customer-person-type-select"
+                />
+              }
+            </div>
+
+            <div class="field">
+              <label for="customer-document">{{ documentLabelKey() | translate }}</label>
+              <p-inputmask
+                inputId="customer-document"
+                formControlName="document"
+                [mask]="documentMask()"
+                [unmask]="true"
+                [autoClear]="false"
+                styleClass="w-full"
+                data-testid="customer-document-input"
+              />
+              @if (form.controls.document.touched) {
+                @if (form.controls.document.errors?.['required']) {
+                  <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+                } @else if (form.controls.document.errors?.['cpf']) {
+                  <small class="field-error">{{ 'commercialPages.customers.validation.cpf' | translate }}</small>
+                } @else if (form.controls.document.errors?.['cnpj']) {
+                  <small class="field-error">{{ 'commercialPages.customers.validation.cnpj' | translate }}</small>
+                }
+              }
+            </div>
+
+            <div class="field">
+              <label for="customer-state-registration">{{ 'commercialPages.customers.dialog.stateRegistrationLabel' | translate }}</label>
+              <input id="customer-state-registration" pInputText type="text" formControlName="stateRegistration" fluid />
+            </div>
+
+            <div class="field">
+              <label for="customer-municipal-registration">{{ 'commercialPages.customers.dialog.municipalRegistrationLabel' | translate }}</label>
+              <input id="customer-municipal-registration" pInputText type="text" formControlName="municipalRegistration" fluid />
+            </div>
+
+            <div class="field">
+              <label for="customer-client-type">{{ 'commercialPages.customers.dialog.clientTypeLabel' | translate }}</label>
+              <p-select
+                inputId="customer-client-type"
+                formControlName="clientTypeId"
+                [options]="clientTypes()"
+                optionLabel="name"
+                optionValue="id"
+                [showClear]="true"
+                [filter]="true"
+                filterBy="name"
+                [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+                fluid
+              />
+            </div>
+
+            <div class="field">
+              <label for="customer-segment">{{ 'commercialPages.customers.dialog.segmentLabel' | translate }}</label>
+              <p-select
+                inputId="customer-segment"
+                formControlName="segmentId"
+                [options]="segments()"
+                optionLabel="name"
+                optionValue="id"
+                [showClear]="true"
+                [filter]="true"
+                filterBy="name"
+                [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+                fluid
+              />
+            </div>
+
+            <div class="field">
+              <label for="customer-branch">{{ 'commercialPages.customers.dialog.activityBranchLabel' | translate }}</label>
+              <p-select
+                inputId="customer-branch"
+                formControlName="activityBranchId"
+                [options]="activityBranches()"
+                optionLabel="name"
+                optionValue="id"
+                [showClear]="true"
+                [filter]="true"
+                filterBy="name"
+                [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+                fluid
+              />
+            </div>
+
+            <div class="field">
+              <label for="customer-category">{{ 'commercialPages.customers.dialog.categoryLabel' | translate }}</label>
+              <p-select
+                inputId="customer-category"
+                formControlName="categoryId"
+                [options]="categories()"
+                optionLabel="name"
+                optionValue="id"
+                [showClear]="true"
+                [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+                fluid
+              />
+            </div>
+
+            <div class="field">
+              <label for="customer-origin">{{ 'commercialPages.customers.dialog.originLabel' | translate }}</label>
+              <p-select
+                inputId="customer-origin"
+                formControlName="originId"
+                [options]="origins()"
+                optionLabel="name"
+                optionValue="id"
+                [showClear]="true"
+                [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+                fluid
+              />
+            </div>
+
+            <div class="field">
+              <label for="customer-status">{{ 'commercialPages.customers.dialog.statusLabel' | translate }}</label>
+              <p-select
+                inputId="customer-status"
+                formControlName="statusId"
+                [options]="statuses()"
+                optionLabel="name"
+                optionValue="id"
+                [showClear]="true"
+                [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+                fluid
+              />
+            </div>
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="contact">
+          <div class="form-grid">
+            <div class="field">
+              <label for="customer-phone">{{ 'commercialPages.customers.dialog.phoneLabel' | translate }}</label>
+              <p-inputmask
+                inputId="customer-phone"
+                formControlName="phone"
+                mask="(99) 9999-9999"
+                [unmask]="true"
+                [autoClear]="false"
+                styleClass="w-full"
+              />
+              @if (form.controls.phone.touched && form.controls.phone.errors?.['phone']) {
+                <small class="field-error">{{ 'common.validation.phone' | translate }}</small>
+              }
+            </div>
+
+            <div class="field">
+              <label for="customer-mobile">{{ 'commercialPages.customers.dialog.mobileLabel' | translate }}</label>
+              <p-inputmask
+                inputId="customer-mobile"
+                formControlName="mobile"
+                mask="(99) 99999-9999"
+                [unmask]="true"
+                [autoClear]="false"
+                styleClass="w-full"
+              />
+              @if (form.controls.mobile.touched && form.controls.mobile.errors?.['phone']) {
+                <small class="field-error">{{ 'common.validation.phone' | translate }}</small>
+              }
+            </div>
+
+            <div class="field">
+              <label for="customer-email">{{ 'commercialPages.customers.dialog.emailLabel' | translate }}</label>
+              <input id="customer-email" pInputText type="email" formControlName="email" fluid data-testid="customer-email-input" />
+              @if (form.controls.email.invalid && form.controls.email.touched) {
+                <small class="field-error">{{ 'common.validation.email' | translate }}</small>
+              }
+            </div>
+
+            <div class="field">
+              <label for="customer-financial-email">{{ 'commercialPages.customers.dialog.financialEmailLabel' | translate }}</label>
+              <input id="customer-financial-email" pInputText type="email" formControlName="financialEmail" fluid />
+              @if (form.controls.financialEmail.invalid && form.controls.financialEmail.touched) {
+                <small class="field-error">{{ 'common.validation.email' | translate }}</small>
+              }
+            </div>
+
+            <div class="field field-span-2">
+              <label for="customer-website">{{ 'commercialPages.customers.dialog.websiteLabel' | translate }}</label>
+              <input id="customer-website" pInputText type="text" formControlName="website" fluid />
+            </div>
+
+            <div class="field">
+              <label for="customer-instagram">{{ 'commercialPages.customers.dialog.instagramLabel' | translate }}</label>
+              <input id="customer-instagram" pInputText type="text" formControlName="instagram" fluid />
+            </div>
+
+            <div class="field">
+              <label for="customer-linkedin">{{ 'commercialPages.customers.dialog.linkedinLabel' | translate }}</label>
+              <input id="customer-linkedin" pInputText type="text" formControlName="linkedin" fluid />
+            </div>
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="address">
+          <div class="form-grid">
+            <div class="field">
+              <label for="customer-zip-code">{{ 'commercialPages.customers.dialog.zipCodeLabel' | translate }}</label>
+              <p-inputmask
+                inputId="customer-zip-code"
+                formControlName="zipCode"
+                mask="99999-999"
+                [unmask]="true"
+                [autoClear]="false"
+                styleClass="w-full"
+                data-testid="customer-zip-code-input"
+              />
+              @if (form.controls.zipCode.touched && form.controls.zipCode.errors?.['cep']) {
+                <small class="field-error">{{ 'common.validation.cep' | translate }}</small>
+              }
+            </div>
+
+            <div class="field">
+              <label for="customer-number">{{ 'commercialPages.customers.dialog.numberLabel' | translate }}</label>
+              <input id="customer-number" pInputText type="text" formControlName="number" fluid />
+            </div>
+
+            <div class="field field-span-2">
+              <label for="customer-street">{{ 'commercialPages.customers.dialog.streetLabel' | translate }}</label>
+              <input id="customer-street" pInputText type="text" formControlName="street" fluid />
+            </div>
+
+            <div class="field">
+              <label for="customer-complement">{{ 'commercialPages.customers.dialog.complementLabel' | translate }}</label>
+              <input id="customer-complement" pInputText type="text" formControlName="complement" fluid />
+            </div>
+
+            <div class="field">
+              <label for="customer-district">{{ 'commercialPages.customers.dialog.districtLabel' | translate }}</label>
+              <input id="customer-district" pInputText type="text" formControlName="district" fluid />
+            </div>
+
+            <div class="field">
+              <label for="customer-city">{{ 'commercialPages.customers.dialog.cityLabel' | translate }}</label>
+              <input id="customer-city" pInputText type="text" formControlName="city" fluid />
+            </div>
+
+            <div class="field">
+              <label for="customer-state">{{ 'commercialPages.customers.dialog.stateLabel' | translate }}</label>
+              <p-select
+                inputId="customer-state"
+                formControlName="state"
+                [options]="states"
+                [showClear]="true"
+                [filter]="true"
+                [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+                fluid
+              />
+            </div>
+
+            <div class="field">
+              <label for="customer-country">{{ 'commercialPages.customers.dialog.countryLabel' | translate }}</label>
+              <input id="customer-country" pInputText type="text" formControlName="country" fluid />
+            </div>
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="commercial">
+          <div class="form-grid">
+            <div class="field">
+              <label for="customer-owner">{{ 'commercialPages.customers.dialog.ownerLabel' | translate }}</label>
+              <p-select
+                inputId="customer-owner"
+                formControlName="ownerUserId"
+                [options]="users()"
+                optionLabel="name"
+                optionValue="id"
+                [showClear]="true"
+                [filter]="true"
+                filterBy="name"
+                [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+                fluid
+                data-testid="customer-owner-select"
+              />
+            </div>
+
+            <div class="field">
+              <label for="customer-team">{{ 'commercialPages.customers.dialog.teamLabel' | translate }}</label>
+              <p-select
+                inputId="customer-team"
+                formControlName="teamId"
+                [options]="teams()"
+                optionLabel="name"
+                optionValue="id"
+                [showClear]="true"
+                [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+                fluid
+              />
+            </div>
+
+            <div class="field">
+              <label for="customer-credit-limit">{{ 'commercialPages.customers.dialog.creditLimitLabel' | translate }}</label>
+              <p-inputnumber
+                inputId="customer-credit-limit"
+                formControlName="creditLimit"
+                mode="currency"
+                currency="BRL"
+                locale="pt-BR"
+                fluid
+              />
+            </div>
+
+            <div class="field">
+              <label for="customer-payment-terms">{{ 'commercialPages.customers.dialog.paymentTermsLabel' | translate }}</label>
+              <input id="customer-payment-terms" pInputText type="text" formControlName="paymentTerms" fluid />
+            </div>
+
+            <div class="field field-span-2">
+              <label for="customer-tags">{{ 'commercialPages.customers.dialog.tagsLabel' | translate }}</label>
+              <p-multiselect
+                inputId="customer-tags"
+                formControlName="tagIds"
+                [options]="tags()"
+                optionLabel="name"
+                optionValue="id"
+                display="chip"
+                [filter]="true"
+                filterBy="name"
+                [placeholder]="'commercialPages.customers.dialog.tagsPlaceholder' | translate"
+                fluid
+                data-testid="customer-tags-select"
+              />
+            </div>
+
+            <div class="field field-span-2">
+              <label for="customer-notes">{{ 'commercialPages.customers.dialog.notesLabel' | translate }}</label>
+              <textarea id="customer-notes" pTextarea formControlName="notes" rows="4" [autoResize]="true" fluid></textarea>
+            </div>
+
+            <div class="field field-inline field-span-2">
+              <p-toggleswitch formControlName="active" inputId="customer-active" />
+              <label for="customer-active">{{ 'commercialPages.customers.dialog.activeLabel' | translate }}</label>
+            </div>
+          </div>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+
+    <div class="dialog-footer">
+      <p-button
+        [label]="'common.actions.cancel' | translate"
+        severity="secondary"
+        [text]="true"
+        type="button"
+        (onClick)="closeDialog()"
+      />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="saving()"
+        data-testid="customer-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>

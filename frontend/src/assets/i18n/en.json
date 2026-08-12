@@ -68,7 +68,9 @@
       "email": "Invalid email address",
       "minLength": "Minimum of {{min}} characters",
       "min": "Minimum value: {{min}}",
-      "max": "Maximum value: {{max}}"
+      "max": "Maximum value: {{max}}",
+      "cep": "Incomplete postal code. Enter 8 digits.",
+      "phone": "Incomplete phone number. Enter area code and number."
     },
     "yes": "Yes",
     "no": "No",
@@ -173,7 +175,9 @@
       "customers": "Customers",
       "leads": "Leads",
       "opportunities": "Opportunities",
-      "finance": "Finance"
+      "finance": "Finance",
+      "companies": "Companies",
+      "contacts": "Contacts"
     },
     "comingSoon": "Coming soon"
   },
@@ -493,6 +497,305 @@
         "code": "Code",
         "action": "Action",
         "description": "Description"
+      }
+    }
+  },
+  "commercialPages": {
+    "common": {
+      "selectPlaceholder": "Select"
+    },
+    "customers": {
+      "title": "Customers",
+      "description": "Single registry of customers, both individuals and companies.",
+      "newButton": "New Customer",
+      "emptyState": "No customers found.",
+      "searchPlaceholder": "Search by name, document, e-mail or code...",
+      "filters": {
+        "personType": "Person type",
+        "clientType": "Customer type",
+        "segment": "Segment",
+        "status": "Status"
+      },
+      "columns": {
+        "code": "Code",
+        "name": "Name / Legal Name",
+        "document": "Document",
+        "personType": "Type",
+        "city": "City/State",
+        "owner": "Owner",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "personType": {
+        "FISICA": "Individual",
+        "JURIDICA": "Company"
+      },
+      "validation": {
+        "cpf": "Invalid CPF",
+        "cnpj": "Invalid CNPJ"
+      },
+      "messages": {
+        "created": "Customer created successfully.",
+        "updated": "Customer updated successfully.",
+        "deleted": "Customer deleted successfully."
+      },
+      "dialog": {
+        "newTitle": "New Customer",
+        "editTitle": "Edit Customer",
+        "codeHint": "Code generated automatically by the system",
+        "tabs": {
+          "general": "General Data",
+          "contact": "Contact",
+          "address": "Address",
+          "commercial": "Commercial"
+        },
+        "nameLabel": "Name / Legal Name",
+        "tradeNameLabel": "Trade Name",
+        "personTypeLabel": "Person Type",
+        "cpfLabel": "CPF",
+        "cnpjLabel": "CNPJ",
+        "stateRegistrationLabel": "State Registration",
+        "municipalRegistrationLabel": "Municipal Registration",
+        "clientTypeLabel": "Customer Type",
+        "segmentLabel": "Market Segment",
+        "activityBranchLabel": "Activity Branch",
+        "categoryLabel": "Category",
+        "originLabel": "Origin",
+        "statusLabel": "Status",
+        "phoneLabel": "Phone",
+        "mobileLabel": "Mobile",
+        "emailLabel": "E-mail",
+        "financialEmailLabel": "Billing E-mail",
+        "websiteLabel": "Website",
+        "instagramLabel": "Instagram",
+        "linkedinLabel": "LinkedIn",
+        "zipCodeLabel": "Zip Code",
+        "streetLabel": "Street",
+        "numberLabel": "Number",
+        "complementLabel": "Complement",
+        "districtLabel": "District",
+        "cityLabel": "City",
+        "stateLabel": "State",
+        "countryLabel": "Country",
+        "ownerLabel": "Owner",
+        "teamLabel": "Team",
+        "creditLimitLabel": "Credit Limit",
+        "paymentTermsLabel": "Payment Terms",
+        "tagsLabel": "Tags",
+        "tagsPlaceholder": "Select tags",
+        "notesLabel": "Notes",
+        "activeLabel": "Active customer"
+      }
+    },
+    "companies": {
+      "title": "Companies",
+      "description": "Corporate customers registered in the system.",
+      "newButton": "New Company",
+      "emptyState": "No companies found."
+    },
+    "contacts": {
+      "title": "Contacts",
+      "description": "People linked to customers.",
+      "newButton": "New Contact",
+      "emptyState": "No contacts found.",
+      "searchPlaceholder": "Search by name, e-mail or job title...",
+      "filters": {
+        "customer": "Customer"
+      },
+      "columns": {
+        "name": "Name",
+        "customer": "Customer",
+        "position": "Job Title",
+        "email": "E-mail",
+        "phone": "Phone",
+        "badges": "Flags",
+        "actions": "Actions"
+      },
+      "badges": {
+        "primary": "Primary",
+        "decisionMaker": "Decision Maker"
+      },
+      "messages": {
+        "created": "Contact created successfully.",
+        "updated": "Contact updated successfully.",
+        "deleted": "Contact deleted successfully."
+      },
+      "dialog": {
+        "newTitle": "New Contact",
+        "editTitle": "Edit Contact",
+        "customerLabel": "Customer",
+        "customerPlaceholder": "Search and select a customer",
+        "nameLabel": "Name",
+        "positionLabel": "Job Title",
+        "departmentLabel": "Department",
+        "emailLabel": "E-mail",
+        "linkedinLabel": "LinkedIn",
+        "phoneLabel": "Phone",
+        "mobileLabel": "Mobile",
+        "birthDateLabel": "Date of Birth",
+        "primaryLabel": "Primary contact",
+        "decisionMakerLabel": "Decision maker",
+        "notesLabel": "Notes",
+        "activeLabel": "Active contact"
+      }
+    },
+    "leads": {
+      "title": "Leads",
+      "description": "Opportunities under pre-qualification and conversion into customers.",
+      "newButton": "New Lead",
+      "emptyState": "No leads found.",
+      "searchPlaceholder": "Search by name, company, e-mail or code...",
+      "convertedTo": "Converted into {{name}}",
+      "filters": {
+        "origin": "Origin",
+        "status": "Status",
+        "priority": "Priority",
+        "owner": "Owner"
+      },
+      "columns": {
+        "code": "Code",
+        "name": "Name",
+        "company": "Company",
+        "origin": "Origin",
+        "owner": "Owner",
+        "estimatedValue": "Estimated Value",
+        "expectedCloseDate": "Expected Close",
+        "statusPriority": "Status / Priority",
+        "actions": "Actions"
+      },
+      "actions": {
+        "convert": "Convert into customer"
+      },
+      "messages": {
+        "created": "Lead created successfully.",
+        "updated": "Lead updated successfully.",
+        "deleted": "Lead deleted successfully.",
+        "converted": "Lead successfully converted into a customer."
+      },
+      "dialog": {
+        "newTitle": "New Lead",
+        "editTitle": "Edit Lead",
+        "codeHint": "Code generated automatically by the system",
+        "nameLabel": "Lead Name",
+        "companyLabel": "Company",
+        "contactLabel": "Contact Person",
+        "emailLabel": "E-mail",
+        "mobileLabel": "Mobile",
+        "phoneLabel": "Phone",
+        "campaignLabel": "Campaign",
+        "originLabel": "Origin",
+        "statusLabel": "Status",
+        "priorityLabel": "Priority",
+        "ownerLabel": "Owner",
+        "pipelineLabel": "Pipeline",
+        "stageLabel": "Stage",
+        "estimatedValueLabel": "Estimated Value",
+        "expectedCloseDateLabel": "Expected Close Date",
+        "probabilityLabel": "Probability",
+        "qualificationScoreLabel": "Qualification Score",
+        "tagsLabel": "Tags",
+        "tagsPlaceholder": "Select tags",
+        "notesLabel": "Notes",
+        "activeLabel": "Active lead"
+      },
+      "convertDialog": {
+        "title": "Convert Lead into Customer",
+        "message": "The lead \"{{name}}\" will be converted into a customer. Do you want to create the first opportunity right away?",
+        "createOpportunityLabel": "Create an opportunity on conversion",
+        "clientTypeLabel": "Customer Type",
+        "pipelineLabel": "Pipeline",
+        "pipelinePlaceholder": "Select the pipeline",
+        "stageLabel": "Initial Stage",
+        "stagePlaceholder": "Pipeline default stage",
+        "opportunityTitleLabel": "Opportunity Title",
+        "amountLabel": "Amount",
+        "expectedCloseDateLabel": "Expected Close Date"
+      }
+    },
+    "opportunities": {
+      "title": "Opportunities",
+      "description": "Board of deals in progress, from first contact to closing.",
+      "newButton": "New Opportunity",
+      "emptyState": "No opportunities found.",
+      "searchPlaceholder": "Search by title or code...",
+      "pipelinePlaceholder": "Select the pipeline",
+      "views": {
+        "board": "Board",
+        "list": "List"
+      },
+      "board": {
+        "emptyBoard": "Select a pipeline with configured stages to build the board.",
+        "emptyColumn": "No opportunities in this stage.",
+        "showingPartial": "Showing {{shown}} of {{total}}",
+        "totalCount": "{{count}} opportunities"
+      },
+      "filters": {
+        "stage": "Stage",
+        "customer": "Customer",
+        "owner": "Owner",
+        "outcome": "Outcome"
+      },
+      "columns": {
+        "code": "Code",
+        "title": "Opportunity",
+        "customer": "Customer",
+        "stage": "Stage",
+        "amount": "Amount",
+        "probability": "Probability",
+        "owner": "Owner",
+        "expectedCloseDate": "Expected",
+        "actions": "Actions"
+      },
+      "outcome": {
+        "OPEN": "Open",
+        "WON": "Won",
+        "LOST": "Lost"
+      },
+      "actions": {
+        "detail": "View details and history"
+      },
+      "messages": {
+        "created": "Opportunity created successfully.",
+        "updated": "Opportunity updated successfully.",
+        "deleted": "Opportunity deleted successfully.",
+        "moved": "Opportunity moved to another stage.",
+        "moveFailed": "The opportunity could not be moved.",
+        "moveReverted": "The card returned to the \"{{stage}}\" stage."
+      },
+      "dialog": {
+        "newTitle": "New Opportunity",
+        "editTitle": "Edit Opportunity",
+        "codeHint": "Code generated automatically by the system",
+        "titleLabel": "Title",
+        "customerLabel": "Customer",
+        "customerPlaceholder": "Search and select a customer",
+        "contactLabel": "Contact",
+        "pipelineLabel": "Pipeline",
+        "stageLabel": "Stage",
+        "stagePlaceholder": "Pipeline first stage",
+        "amountLabel": "Amount",
+        "probabilityLabel": "Probability",
+        "ownerLabel": "Owner",
+        "teamLabel": "Team",
+        "expectedCloseDateLabel": "Expected Close Date",
+        "competitorLabel": "Competitor",
+        "notesLabel": "Notes"
+      },
+      "reasonDialog": {
+        "lossTitle": "Provide the loss reason",
+        "winTitle": "Provide the win reason",
+        "message": "The target stage requires a justification for \"{{title}}\".",
+        "lossLabel": "Loss Reason",
+        "winLabel": "Win Reason",
+        "noteLabel": "Note",
+        "confirm": "Confirm move"
+      },
+      "detail": {
+        "title": "Opportunity Details",
+        "historyTitle": "Stage History",
+        "historyEmpty": "No stage changes recorded.",
+        "movedFrom": "Came from {{stage}}",
+        "daysInStage": "{{days}} day(s) in the previous stage"
       }
     }
   }

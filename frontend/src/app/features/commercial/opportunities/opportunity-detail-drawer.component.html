@@ -1,0 +1,151 @@
+<p-drawer
+  [visible]="visible()"
+  (visibleChange)="onVisibleChange($event)"
+  position="right"
+  styleClass="opportunity-drawer"
+  [header]="'commercialPages.opportunities.detail.title' | translate"
+>
+  @if (loading()) {
+    <div class="detail-skeleton" data-testid="opportunity-detail-skeleton">
+      @for (row of skeletonRows; track row) {
+        <p-skeleton width="100%" height="3rem" borderRadius="8px" />
+      }
+    </div>
+  } @else if (opportunity(); as item) {
+    <div class="detail" data-testid="opportunity-detail">
+      <header class="detail__header">
+        <span class="cell-code">{{ item.code }}</span>
+        <h2>{{ item.title }}</h2>
+        <div class="detail__badges">
+          <p-tag
+            [severity]="outcomeSeverity(item.outcome)"
+            [value]="'commercialPages.opportunities.outcome.' + item.outcome | translate"
+          />
+          @if (item.stage) {
+            <span class="domain-chip" [style]="chipStyle(item.stage.color)">{{ item.stage.name }}</span>
+          }
+        </div>
+      </header>
+
+      <dl class="detail__facts">
+        <div>
+          <dt>{{ 'commercialPages.opportunities.columns.customer' | translate }}</dt>
+          <dd>{{ item.customer?.name ?? '-' }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'commercialPages.opportunities.dialog.contactLabel' | translate }}</dt>
+          <dd>{{ item.contact?.name ?? '-' }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'commercialPages.opportunities.columns.amount' | translate }}</dt>
+          <dd class="cell-numeric">{{ currency(item.amount) }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'commercialPages.opportunities.columns.probability' | translate }}</dt>
+          <dd class="cell-numeric">{{ item.probability !== null ? item.probability + '%' : '-' }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'commercialPages.opportunities.columns.owner' | translate }}</dt>
+          <dd>{{ item.owner?.name ?? '-' }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'commercialPages.opportunities.dialog.teamLabel' | translate }}</dt>
+          <dd>{{ item.team?.name ?? '-' }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'commercialPages.opportunities.columns.expectedCloseDate' | translate }}</dt>
+          <dd class="cell-numeric">{{ date(item.expectedCloseDate) }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'commercialPages.opportunities.dialog.competitorLabel' | translate }}</dt>
+          <dd>{{ item.competitor ?? '-' }}</dd>
+        </div>
+        @if (item.winReason) {
+          <div>
+            <dt>{{ 'commercialPages.opportunities.reasonDialog.winLabel' | translate }}</dt>
+            <dd>{{ item.winReason.name }}</dd>
+          </div>
+        }
+        @if (item.lossReason) {
+          <div>
+            <dt>{{ 'commercialPages.opportunities.reasonDialog.lossLabel' | translate }}</dt>
+            <dd>{{ item.lossReason.name }}</dd>
+          </div>
+        }
+      </dl>
+
+      @if (item.notes) {
+        <section class="detail__notes">
+          <h3>{{ 'commercialPages.opportunities.dialog.notesLabel' | translate }}</h3>
+          <p>{{ item.notes }}</p>
+        </section>
+      }
+
+      <section class="detail__history">
+        <h3>{{ 'commercialPages.opportunities.detail.historyTitle' | translate }}</h3>
+
+        @if (history().length === 0) {
+          <p class="detail__history-empty">
+            {{ 'commercialPages.opportunities.detail.historyEmpty' | translate }}
+          </p>
+        } @else {
+          <p-timeline [value]="history()" align="left" data-testid="opportunity-history-timeline">
+            <ng-template #marker let-entry>
+              <span class="detail__marker" [style]="chipStyle(entry.toStage?.color)">
+                <i class="pi pi-arrow-right"></i>
+              </span>
+            </ng-template>
+            <ng-template #content let-entry>
+              <div class="detail__history-entry">
+                <strong>{{ entry.toStage?.name ?? '-' }}</strong>
+                @if (entry.fromStage) {
+                  <span class="detail__history-from">
+                    {{
+                      'commercialPages.opportunities.detail.movedFrom' | translate: { stage: entry.fromStage.name }
+                    }}
+                  </span>
+                }
+                <span class="detail__history-meta">{{ instant(entry.movedAt) }}</span>
+                @if (entry.movedByUser) {
+                  <span class="detail__history-meta">
+                    <i class="pi pi-user"></i>
+                    {{ entry.movedByUser.name }}
+                  </span>
+                }
+                @if (entry.daysInPreviousStage !== null) {
+                  <span class="detail__history-meta">
+                    <i class="pi pi-clock"></i>
+                    {{
+                      'commercialPages.opportunities.detail.daysInStage'
+                        | translate: { days: entry.daysInPreviousStage }
+                    }}
+                  </span>
+                }
+                @if (entry.note) {
+                  <p class="detail__history-note">{{ entry.note }}</p>
+                }
+              </div>
+            </ng-template>
+          </p-timeline>
+        }
+      </section>
+
+      <div class="dialog-footer">
+        <p-button
+          [label]="'common.actions.close' | translate"
+          severity="secondary"
+          [text]="true"
+          (onClick)="close()"
+        />
+        @if (canEdit()) {
+          <p-button
+            icon="pi pi-pencil"
+            [label]="'common.actions.edit' | translate"
+            (onClick)="requestEdit()"
+            data-testid="opportunity-detail-edit"
+          />
+        }
+      </div>
+    </div>
+  }
+</p-drawer>

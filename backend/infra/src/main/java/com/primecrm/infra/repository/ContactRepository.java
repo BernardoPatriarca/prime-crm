@@ -22,4 +22,6 @@ public interface ContactRepository extends JpaRepository<Contact, UUID>, JpaSpec
     List<Contact> findByCustomer_IdAndDeletedAtIsNullOrderByNameAsc(UUID customerId);
 
     long countByCustomer_IdAndDeletedAtIsNull(UUID customerId);
+
+    List<Contact> findByCustomer_IdAndPrimaryContactIsTrueAndDeletedAtIsNull(UUID customerId);
 }

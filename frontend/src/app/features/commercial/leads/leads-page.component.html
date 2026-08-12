@@ -1,0 +1,565 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'commercialPages.leads.title' | translate }}</h1>
+      <p>{{ 'commercialPages.leads.description' | translate }}</p>
+    </div>
+    @if (canCreate()) {
+      <p-button
+        icon="pi pi-plus"
+        [label]="'commercialPages.leads.newButton' | translate"
+        (onClick)="openCreateDialog()"
+        data-testid="leads-new-button"
+      />
+    }
+  </div>
+
+  <app-generic-table
+    [items]="leads()"
+    [totalRecords]="total()"
+    [loading]="loading()"
+    [columnsCount]="9"
+    emptyIcon="pi-bullseye"
+    emptyMessageKey="commercialPages.leads.emptyState"
+    searchPlaceholderKey="commercialPages.leads.searchPlaceholder"
+    (queryChange)="onQueryChange($event)"
+  >
+    <div tableActions class="filter-bar">
+      <p-select
+        [ngModel]="originFilter()"
+        (ngModelChange)="originFilter.set($event); onFilterChange()"
+        [options]="origins()"
+        optionLabel="name"
+        optionValue="id"
+        [showClear]="true"
+        [placeholder]="'commercialPages.leads.filters.origin' | translate"
+        data-testid="leads-origin-filter"
+      />
+      <p-select
+        [ngModel]="statusFilter()"
+        (ngModelChange)="statusFilter.set($event); onFilterChange()"
+        [options]="statuses()"
+        optionLabel="name"
+        optionValue="id"
+        [showClear]="true"
+        [placeholder]="'commercialPages.leads.filters.status' | translate"
+        data-testid="leads-status-filter"
+      />
+      <p-select
+        [ngModel]="priorityFilter()"
+        (ngModelChange)="priorityFilter.set($event); onFilterChange()"
+        [options]="priorities()"
+        optionLabel="name"
+        optionValue="id"
+        [showClear]="true"
+        [placeholder]="'commercialPages.leads.filters.priority' | translate"
+        data-testid="leads-priority-filter"
+      />
+      <p-select
+        [ngModel]="ownerFilter()"
+        (ngModelChange)="ownerFilter.set($event); onFilterChange()"
+        [options]="users()"
+        optionLabel="name"
+        optionValue="id"
+        [showClear]="true"
+        [filter]="true"
+        filterBy="name"
+        [placeholder]="'commercialPages.leads.filters.owner' | translate"
+        data-testid="leads-owner-filter"
+      />
+      <p-button
+        icon="pi pi-filter-slash"
+        severity="secondary"
+        [text]="true"
+        [pTooltip]="'common.actions.clearFilters' | translate"
+        tooltipPosition="top"
+        [ariaLabel]="'common.actions.clearFilters' | translate"
+        (onClick)="clearFilters()"
+        data-testid="leads-clear-filters"
+      />
+    </div>
+
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="code">
+          {{ 'commercialPages.leads.columns.code' | translate }}
+          <p-sortIcon field="code" />
+        </th>
+        <th pSortableColumn="name">
+          {{ 'commercialPages.leads.columns.name' | translate }}
+          <p-sortIcon field="name" />
+        </th>
+        <th>{{ 'commercialPages.leads.columns.company' | translate }}</th>
+        <th>{{ 'commercialPages.leads.columns.origin' | translate }}</th>
+        <th>{{ 'commercialPages.leads.columns.owner' | translate }}</th>
+        <th pSortableColumn="estimatedValue">
+          {{ 'commercialPages.leads.columns.estimatedValue' | translate }}
+          <p-sortIcon field="estimatedValue" />
+        </th>
+        <th pSortableColumn="expectedCloseDate">
+          {{ 'commercialPages.leads.columns.expectedCloseDate' | translate }}
+          <p-sortIcon field="expectedCloseDate" />
+        </th>
+        <th>{{ 'commercialPages.leads.columns.statusPriority' | translate }}</th>
+        <th class="col-actions">{{ 'commercialPages.leads.columns.actions' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-item>
+      <tr>
+        <td class="cell-code">{{ item.code }}</td>
+        <td>
+          <div class="cell-identity">
+            <span class="cell-strong">{{ item.name }}</span>
+            @if (item.convertedCustomer) {
+              <span class="converted-hint">
+                <i class="pi pi-check-circle"></i>
+                {{ 'commercialPages.leads.convertedTo' | translate: { name: item.convertedCustomer.name } }}
+              </span>
+            }
+          </div>
+        </td>
+        <td class="cell-muted">{{ item.companyName ?? '-' }}</td>
+        <td>
+          @if (item.origin) {
+            <span class="domain-chip" [style]="chipStyle(item.origin.color)">{{ item.origin.name }}</span>
+          } @else {
+            <span class="cell-muted">-</span>
+          }
+        </td>
+        <td class="cell-muted">{{ item.owner?.name ?? '-' }}</td>
+        <td class="cell-numeric">{{ formatCurrency(item.estimatedValue) }}</td>
+        <td class="cell-muted cell-numeric">{{ formatDate(item.expectedCloseDate) }}</td>
+        <td>
+          <div class="chip-list">
+            @if (item.status) {
+              <span class="domain-chip" [style]="chipStyle(item.status.color)">{{ item.status.name }}</span>
+            }
+            @if (item.priority) {
+              <span class="domain-chip" [style]="chipStyle(item.priority.color)">{{ item.priority.name }}</span>
+            }
+            @if (!item.status && !item.priority) {
+              <span class="cell-muted">-</span>
+            }
+          </div>
+        </td>
+        <td>
+          <div class="row-actions">
+            @if (canConvert() && !item.convertedCustomer) {
+              <p-button
+                icon="pi pi-sync"
+                severity="success"
+                [text]="true"
+                [rounded]="true"
+                [pTooltip]="'commercialPages.leads.actions.convert' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'commercialPages.leads.actions.convert' | translate"
+                (onClick)="openConvertDialog(item)"
+                [attr.data-testid]="'lead-convert-' + item.id"
+              />
+            }
+            @if (canEdit()) {
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'common.actions.edit' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.edit' | translate"
+                (onClick)="openEditDialog(item)"
+                [attr.data-testid]="'lead-edit-' + item.id"
+              />
+            }
+            @if (canDelete()) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                [pTooltip]="'common.actions.delete' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.delete' | translate"
+                (onClick)="confirmDelete(item)"
+                [attr.data-testid]="'lead-delete-' + item.id"
+              />
+            }
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </app-generic-table>
+</div>
+
+<p-dialog
+  appendTo="body"
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '50rem' }"
+  [breakpoints]="{ '1024px': '92vw', '767px': '96vw' }"
+  [header]="(editingLead() ? 'commercialPages.leads.dialog.editTitle' : 'commercialPages.leads.dialog.newTitle') | translate"
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+    @if (editingLead()) {
+      <p-tag
+        severity="secondary"
+        icon="pi pi-hashtag"
+        [value]="editingLead()!.code"
+        [pTooltip]="'commercialPages.leads.dialog.codeHint' | translate"
+        tooltipPosition="right"
+      />
+    }
+
+    <div class="form-grid">
+      <div class="field field-span-2">
+        <label for="lead-name">{{ 'commercialPages.leads.dialog.nameLabel' | translate }}</label>
+        <input id="lead-name" pInputText type="text" formControlName="name" fluid data-testid="lead-name-input" />
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+          <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="lead-company">{{ 'commercialPages.leads.dialog.companyLabel' | translate }}</label>
+        <input id="lead-company" pInputText type="text" formControlName="companyName" fluid />
+      </div>
+
+      <div class="field">
+        <label for="lead-contact">{{ 'commercialPages.leads.dialog.contactLabel' | translate }}</label>
+        <input id="lead-contact" pInputText type="text" formControlName="contactName" fluid />
+      </div>
+
+      <div class="field">
+        <label for="lead-email">{{ 'commercialPages.leads.dialog.emailLabel' | translate }}</label>
+        <input id="lead-email" pInputText type="email" formControlName="email" fluid data-testid="lead-email-input" />
+        @if (form.controls.email.invalid && form.controls.email.touched) {
+          <small class="field-error">{{ 'common.validation.email' | translate }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="lead-mobile">{{ 'commercialPages.leads.dialog.mobileLabel' | translate }}</label>
+        <p-inputmask
+          inputId="lead-mobile"
+          formControlName="mobile"
+          mask="(99) 99999-9999"
+          [unmask]="true"
+          [autoClear]="false"
+          styleClass="w-full"
+        />
+        @if (form.controls.mobile.touched && form.controls.mobile.errors?.['phone']) {
+          <small class="field-error">{{ 'common.validation.phone' | translate }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="lead-phone">{{ 'commercialPages.leads.dialog.phoneLabel' | translate }}</label>
+        <p-inputmask
+          inputId="lead-phone"
+          formControlName="phone"
+          mask="(99) 9999-9999"
+          [unmask]="true"
+          [autoClear]="false"
+          styleClass="w-full"
+        />
+        @if (form.controls.phone.touched && form.controls.phone.errors?.['phone']) {
+          <small class="field-error">{{ 'common.validation.phone' | translate }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="lead-campaign">{{ 'commercialPages.leads.dialog.campaignLabel' | translate }}</label>
+        <input id="lead-campaign" pInputText type="text" formControlName="campaign" fluid />
+      </div>
+
+      <div class="field">
+        <label for="lead-origin">{{ 'commercialPages.leads.dialog.originLabel' | translate }}</label>
+        <p-select
+          inputId="lead-origin"
+          formControlName="originId"
+          [options]="origins()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="lead-status">{{ 'commercialPages.leads.dialog.statusLabel' | translate }}</label>
+        <p-select
+          inputId="lead-status"
+          formControlName="statusId"
+          [options]="statuses()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="lead-priority">{{ 'commercialPages.leads.dialog.priorityLabel' | translate }}</label>
+        <p-select
+          inputId="lead-priority"
+          formControlName="priorityId"
+          [options]="priorities()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="lead-owner">{{ 'commercialPages.leads.dialog.ownerLabel' | translate }}</label>
+        <p-select
+          inputId="lead-owner"
+          formControlName="ownerUserId"
+          [options]="users()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [filter]="true"
+          filterBy="name"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="lead-pipeline">{{ 'commercialPages.leads.dialog.pipelineLabel' | translate }}</label>
+        <p-select
+          inputId="lead-pipeline"
+          [ngModel]="form.controls.pipelineId.value"
+          [ngModelOptions]="{ standalone: true }"
+          (ngModelChange)="onFormPipelineChange($event)"
+          [options]="pipelines()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="lead-stage">{{ 'commercialPages.leads.dialog.stageLabel' | translate }}</label>
+        <p-select
+          inputId="lead-stage"
+          formControlName="stageId"
+          [options]="formStages()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="lead-estimated-value">{{ 'commercialPages.leads.dialog.estimatedValueLabel' | translate }}</label>
+        <p-inputnumber
+          inputId="lead-estimated-value"
+          formControlName="estimatedValue"
+          mode="currency"
+          currency="BRL"
+          locale="pt-BR"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="lead-expected-close-date">{{ 'commercialPages.leads.dialog.expectedCloseDateLabel' | translate }}</label>
+        <p-datepicker
+          inputId="lead-expected-close-date"
+          formControlName="expectedCloseDate"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          [showClear]="true"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="lead-probability">{{ 'commercialPages.leads.dialog.probabilityLabel' | translate }}</label>
+        <p-inputnumber inputId="lead-probability" formControlName="probability" suffix="%" [min]="0" [max]="100" fluid />
+      </div>
+
+      <div class="field">
+        <label for="lead-qualification-score">{{ 'commercialPages.leads.dialog.qualificationScoreLabel' | translate }}</label>
+        <p-inputnumber inputId="lead-qualification-score" formControlName="qualificationScore" [min]="0" [max]="100" fluid />
+      </div>
+
+      <div class="field field-span-2">
+        <label for="lead-tags">{{ 'commercialPages.leads.dialog.tagsLabel' | translate }}</label>
+        <p-multiselect
+          inputId="lead-tags"
+          formControlName="tagIds"
+          [options]="tags()"
+          optionLabel="name"
+          optionValue="id"
+          display="chip"
+          [filter]="true"
+          filterBy="name"
+          [placeholder]="'commercialPages.leads.dialog.tagsPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field field-span-2">
+        <label for="lead-notes">{{ 'commercialPages.leads.dialog.notesLabel' | translate }}</label>
+        <textarea id="lead-notes" pTextarea formControlName="notes" rows="3" [autoResize]="true" fluid></textarea>
+      </div>
+
+      <div class="field field-inline field-span-2">
+        <p-toggleswitch formControlName="active" inputId="lead-active" />
+        <label for="lead-active">{{ 'commercialPages.leads.dialog.activeLabel' | translate }}</label>
+      </div>
+    </div>
+
+    <div class="dialog-footer">
+      <p-button
+        [label]="'common.actions.cancel' | translate"
+        severity="secondary"
+        [text]="true"
+        type="button"
+        (onClick)="closeDialog()"
+      />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="saving()"
+        data-testid="lead-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>
+
+<p-dialog
+  appendTo="body"
+  [visible]="convertDialogVisible()"
+  (visibleChange)="convertDialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '34rem' }"
+  [breakpoints]="{ '1024px': '92vw', '767px': '96vw' }"
+  [header]="'commercialPages.leads.convertDialog.title' | translate"
+>
+  <form [formGroup]="convertForm" (ngSubmit)="submitConvert()" class="dialog-form">
+    <p class="convert-intro">
+      {{ 'commercialPages.leads.convertDialog.message' | translate: { name: convertingLead()?.name ?? '' } }}
+    </p>
+
+    <div class="field field-inline">
+      <p-checkbox
+        formControlName="createOpportunity"
+        [binary]="true"
+        inputId="convert-create-opportunity"
+        data-testid="convert-create-opportunity"
+      />
+      <label for="convert-create-opportunity">
+        {{ 'commercialPages.leads.convertDialog.createOpportunityLabel' | translate }}
+      </label>
+    </div>
+
+    <div class="field">
+      <label for="convert-client-type">{{ 'commercialPages.leads.convertDialog.clientTypeLabel' | translate }}</label>
+      <p-select
+        inputId="convert-client-type"
+        formControlName="clientTypeId"
+        [options]="clientTypes()"
+        optionLabel="name"
+        optionValue="id"
+        [showClear]="true"
+        [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+        fluid
+      />
+    </div>
+
+    @if (convertForm.controls.createOpportunity.value) {
+      <div class="field">
+        <label for="convert-pipeline">{{ 'commercialPages.leads.convertDialog.pipelineLabel' | translate }}</label>
+        <p-select
+          inputId="convert-pipeline"
+          [ngModel]="convertForm.controls.pipelineId.value"
+          [ngModelOptions]="{ standalone: true }"
+          (ngModelChange)="onConvertPipelineChange($event)"
+          [options]="pipelines()"
+          optionLabel="name"
+          optionValue="id"
+          [placeholder]="'commercialPages.leads.convertDialog.pipelinePlaceholder' | translate"
+          fluid
+          data-testid="convert-pipeline-select"
+        />
+        @if (convertForm.controls.pipelineId.invalid && convertForm.controls.pipelineId.touched) {
+          <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="convert-stage">{{ 'commercialPages.leads.convertDialog.stageLabel' | translate }}</label>
+        <p-select
+          inputId="convert-stage"
+          formControlName="stageId"
+          [options]="convertStages()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.leads.convertDialog.stagePlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="convert-title">{{ 'commercialPages.leads.convertDialog.opportunityTitleLabel' | translate }}</label>
+        <input id="convert-title" pInputText type="text" formControlName="opportunityTitle" fluid />
+      </div>
+
+      <div class="field">
+        <label for="convert-amount">{{ 'commercialPages.leads.convertDialog.amountLabel' | translate }}</label>
+        <p-inputnumber inputId="convert-amount" formControlName="amount" mode="currency" currency="BRL" locale="pt-BR" fluid />
+      </div>
+
+      <div class="field">
+        <label for="convert-expected-close-date">
+          {{ 'commercialPages.leads.convertDialog.expectedCloseDateLabel' | translate }}
+        </label>
+        <p-datepicker
+          inputId="convert-expected-close-date"
+          formControlName="expectedCloseDate"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          [showClear]="true"
+          fluid
+        />
+      </div>
+    }
+
+    <div class="dialog-footer">
+      <p-button
+        [label]="'common.actions.cancel' | translate"
+        severity="secondary"
+        [text]="true"
+        type="button"
+        (onClick)="closeConvertDialog()"
+      />
+      <p-button
+        icon="pi pi-sync"
+        [label]="'commercialPages.leads.actions.convert' | translate"
+        type="submit"
+        severity="success"
+        [loading]="converting()"
+        data-testid="convert-submit-button"
+      />
+    </div>
+  </form>
+</p-dialog>

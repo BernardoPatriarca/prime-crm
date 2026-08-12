@@ -12,6 +12,7 @@ import { ConfirmationService, MessageService, SharedModule } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
+import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PasswordModule } from 'primeng/password';
@@ -26,6 +27,7 @@ import { AdminUserService } from '../../../core/services/admin-user.service';
 import { RoleService } from '../../../core/services/role.service';
 import { SessionStore } from '../../../core/store/session.store';
 import { GenericTableComponent, TableQuery } from '../../../shared/components/generic-table/generic-table.component';
+import { phoneValidator } from '../../../shared/validators/contact.validators';
 
 function toSort(query: TableQuery): string | undefined {
   if (!query.sortField) {
@@ -54,6 +56,7 @@ const USER_STATUSES: UserStatus[] = ['ACTIVE', 'INACTIVE', 'BLOCKED'];
     AvatarModule,
     ButtonModule,
     DialogModule,
+    InputMaskModule,
     InputTextModule,
     SelectModule,
     MultiSelectModule,
@@ -101,7 +104,7 @@ export class UsersPageComponent {
     name: ['', [Validators.required, Validators.maxLength(150)]],
     email: ['', [Validators.required, Validators.email, Validators.maxLength(180)]],
     login: ['', [Validators.required, Validators.maxLength(80)]],
-    phone: ['', [Validators.maxLength(30)]],
+    phone: ['', [Validators.maxLength(30), phoneValidator]],
     password: ['', [Validators.minLength(8), Validators.maxLength(72)]],
     roleIds: [[] as string[]]
   });

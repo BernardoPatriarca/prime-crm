@@ -17,6 +17,8 @@ import java.time.LocalDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Generated;
+import org.hibernate.generator.EventType;
 
 @Getter
 @Setter
@@ -25,7 +27,8 @@ import lombok.Setter;
 @Table(name = "leads")
 public class Lead extends BaseEntity {
 
-    @Column(length = 30)
+    @Generated(event = EventType.INSERT)
+    @Column(length = 30, insertable = false, updatable = false)
     private String code;
 
     @Column(nullable = false, length = 200)

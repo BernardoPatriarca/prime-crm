@@ -1,0 +1,62 @@
+package com.primecrm.core.dto.commercial;
+
+import com.primecrm.core.dto.common.CustomerSummaryResponse;
+import com.primecrm.core.dto.common.DomainValueSummaryResponse;
+import com.primecrm.core.dto.common.UserSummaryResponse;
+import com.primecrm.infra.entity.commercial.PersonType;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+import lombok.Builder;
+
+@Builder
+public record CustomerResponse(
+        UUID id,
+        String code,
+        String name,
+        String tradeName,
+        PersonType personType,
+        String document,
+        String stateRegistration,
+        String municipalRegistration,
+        DomainValueSummaryResponse clientType,
+        DomainValueSummaryResponse segment,
+        DomainValueSummaryResponse activityBranch,
+        DomainValueSummaryResponse category,
+        DomainValueSummaryResponse origin,
+        DomainValueSummaryResponse status,
+        UserSummaryResponse owner,
+        DomainValueSummaryResponse team,
+        String phone,
+        String mobile,
+        String email,
+        String financialEmail,
+        String website,
+        String instagram,
+        String linkedin,
+        String zipCode,
+        String street,
+        String number,
+        String complement,
+        String district,
+        String city,
+        String state,
+        String country,
+        BigDecimal latitude,
+        BigDecimal longitude,
+        LocalDate birthDate,
+        Instant lastContactAt,
+        Instant nextContactAt,
+        BigDecimal creditLimit,
+        String paymentTerms,
+        Integer healthScore,
+        String notes,
+        CustomerSummaryResponse parentCustomer,
+        boolean active,
+        List<DomainValueSummaryResponse> tags,
+        Instant createdAt,
+        Instant updatedAt
+) {
+}

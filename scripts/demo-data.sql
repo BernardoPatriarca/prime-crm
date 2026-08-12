@@ -169,17 +169,30 @@ FROM (VALUES
 WHERE NOT EXISTS (SELECT 1 FROM roles r WHERE r.name = v.name);
 
 -- Permissoes por perfil (por modulo e acao)
+-- Os modulos comerciais (CLIENTES, CONTATOS, LEADS, OPORTUNIDADES) so existem a partir
+-- da migration V17. Como o INSERT abaixo e protegido por NOT EXISTS por par
+-- (perfil, permissao), rodar este script de novo depois de novas permissoes surgirem
+-- concede o que estiver faltando, sem duplicar nada.
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id
 FROM roles r
 JOIN permissions p ON (
     (r.name = 'Gerente')
- OR (r.name = 'Supervisor'    AND p.action IN ('VIEW','CREATE','EDIT'))
- OR (r.name = 'Comercial'     AND (p.action = 'VIEW' OR (p.module IN ('PIPELINES','DOMINIOS') AND p.action IN ('CREATE','EDIT'))))
+ OR (r.name = 'Supervisor'    AND p.action IN ('VIEW','CREATE','EDIT','EXPORT'))
+ OR (r.name = 'Comercial'     AND (
+        p.action = 'VIEW'
+     OR (p.module IN ('CLIENTES','CONTATOS','LEADS','OPORTUNIDADES') AND p.action IN ('CREATE','EDIT','EXPORT'))
+     OR (p.module IN ('PIPELINES','DOMINIOS') AND p.action IN ('CREATE','EDIT'))))
  OR (r.name = 'Financeiro'    AND (p.action = 'VIEW' OR p.module = 'CONFIGURACOES_GERAIS'))
- OR (r.name = 'Atendimento'   AND p.action = 'VIEW')
- OR (r.name = 'Marketing'     AND (p.action = 'VIEW' OR (p.module IN ('TEMPLATES','DOMINIOS') AND p.action IN ('CREATE','EDIT','DELETE'))))
- OR (r.name = 'Usuario Padrao' AND p.action = 'VIEW' AND p.module IN ('DOMINIOS','PIPELINES','FERIADOS'))
+ OR (r.name = 'Atendimento'   AND (
+        p.action = 'VIEW'
+     OR (p.module IN ('CLIENTES','CONTATOS') AND p.action = 'EDIT')))
+ OR (r.name = 'Marketing'     AND (
+        p.action = 'VIEW'
+     OR (p.module IN ('TEMPLATES','DOMINIOS') AND p.action IN ('CREATE','EDIT','DELETE'))
+     OR (p.module = 'LEADS' AND p.action IN ('CREATE','EDIT','EXPORT'))))
+ OR (r.name = 'Usuario Padrao' AND p.action = 'VIEW'
+        AND p.module IN ('DOMINIOS','PIPELINES','FERIADOS','CLIENTES','LEADS','OPORTUNIDADES'))
  OR (r.name = 'Auditoria'     AND p.action = 'VIEW')
 )
 WHERE r.name IN ('Gerente','Supervisor','Comercial','Financeiro','Atendimento','Marketing','Usuario Padrao','Auditoria')
