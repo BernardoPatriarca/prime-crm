@@ -1,0 +1,88 @@
+import { CustomerSummary, DomainValueSummary, UserSummary } from './summary.model';
+
+export type PersonType = 'FISICA' | 'JURIDICA';
+
+export interface Customer {
+  id: string;
+  code: string;
+  name: string;
+  tradeName: string | null;
+  personType: PersonType;
+  document: string | null;
+  stateRegistration: string | null;
+  municipalRegistration: string | null;
+  clientType: DomainValueSummary | null;
+  segment: DomainValueSummary | null;
+  activityBranch: DomainValueSummary | null;
+  category: DomainValueSummary | null;
+  origin: DomainValueSummary | null;
+  status: DomainValueSummary | null;
+  owner: UserSummary | null;
+  team: DomainValueSummary | null;
+  phone: string | null;
+  mobile: string | null;
+  email: string | null;
+  financialEmail: string | null;
+  website: string | null;
+  instagram: string | null;
+  linkedin: string | null;
+  zipCode: string | null;
+  street: string | null;
+  number: string | null;
+  complement: string | null;
+  district: string | null;
+  city: string | null;
+  state: string | null;
+  country: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  birthDate: string | null;
+  lastContactAt: string | null;
+  nextContactAt: string | null;
+  creditLimit: number | null;
+  paymentTerms: string | null;
+  healthScore: number | null;
+  notes: string | null;
+  parentCustomer: CustomerSummary | null;
+  active: boolean;
+  tags: DomainValueSummary[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CustomerRequest {
+  name: string;
+  tradeName?: string | null;
+  personType: PersonType;
+  document?: string | null;
+  stateRegistration?: string | null;
+  municipalRegistration?: string | null;
+  clientTypeId?: string | null;
+  segmentId?: string | null;
+  activityBranchId?: string | null;
+  categoryId?: string | null;
+  originId?: string | null;
+  statusId?: string | null;
+  ownerUserId?: string | null;
+  teamId?: string | null;
+  phone?: string | null;
+  mobile?: string | null;
+  email?: string | null;
+  financialEmail?: string | null;
+  website?: string | null;
+  instagram?: string | null;
+  linkedin?: string | null;
+  zipCode?: string | null;
+  street?: string | null;
+  number?: string | null;
+  complement?: string | null;
+  district?: string | null;
+  city?: string | null;
+  state?: string | null;
+  country?: string | null;
+  creditLimit?: number | null;
+  paymentTerms?: string | null;
+  notes?: string | null;
+  tagIds?: string[];
+  active?: boolean;
+}

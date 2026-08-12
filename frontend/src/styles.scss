@@ -211,6 +211,89 @@ body {
   animation: pc-fade-in var(--pc-duration-fast) var(--pc-ease-out) both;
 }
 
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.25rem;
+  padding-top: 0.75rem;
+}
+
+.form-grid .field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.form-grid .field label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--p-text-color, #1f2937);
+}
+
+.form-grid .field-inline {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.form-grid .field-span-2 {
+  grid-column: 1 / -1;
+}
+
+.form-grid .p-inputmask {
+  width: 100%;
+}
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-bar .p-select,
+.filter-bar .p-multiselect {
+  min-width: 11rem;
+}
+
+.cell-strong {
+  font-weight: 600;
+}
+
+.cell-code {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--p-primary-color, #1e5eff);
+  white-space: nowrap;
+}
+
+.cell-numeric {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.cell-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+@media (max-width: 767.98px) {
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .form-grid .field-span-2 {
+    grid-column: auto;
+  }
+
+  .filter-bar {
+    width: 100%;
+  }
+}
+
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
@@ -273,6 +356,24 @@ tr:hover .row-actions,
 
 .color-swatch:hover {
   transform: scale(1.15);
+}
+
+.domain-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  background: var(--p-surface-200, #e5e7eb);
+  color: var(--p-text-color, #1f2937);
+}
+
+.app-dark .domain-chip {
+  background: var(--p-surface-700, #374151);
+  color: var(--p-surface-0, #ffffff);
 }
 
 .app-sidebar__menu {
@@ -457,8 +558,29 @@ tr:hover .row-actions,
   }
 }
 
+.p-toast.p-toast-top-right,
+.p-toast.p-toast-top-left,
+.p-toast.p-toast-top-center {
+  top: 5.25rem;
+}
+
+@media (max-width: 767.98px) {
+  .p-toast.p-toast-top-right,
+  .p-toast.p-toast-top-left,
+  .p-toast.p-toast-top-center {
+    top: 4.75rem;
+    right: 0.75rem;
+    left: 0.75rem;
+    width: auto;
+  }
+}
+
 .p-drawer.app-sidebar__drawer {
   width: min(20rem, 84vw);
+}
+
+.p-drawer.opportunity-drawer {
+  width: min(36rem, 96vw);
 }
 
 .p-datatable .p-datatable-tbody > tr {

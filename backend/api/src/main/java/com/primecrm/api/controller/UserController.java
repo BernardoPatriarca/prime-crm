@@ -6,6 +6,7 @@ import com.primecrm.core.dto.user.UserCreateRequest;
 import com.primecrm.core.dto.user.UserResponse;
 import com.primecrm.core.dto.user.UserStatusUpdateRequest;
 import com.primecrm.core.dto.user.UserUpdateRequest;
+import com.primecrm.api.support.SortGuard;
 import com.primecrm.core.security.AuthenticatedUser;
 import com.primecrm.core.service.UserService;
 import com.primecrm.infra.entity.auth.UserStatus;
@@ -47,7 +48,8 @@ public class UserController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) UserStatus status,
             @PageableDefault(size = 20, sort = "name") Pageable pageable) {
-        return ResponseEntity.ok(PageResponse.from(userService.list(search, status, pageable)));
+        return ResponseEntity.ok(PageResponse.from(
+                userService.list(search, status, SortGuard.requireSafeSort(pageable))));
     }
 
     @GetMapping("/{id}")

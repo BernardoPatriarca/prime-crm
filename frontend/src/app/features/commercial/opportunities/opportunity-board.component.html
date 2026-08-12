@@ -1,0 +1,122 @@
+@if (loading() && columns().length === 0) {
+  <div class="kanban" data-testid="opportunity-board-skeleton">
+    @for (column of skeletonColumns; track column) {
+      <section class="kanban__column">
+        <header class="kanban__column-header">
+          <p-skeleton width="7rem" height="1rem" borderRadius="4px" />
+          <p-skeleton width="4rem" height="0.75rem" borderRadius="4px" />
+        </header>
+        <div class="kanban__column-body">
+          @for (card of skeletonCards; track card) {
+            <p-skeleton width="100%" height="6.5rem" borderRadius="10px" />
+          }
+        </div>
+      </section>
+    }
+  </div>
+} @else if (columns().length === 0) {
+  <div class="table-empty-state" data-testid="opportunity-board-empty">
+    <i class="pi pi-chart-line"></i>
+    <p>{{ 'commercialPages.opportunities.board.emptyBoard' | translate }}</p>
+  </div>
+} @else {
+  <div class="kanban" cdkDropListGroup data-testid="opportunity-board">
+    @for (column of columns(); track column.stageId) {
+      <section class="kanban__column" [attr.data-testid]="'opportunity-column-' + column.stageId">
+        <header class="kanban__column-header">
+          <div class="kanban__column-title">
+            <span class="kanban__stage-dot" [style]="stageDotStyle(column.color)"></span>
+            <h2>{{ column.stageName }}</h2>
+            <p-badge [value]="column.totalCount" severity="secondary" />
+          </div>
+          <span
+            class="kanban__column-total"
+            [pTooltip]="currency(column.totalAmount)"
+            tooltipPosition="bottom"
+            [attr.data-testid]="'opportunity-column-total-' + column.stageId"
+          >
+            {{ compactCurrency(column.totalAmount) }}
+          </span>
+        </header>
+
+        <div
+          class="kanban__column-body"
+          cdkDropList
+          [cdkDropListData]="column"
+          [cdkDropListDisabled]="!canEdit()"
+          (cdkDropListDropped)="onDrop($event)"
+        >
+          @for (card of column.cards; track card.id) {
+            <article
+              class="kanban__card"
+              cdkDrag
+              [cdkDragData]="card"
+              [cdkDragDisabled]="!canEdit() || movingCardId() === card.id"
+              [class.kanban__card--moving]="movingCardId() === card.id"
+              role="button"
+              tabindex="0"
+              (click)="cardSelected.emit(card)"
+              (keydown.enter)="cardSelected.emit(card)"
+              (keydown.space)="cardSelected.emit(card)"
+              [attr.data-testid]="'opportunity-card-' + card.id"
+            >
+              <div class="kanban__card-ghost" *cdkDragPlaceholder></div>
+
+              <div class="kanban__card-top">
+                <span class="cell-code">{{ card.code }}</span>
+                @if (movingCardId() === card.id) {
+                  <i class="pi pi-spin pi-spinner kanban__card-spinner"></i>
+                }
+              </div>
+
+              <h3 class="kanban__card-title">{{ card.title }}</h3>
+
+              @if (card.customer) {
+                <span class="kanban__card-customer">
+                  <i class="pi pi-building"></i>
+                  {{ card.customer.name }}
+                </span>
+              }
+
+              <div class="kanban__card-metrics">
+                <strong class="kanban__card-amount">{{ currency(card.amount) }}</strong>
+                @if (card.probability !== null) {
+                  <span class="domain-chip" [style]="chipStyle(column.color)">{{ card.probability }}%</span>
+                }
+              </div>
+
+              <footer class="kanban__card-footer">
+                <span class="kanban__card-date">
+                  <i class="pi pi-calendar"></i>
+                  {{ date(card.expectedCloseDate) }}
+                </span>
+                @if (card.owner) {
+                  <p-avatar
+                    [label]="initials(card.owner.name)"
+                    shape="circle"
+                    size="normal"
+                    [pTooltip]="card.owner.name"
+                    tooltipPosition="left"
+                  />
+                }
+              </footer>
+            </article>
+          }
+
+          @if (column.cards.length === 0) {
+            <p class="kanban__column-empty">{{ 'commercialPages.opportunities.board.emptyColumn' | translate }}</p>
+          }
+
+          @if (column.hasMore) {
+            <p class="kanban__column-more">
+              {{
+                'commercialPages.opportunities.board.showingPartial'
+                  | translate: { shown: column.cards.length, total: column.totalCount }
+              }}
+            </p>
+          }
+        </div>
+      </section>
+    }
+  </div>
+}

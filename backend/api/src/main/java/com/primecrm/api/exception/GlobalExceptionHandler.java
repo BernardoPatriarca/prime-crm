@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.List;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -27,6 +29,24 @@ public class GlobalExceptionHandler {
                                                                           HttpServletRequest request) {
         return build(HttpStatus.CONFLICT, "CONFLICT",
                 "Operacao viola uma restricao de unicidade ou integridade dos dados", request, null);
+    }
+
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ResponseEntity<ApiErrorResponse> handlePropertyReference(PropertyReferenceException ex,
+                                                                     HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "INVALID_SORT_PROPERTY",
+                "Propriedade de ordenacao ou filtro invalida", request, null);
+    }
+
+    @ExceptionHandler(InvalidDataAccessApiUsageException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidDataAccessApiUsage(InvalidDataAccessApiUsageException ex,
+                                                                             HttpServletRequest request) {
+        if (containsPropertyReference(ex)) {
+            return build(HttpStatus.BAD_REQUEST, "INVALID_SORT_PROPERTY",
+                    "Propriedade de ordenacao ou filtro invalida", request, null);
+        }
+        return build(HttpStatus.BAD_REQUEST, "INVALID_QUERY_PARAMETER",
+                "Parametros de consulta invalidos", request, null);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -53,6 +73,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleGeneric(Exception ex, HttpServletRequest request) {
         return build(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR", "Erro interno inesperado", request, null);
+    }
+
+    private boolean containsPropertyReference(Throwable throwable) {
+        Throwable current = throwable;
+        while (current != null) {
+            if (current instanceof PropertyReferenceException) {
+                return true;
+            }
+            current = current.getCause() == current ? null : current.getCause();
+        }
+        return false;
     }
 
     private ResponseEntity<ApiErrorResponse> build(HttpStatus status, String errorCode, String message,
