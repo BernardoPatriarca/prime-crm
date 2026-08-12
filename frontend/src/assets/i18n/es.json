@@ -68,7 +68,9 @@
       "email": "Correo electrónico inválido",
       "minLength": "Mínimo de {{min}} caracteres",
       "min": "Valor mínimo: {{min}}",
-      "max": "Valor máximo: {{max}}"
+      "max": "Valor máximo: {{max}}",
+      "cep": "Código postal incompleto. Ingrese 8 dígitos.",
+      "phone": "Teléfono incompleto. Ingrese código de área y número."
     },
     "yes": "Sí",
     "no": "No",
@@ -173,7 +175,9 @@
       "customers": "Clientes",
       "leads": "Leads",
       "opportunities": "Oportunidades",
-      "finance": "Finanzas"
+      "finance": "Finanzas",
+      "companies": "Empresas",
+      "contacts": "Contactos"
     },
     "comingSoon": "Próximamente"
   },
@@ -493,6 +497,305 @@
         "code": "Código",
         "action": "Acción",
         "description": "Descripción"
+      }
+    }
+  },
+  "commercialPages": {
+    "common": {
+      "selectPlaceholder": "Seleccione"
+    },
+    "customers": {
+      "title": "Clientes",
+      "description": "Registro único de clientes, personas físicas y jurídicas.",
+      "newButton": "Nuevo Cliente",
+      "emptyState": "No se encontraron clientes.",
+      "searchPlaceholder": "Buscar por nombre, documento, correo o código...",
+      "filters": {
+        "personType": "Tipo de persona",
+        "clientType": "Tipo de cliente",
+        "segment": "Segmento",
+        "status": "Estado"
+      },
+      "columns": {
+        "code": "Código",
+        "name": "Nombre / Razón Social",
+        "document": "Documento",
+        "personType": "Tipo",
+        "city": "Ciudad/Estado",
+        "owner": "Responsable",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "personType": {
+        "FISICA": "Persona Física",
+        "JURIDICA": "Persona Jurídica"
+      },
+      "validation": {
+        "cpf": "CPF inválido",
+        "cnpj": "CNPJ inválido"
+      },
+      "messages": {
+        "created": "Cliente creado con éxito.",
+        "updated": "Cliente actualizado con éxito.",
+        "deleted": "Cliente eliminado con éxito."
+      },
+      "dialog": {
+        "newTitle": "Nuevo Cliente",
+        "editTitle": "Editar Cliente",
+        "codeHint": "Código generado automáticamente por el sistema",
+        "tabs": {
+          "general": "Datos Generales",
+          "contact": "Contacto",
+          "address": "Dirección",
+          "commercial": "Comercial"
+        },
+        "nameLabel": "Nombre / Razón Social",
+        "tradeNameLabel": "Nombre Comercial",
+        "personTypeLabel": "Tipo de Persona",
+        "cpfLabel": "CPF",
+        "cnpjLabel": "CNPJ",
+        "stateRegistrationLabel": "Inscripción Estatal",
+        "municipalRegistrationLabel": "Inscripción Municipal",
+        "clientTypeLabel": "Tipo de Cliente",
+        "segmentLabel": "Segmento de Mercado",
+        "activityBranchLabel": "Rubro de Actividad",
+        "categoryLabel": "Categoría",
+        "originLabel": "Origen",
+        "statusLabel": "Estado",
+        "phoneLabel": "Teléfono",
+        "mobileLabel": "Celular",
+        "emailLabel": "Correo electrónico",
+        "financialEmailLabel": "Correo de Facturación",
+        "websiteLabel": "Sitio web",
+        "instagramLabel": "Instagram",
+        "linkedinLabel": "LinkedIn",
+        "zipCodeLabel": "Código Postal",
+        "streetLabel": "Calle",
+        "numberLabel": "Número",
+        "complementLabel": "Complemento",
+        "districtLabel": "Barrio",
+        "cityLabel": "Ciudad",
+        "stateLabel": "Estado",
+        "countryLabel": "País",
+        "ownerLabel": "Responsable",
+        "teamLabel": "Equipo",
+        "creditLimitLabel": "Límite de Crédito",
+        "paymentTermsLabel": "Condición de Pago",
+        "tagsLabel": "Etiquetas",
+        "tagsPlaceholder": "Seleccione las etiquetas",
+        "notesLabel": "Observaciones",
+        "activeLabel": "Cliente activo"
+      }
+    },
+    "companies": {
+      "title": "Empresas",
+      "description": "Clientes personas jurídicas registrados en el sistema.",
+      "newButton": "Nueva Empresa",
+      "emptyState": "No se encontraron empresas."
+    },
+    "contacts": {
+      "title": "Contactos",
+      "description": "Personas vinculadas a los clientes.",
+      "newButton": "Nuevo Contacto",
+      "emptyState": "No se encontraron contactos.",
+      "searchPlaceholder": "Buscar por nombre, correo o cargo...",
+      "filters": {
+        "customer": "Cliente"
+      },
+      "columns": {
+        "name": "Nombre",
+        "customer": "Cliente",
+        "position": "Cargo",
+        "email": "Correo electrónico",
+        "phone": "Teléfono",
+        "badges": "Indicadores",
+        "actions": "Acciones"
+      },
+      "badges": {
+        "primary": "Principal",
+        "decisionMaker": "Decisor"
+      },
+      "messages": {
+        "created": "Contacto creado con éxito.",
+        "updated": "Contacto actualizado con éxito.",
+        "deleted": "Contacto eliminado con éxito."
+      },
+      "dialog": {
+        "newTitle": "Nuevo Contacto",
+        "editTitle": "Editar Contacto",
+        "customerLabel": "Cliente",
+        "customerPlaceholder": "Busque y seleccione un cliente",
+        "nameLabel": "Nombre",
+        "positionLabel": "Cargo",
+        "departmentLabel": "Departamento",
+        "emailLabel": "Correo electrónico",
+        "linkedinLabel": "LinkedIn",
+        "phoneLabel": "Teléfono",
+        "mobileLabel": "Celular",
+        "birthDateLabel": "Fecha de Nacimiento",
+        "primaryLabel": "Contacto principal",
+        "decisionMakerLabel": "Decisor",
+        "notesLabel": "Observaciones",
+        "activeLabel": "Contacto activo"
+      }
+    },
+    "leads": {
+      "title": "Leads",
+      "description": "Oportunidades en precalificación y conversión en clientes.",
+      "newButton": "Nuevo Lead",
+      "emptyState": "No se encontraron leads.",
+      "searchPlaceholder": "Buscar por nombre, empresa, correo o código...",
+      "convertedTo": "Convertido en {{name}}",
+      "filters": {
+        "origin": "Origen",
+        "status": "Estado",
+        "priority": "Prioridad",
+        "owner": "Responsable"
+      },
+      "columns": {
+        "code": "Código",
+        "name": "Nombre",
+        "company": "Empresa",
+        "origin": "Origen",
+        "owner": "Responsable",
+        "estimatedValue": "Valor Estimado",
+        "expectedCloseDate": "Previsión",
+        "statusPriority": "Estado / Prioridad",
+        "actions": "Acciones"
+      },
+      "actions": {
+        "convert": "Convertir en cliente"
+      },
+      "messages": {
+        "created": "Lead creado con éxito.",
+        "updated": "Lead actualizado con éxito.",
+        "deleted": "Lead eliminado con éxito.",
+        "converted": "Lead convertido en cliente con éxito."
+      },
+      "dialog": {
+        "newTitle": "Nuevo Lead",
+        "editTitle": "Editar Lead",
+        "codeHint": "Código generado automáticamente por el sistema",
+        "nameLabel": "Nombre del Lead",
+        "companyLabel": "Empresa",
+        "contactLabel": "Persona de Contacto",
+        "emailLabel": "Correo electrónico",
+        "mobileLabel": "Celular",
+        "phoneLabel": "Teléfono",
+        "campaignLabel": "Campaña",
+        "originLabel": "Origen",
+        "statusLabel": "Estado",
+        "priorityLabel": "Prioridad",
+        "ownerLabel": "Responsable",
+        "pipelineLabel": "Embudo",
+        "stageLabel": "Etapa",
+        "estimatedValueLabel": "Valor Estimado",
+        "expectedCloseDateLabel": "Fecha Prevista de Cierre",
+        "probabilityLabel": "Probabilidad",
+        "qualificationScoreLabel": "Puntaje de Calificación",
+        "tagsLabel": "Etiquetas",
+        "tagsPlaceholder": "Seleccione las etiquetas",
+        "notesLabel": "Observaciones",
+        "activeLabel": "Lead activo"
+      },
+      "convertDialog": {
+        "title": "Convertir Lead en Cliente",
+        "message": "El lead \"{{name}}\" será convertido en un cliente. ¿Desea crear ya la primera oportunidad?",
+        "createOpportunityLabel": "Crear oportunidad en la conversión",
+        "clientTypeLabel": "Tipo de Cliente",
+        "pipelineLabel": "Embudo",
+        "pipelinePlaceholder": "Seleccione el embudo",
+        "stageLabel": "Etapa Inicial",
+        "stagePlaceholder": "Etapa predeterminada del embudo",
+        "opportunityTitleLabel": "Título de la Oportunidad",
+        "amountLabel": "Importe",
+        "expectedCloseDateLabel": "Fecha Prevista de Cierre"
+      }
+    },
+    "opportunities": {
+      "title": "Oportunidades",
+      "description": "Tablero de negocios en curso, del primer contacto al cierre.",
+      "newButton": "Nueva Oportunidad",
+      "emptyState": "No se encontraron oportunidades.",
+      "searchPlaceholder": "Buscar por título o código...",
+      "pipelinePlaceholder": "Seleccione el embudo",
+      "views": {
+        "board": "Tablero",
+        "list": "Lista"
+      },
+      "board": {
+        "emptyBoard": "Seleccione un embudo con etapas configuradas para armar el tablero.",
+        "emptyColumn": "Ninguna oportunidad en esta etapa.",
+        "showingPartial": "Mostrando {{shown}} de {{total}}",
+        "totalCount": "{{count}} oportunidades"
+      },
+      "filters": {
+        "stage": "Etapa",
+        "customer": "Cliente",
+        "owner": "Responsable",
+        "outcome": "Resultado"
+      },
+      "columns": {
+        "code": "Código",
+        "title": "Oportunidad",
+        "customer": "Cliente",
+        "stage": "Etapa",
+        "amount": "Valor",
+        "probability": "Probabilidad",
+        "owner": "Responsable",
+        "expectedCloseDate": "Previsión",
+        "actions": "Acciones"
+      },
+      "outcome": {
+        "OPEN": "Abierta",
+        "WON": "Ganada",
+        "LOST": "Perdida"
+      },
+      "actions": {
+        "detail": "Ver detalles e historial"
+      },
+      "messages": {
+        "created": "Oportunidad creada con éxito.",
+        "updated": "Oportunidad actualizada con éxito.",
+        "deleted": "Oportunidad eliminada con éxito.",
+        "moved": "Oportunidad movida de etapa.",
+        "moveFailed": "No se pudo mover la oportunidad.",
+        "moveReverted": "La tarjeta volvió a la etapa \"{{stage}}\"."
+      },
+      "dialog": {
+        "newTitle": "Nueva Oportunidad",
+        "editTitle": "Editar Oportunidad",
+        "codeHint": "Código generado automáticamente por el sistema",
+        "titleLabel": "Título",
+        "customerLabel": "Cliente",
+        "customerPlaceholder": "Busque y seleccione un cliente",
+        "contactLabel": "Contacto",
+        "pipelineLabel": "Embudo",
+        "stageLabel": "Etapa",
+        "stagePlaceholder": "Primera etapa del embudo",
+        "amountLabel": "Valor",
+        "probabilityLabel": "Probabilidad",
+        "ownerLabel": "Responsable",
+        "teamLabel": "Equipo",
+        "expectedCloseDateLabel": "Fecha Prevista de Cierre",
+        "competitorLabel": "Competidor",
+        "notesLabel": "Observaciones"
+      },
+      "reasonDialog": {
+        "lossTitle": "Indique el motivo de la pérdida",
+        "winTitle": "Indique el motivo de la ganancia",
+        "message": "La etapa de destino exige una justificación para \"{{title}}\".",
+        "lossLabel": "Motivo de la Pérdida",
+        "winLabel": "Motivo de la Ganancia",
+        "noteLabel": "Observación",
+        "confirm": "Confirmar movimiento"
+      },
+      "detail": {
+        "title": "Detalles de la Oportunidad",
+        "historyTitle": "Historial de Movimientos",
+        "historyEmpty": "Ningún movimiento registrado.",
+        "movedFrom": "Vino de {{stage}}",
+        "daysInStage": "{{days}} día(s) en la etapa anterior"
       }
     }
   }

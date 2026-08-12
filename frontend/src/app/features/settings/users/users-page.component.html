@@ -163,6 +163,7 @@
 </div>
 
 <p-dialog
+  appendTo="body"
   [visible]="dialogVisible()"
   (visibleChange)="dialogVisible.set($event)"
   [modal]="true"
@@ -200,7 +201,18 @@
 
     <div class="field">
       <label for="user-phone">{{ 'settingsPages.users.dialog.phoneLabel' | translate }}</label>
-      <input id="user-phone" pInputText type="text" formControlName="phone" fluid />
+      <p-inputmask
+        inputId="user-phone"
+        formControlName="phone"
+        mask="(99) 99999-9999"
+        [unmask]="true"
+        [autoClear]="false"
+        styleClass="w-full"
+        data-testid="user-phone-input"
+      />
+      @if (form.controls.phone.invalid && form.controls.phone.touched) {
+        <small class="field-error">{{ 'common.validation.phone' | translate }}</small>
+      }
     </div>
 
     @if (!editingUser()) {
@@ -251,6 +263,7 @@
 </p-dialog>
 
 <p-dialog
+  appendTo="body"
   [visible]="resetPasswordDialogVisible()"
   (visibleChange)="resetPasswordDialogVisible.set($event)"
   [modal]="true"

@@ -101,6 +101,24 @@ Depois de logar com o usuário admin:
 - **Auditoria**: toda criação, edição e exclusão grava em `audit_log`. Para conferir: `psql -U postgres -d primecrm -c "SELECT entity_name, action, user_email, created_at FROM audit_log ORDER BY created_at DESC LIMIT 10;"`
 - **API**: todos os endpoints documentados e testáveis pelo Swagger UI.
 
+## Massa de dados para demonstração
+
+Para ver o sistema com cara de já utilizado, rode os dois scripts nesta ordem (ambos são idempotentes — rodar de novo não duplica nada):
+
+```bash
+psql -U postgres -h localhost -d primecrm -f scripts/demo-data.sql
+```
+
+```bash
+psql -U postgres -h localhost -d primecrm -f scripts/demo-data-commercial.sql
+```
+
+Isso cria 26 usuários em 8 perfis de acesso, 113 cadastros de domínio, 5 funis, 320 clientes, 512 contatos, 260 leads, 420 oportunidades distribuídas pelas etapas e histórico de auditoria. Todos os usuários criados usam a senha `Admin@123`.
+
+Para ver o RBAC funcionando, entre com perfis diferentes: `patricia.nogueira` (Comercial, cria e edita), `camila.rocha` (Atendimento, majoritariamente leitura) e `rodrigo.salles` (Usuário Padrão, acesso mínimo).
+
+Cada script tem, no final, um bloco de limpeza comentado caso queira voltar ao estado inicial.
+
 ## Estrutura e convenções
 
 Ver [CLAUDE.md](CLAUDE.md) — estrutura de pastas, convenções de código, comandos e o checklist de Definition of Done usado no projeto.
@@ -117,7 +135,7 @@ Ver [CLAUDE.md](CLAUDE.md) — estrutura de pastas, convenções de código, com
 
 - [x] **Fase 0** — Fundação: monorepo, autenticação JWT, layout base, CI
 - [x] **Fase 1** — Parametrização (engine genérico + módulos dedicados) e RBAC (Usuários/Perfis/Permissões)
-- [ ] **Fase 2** — Núcleo Comercial: Clientes, Empresas, Contatos, Leads, Funil/Kanban de Oportunidades
+- [x] **Fase 2** — Núcleo Comercial: Clientes, Empresas, Contatos, Leads, Funil/Kanban de Oportunidades
 - [ ] **Fase 3** — Produtividade: Tarefas, Agenda/Calendário, Notificações em tempo real
 - [ ] **Fase 4** — Comercial Avançado: Produtos/Serviços, Propostas, Pedidos, Contratos
 - [ ] **Fase 5** — Financeiro e Documentos

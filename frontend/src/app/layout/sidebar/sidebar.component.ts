@@ -140,15 +140,56 @@ export class SidebarComponent {
       });
     }
 
+    const moduleChildren: MenuItem[] = [];
+
+    if (hasPermission('CLIENTES_VIEW')) {
+      moduleChildren.push({
+        label: t('sidebar.modules.customers'),
+        icon: 'pi pi-building',
+        routerLink: '/clientes'
+      });
+      moduleChildren.push({
+        label: t('sidebar.modules.companies'),
+        icon: 'pi pi-briefcase',
+        routerLink: '/empresas'
+      });
+    }
+
+    if (hasPermission('CONTATOS_VIEW')) {
+      moduleChildren.push({
+        label: t('sidebar.modules.contacts'),
+        icon: 'pi pi-id-card',
+        routerLink: '/contatos'
+      });
+    }
+
+    if (hasPermission('LEADS_VIEW')) {
+      moduleChildren.push({
+        label: t('sidebar.modules.leads'),
+        icon: 'pi pi-bullseye',
+        routerLink: '/leads'
+      });
+    }
+
+    if (hasPermission('OPORTUNIDADES_VIEW')) {
+      moduleChildren.push({
+        label: t('sidebar.modules.opportunities'),
+        icon: 'pi pi-chart-line',
+        routerLink: '/oportunidades'
+      });
+    }
+
+    moduleChildren.push({
+      label: t('sidebar.modules.finance'),
+      icon: 'pi pi-wallet',
+      disabled: true,
+      badge: t('sidebar.comingSoon')
+    });
+
     items.push({
       label: t('sidebar.modules.root'),
       icon: 'pi pi-th-large',
-      items: [
-        { label: t('sidebar.modules.customers'), icon: 'pi pi-building', disabled: true, badge: t('sidebar.comingSoon') },
-        { label: t('sidebar.modules.leads'), icon: 'pi pi-bullseye', disabled: true, badge: t('sidebar.comingSoon') },
-        { label: t('sidebar.modules.opportunities'), icon: 'pi pi-briefcase', disabled: true, badge: t('sidebar.comingSoon') },
-        { label: t('sidebar.modules.finance'), icon: 'pi pi-wallet', disabled: true, badge: t('sidebar.comingSoon') }
-      ]
+      items: moduleChildren
     });
 
     if (!railMode) {

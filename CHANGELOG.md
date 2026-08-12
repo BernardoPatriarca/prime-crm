@@ -2,6 +2,34 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fase 2] — Núcleo Comercial
+
+### Banco de dados
+Migrations `V13` a `V18`: `customers`, `contacts`, `leads`, `opportunities`, `opportunity_stage_history`, `customer_tags`, `lead_tags`, mais 18 permissões novas (`CLIENTES_*`, `CONTATOS_*`, `LEADS_*`, `OPORTUNIDADES_*`) e sequences para os códigos legíveis (`CLI-001042`, `LEAD-...`, `OPO-...`).
+
+**Decisões de modelagem**: clientes e empresas vivem na **mesma tabela** (`customers`, diferenciados por `person_type`) — a tela "Empresas" é o mesmo cadastro filtrado por pessoa jurídica, evitando duplicar endereço, contato e histórico. Os códigos legíveis são gerados por `DEFAULT` no banco, não no Java, para que inserções por SQL puro (carga de dados) também recebam código e não haja corrida de concorrência.
+
+### Backend
+CRUD completo dos quatro recursos com filtros dinâmicos, paginação, RBAC e auditoria. Regras de negócio:
+- **Conversão de lead em cliente** (`POST /leads/{id}/convert`), opcionalmente já criando a oportunidade no funil escolhido; um lead só pode ser convertido uma vez.
+- **Movimentação de etapa** (`PATCH /opportunities/{id}/stage`) gravando histórico com dias na etapa anterior, recalculando a probabilidade pela etapa destino e exigindo motivo quando a etapa é de perda ou de ganho.
+- **Endpoint de board** (`GET /opportunities/board`) devolvendo o Kanban pronto — colunas na ordem, com totalizadores e limite por coluna.
+- Contato principal único por cliente; documento (CPF/CNPJ) único por tenant.
+
+Todas as listagens usam carregamento em lote, com teste de regressão garantindo que a contagem de queries não cresce com o número de linhas.
+
+### Frontend
+- **Clientes** com formulário em abas (dados gerais, contato, endereço, comercial) e validação real de CPF/CNPJ (dígito verificador, rejeitando sequências repetidas). Ao salvar com erro em aba oculta, a aba correspondente é aberta.
+- **Empresas** reaproveitando o mesmo componente via `data` de rota, não uma cópia.
+- **Contatos** com busca de cliente server-side.
+- **Leads** com ação de conversão.
+- **Kanban de Oportunidades** com arrastar e soltar entre etapas: movimento otimista, dialog exigindo motivo quando a etapa pede, e **reversão exata do card (posição e totalizadores) se a API falhar**. Visão de lista alternável, dialog de CRUD e gaveta de histórico em linha do tempo.
+
+### Massa de dados
+`scripts/demo-data.sql` (configurações, usuários, perfis, funis) e `scripts/demo-data-commercial.sql` (320 clientes, 512 contatos, 260 leads, 420 oportunidades e 1.316 movimentações). Ambos idempotentes. Os documentos são gerados com dígito verificador válido — verificado passando os 320 pelo validador real da aplicação.
+
+---
+
 ## [Fase 0 + Fase 1] — Fundação, Parametrização e RBAC
 
 ### Fundação (Fase 0)

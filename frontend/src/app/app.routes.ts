@@ -18,6 +18,42 @@ export const routes: Routes = [
         loadComponent: () => import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent)
       },
       {
+        path: 'clientes',
+        canActivate: [permissionGuard],
+        data: { permission: 'CLIENTES_VIEW', pageKey: 'customers' },
+        loadComponent: () =>
+          import('./features/commercial/customers/customers-page.component').then((m) => m.CustomersPageComponent)
+      },
+      {
+        path: 'empresas',
+        canActivate: [permissionGuard],
+        data: { permission: 'CLIENTES_VIEW', pageKey: 'companies', personType: 'JURIDICA' },
+        loadComponent: () =>
+          import('./features/commercial/customers/customers-page.component').then((m) => m.CustomersPageComponent)
+      },
+      {
+        path: 'contatos',
+        canActivate: [permissionGuard],
+        data: { permission: 'CONTATOS_VIEW' },
+        loadComponent: () =>
+          import('./features/commercial/contacts/contacts-page.component').then((m) => m.ContactsPageComponent)
+      },
+      {
+        path: 'leads',
+        canActivate: [permissionGuard],
+        data: { permission: 'LEADS_VIEW' },
+        loadComponent: () => import('./features/commercial/leads/leads-page.component').then((m) => m.LeadsPageComponent)
+      },
+      {
+        path: 'oportunidades',
+        canActivate: [permissionGuard],
+        data: { permission: 'OPORTUNIDADES_VIEW' },
+        loadComponent: () =>
+          import('./features/commercial/opportunities/opportunities-page.component').then(
+            (m) => m.OpportunitiesPageComponent
+          )
+      },
+      {
         path: 'configuracoes/dominios/:tipo',
         canActivate: [permissionGuard],
         data: { permission: 'DOMINIOS_VIEW' },

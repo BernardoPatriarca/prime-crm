@@ -1,0 +1,542 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'commercialPages.opportunities.title' | translate }}</h1>
+      <p>{{ 'commercialPages.opportunities.description' | translate }}</p>
+    </div>
+    @if (canCreate()) {
+      <p-button
+        icon="pi pi-plus"
+        [label]="'commercialPages.opportunities.newButton' | translate"
+        (onClick)="openCreateDialog()"
+        data-testid="opportunities-new-button"
+      />
+    }
+  </div>
+
+  <div class="board-toolbar">
+    <p-select
+      [ngModel]="selectedPipelineId()"
+      (ngModelChange)="onPipelineChange($event)"
+      [options]="pipelines()"
+      optionLabel="name"
+      optionValue="id"
+      [filter]="true"
+      filterBy="name"
+      [placeholder]="'commercialPages.opportunities.pipelinePlaceholder' | translate"
+      [ariaLabel]="'commercialPages.opportunities.dialog.pipelineLabel' | translate"
+      data-testid="opportunities-pipeline-select"
+    />
+
+    <div class="board-toolbar__summary">
+      <span class="board-toolbar__metric">
+        <i class="pi pi-briefcase"></i>
+        {{ 'commercialPages.opportunities.board.totalCount' | translate: { count: boardCount() } }}
+      </span>
+      <span class="board-toolbar__metric board-toolbar__metric--strong">
+        <i class="pi pi-dollar"></i>
+        {{ currency(boardAmount()) }}
+      </span>
+    </div>
+
+    <p-selectbutton
+      [ngModel]="view()"
+      (ngModelChange)="onViewChange($event)"
+      [options]="viewOptions()"
+      optionValue="value"
+      [allowEmpty]="false"
+      data-testid="opportunities-view-toggle"
+    >
+      <ng-template #item let-option>
+        <span class="view-toggle__option">
+          <i [class]="option.icon" aria-hidden="true"></i>
+          {{ option.label }}
+        </span>
+      </ng-template>
+    </p-selectbutton>
+  </div>
+
+  <div class="view-panel" [class.view-panel--hidden]="view() !== 'BOARD'">
+    <app-opportunity-board
+      [columns]="boardColumns()"
+      [canEdit]="canEdit()"
+      [loading]="boardLoading()"
+      [movingCardId]="movingCardId()"
+      (cardDropped)="onCardDropped($event)"
+      (cardSelected)="onCardSelected($event)"
+    />
+  </div>
+
+  <div class="view-panel" [class.view-panel--hidden]="view() !== 'LIST'">
+    <app-generic-table
+      [items]="opportunities()"
+      [totalRecords]="total()"
+      [loading]="loading()"
+      [columnsCount]="9"
+      emptyIcon="pi-chart-line"
+      emptyMessageKey="commercialPages.opportunities.emptyState"
+      searchPlaceholderKey="commercialPages.opportunities.searchPlaceholder"
+      (queryChange)="onQueryChange($event)"
+    >
+      <div tableActions class="filter-bar">
+        <p-select
+          [ngModel]="stageFilter()"
+          (ngModelChange)="stageFilter.set($event); onFilterChange()"
+          [options]="pipelineStages()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.opportunities.filters.stage' | translate"
+          data-testid="opportunities-stage-filter"
+        />
+        <p-select
+          [ngModel]="customerFilter()"
+          (ngModelChange)="customerFilter.set($event); onFilterChange()"
+          [options]="customerOptions()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [filter]="true"
+          filterBy="name"
+          (onFilter)="onCustomerFilter($event.filter)"
+          [placeholder]="'commercialPages.opportunities.filters.customer' | translate"
+          data-testid="opportunities-customer-filter"
+        />
+        <p-select
+          [ngModel]="ownerFilter()"
+          (ngModelChange)="ownerFilter.set($event); onFilterChange()"
+          [options]="users()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [filter]="true"
+          filterBy="name"
+          [placeholder]="'commercialPages.opportunities.filters.owner' | translate"
+          data-testid="opportunities-owner-filter"
+        />
+        <p-select
+          [ngModel]="outcomeFilter()"
+          (ngModelChange)="outcomeFilter.set($event); onFilterChange()"
+          [options]="outcomeOptions()"
+          optionLabel="label"
+          optionValue="value"
+          [showClear]="true"
+          [placeholder]="'commercialPages.opportunities.filters.outcome' | translate"
+          data-testid="opportunities-outcome-filter"
+        />
+        <p-button
+          icon="pi pi-filter-slash"
+          severity="secondary"
+          [text]="true"
+          [pTooltip]="'common.actions.clearFilters' | translate"
+          tooltipPosition="top"
+          [ariaLabel]="'common.actions.clearFilters' | translate"
+          (onClick)="clearFilters()"
+          data-testid="opportunities-clear-filters"
+        />
+      </div>
+
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="code">
+            {{ 'commercialPages.opportunities.columns.code' | translate }}
+            <p-sortIcon field="code" />
+          </th>
+          <th pSortableColumn="title">
+            {{ 'commercialPages.opportunities.columns.title' | translate }}
+            <p-sortIcon field="title" />
+          </th>
+          <th>{{ 'commercialPages.opportunities.columns.customer' | translate }}</th>
+          <th>{{ 'commercialPages.opportunities.columns.stage' | translate }}</th>
+          <th pSortableColumn="amount">
+            {{ 'commercialPages.opportunities.columns.amount' | translate }}
+            <p-sortIcon field="amount" />
+          </th>
+          <th pSortableColumn="probability">
+            {{ 'commercialPages.opportunities.columns.probability' | translate }}
+            <p-sortIcon field="probability" />
+          </th>
+          <th>{{ 'commercialPages.opportunities.columns.owner' | translate }}</th>
+          <th pSortableColumn="expectedCloseDate">
+            {{ 'commercialPages.opportunities.columns.expectedCloseDate' | translate }}
+            <p-sortIcon field="expectedCloseDate" />
+          </th>
+          <th class="col-actions">{{ 'commercialPages.opportunities.columns.actions' | translate }}</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-item>
+        <tr>
+          <td class="cell-code">{{ item.code }}</td>
+          <td>
+            <div class="cell-identity">
+              <span class="cell-strong">{{ item.title }}</span>
+              <p-tag
+                [severity]="outcomeSeverity(item.outcome)"
+                [value]="'commercialPages.opportunities.outcome.' + item.outcome | translate"
+              />
+            </div>
+          </td>
+          <td class="cell-muted">{{ item.customer?.name ?? '-' }}</td>
+          <td>
+            @if (item.stage) {
+              <span class="domain-chip" [style]="chipStyle(item.stage.color)">{{ item.stage.name }}</span>
+            } @else {
+              <span class="cell-muted">-</span>
+            }
+          </td>
+          <td class="cell-numeric">{{ currency(item.amount) }}</td>
+          <td class="cell-numeric">{{ item.probability !== null ? item.probability + '%' : '-' }}</td>
+          <td class="cell-muted">{{ item.owner?.name ?? '-' }}</td>
+          <td class="cell-muted cell-numeric">{{ date(item.expectedCloseDate) }}</td>
+          <td>
+            <div class="row-actions">
+              <p-button
+                icon="pi pi-history"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'commercialPages.opportunities.actions.detail' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'commercialPages.opportunities.actions.detail' | translate"
+                (onClick)="openDetail(item.id)"
+                [attr.data-testid]="'opportunity-detail-' + item.id"
+              />
+              @if (canEdit()) {
+                <p-button
+                  icon="pi pi-pencil"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="secondary"
+                  [pTooltip]="'common.actions.edit' | translate"
+                  tooltipPosition="top"
+                  [ariaLabel]="'common.actions.edit' | translate"
+                  (onClick)="openEditDialog(item)"
+                  [attr.data-testid]="'opportunity-edit-' + item.id"
+                />
+              }
+              @if (canDelete()) {
+                <p-button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  [text]="true"
+                  [rounded]="true"
+                  [pTooltip]="'common.actions.delete' | translate"
+                  tooltipPosition="top"
+                  [ariaLabel]="'common.actions.delete' | translate"
+                  (onClick)="confirmDelete(item)"
+                  [attr.data-testid]="'opportunity-delete-' + item.id"
+                />
+              }
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </app-generic-table>
+  </div>
+</div>
+
+<p-dialog
+  appendTo="body"
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '50rem' }"
+  [breakpoints]="{ '1024px': '92vw', '767px': '96vw' }"
+  [header]="
+    (editingOpportunity()
+      ? 'commercialPages.opportunities.dialog.editTitle'
+      : 'commercialPages.opportunities.dialog.newTitle'
+    ) | translate
+  "
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+    @if (editingOpportunity()) {
+      <p-tag
+        severity="secondary"
+        icon="pi pi-hashtag"
+        [value]="editingOpportunity()!.code"
+        [pTooltip]="'commercialPages.opportunities.dialog.codeHint' | translate"
+        tooltipPosition="right"
+      />
+    }
+
+    <div class="form-grid">
+      <div class="field field-span-2">
+        <label for="opportunity-title">{{ 'commercialPages.opportunities.dialog.titleLabel' | translate }}</label>
+        <input
+          id="opportunity-title"
+          pInputText
+          type="text"
+          formControlName="title"
+          fluid
+          data-testid="opportunity-title-input"
+        />
+        @if (form.controls.title.invalid && form.controls.title.touched) {
+          <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="opportunity-customer">{{ 'commercialPages.opportunities.dialog.customerLabel' | translate }}</label>
+        <p-select
+          inputId="opportunity-customer"
+          [ngModel]="form.controls.customerId.value"
+          [ngModelOptions]="{ standalone: true }"
+          (ngModelChange)="onFormCustomerChange($event)"
+          [options]="customerOptions()"
+          optionLabel="name"
+          optionValue="id"
+          [filter]="true"
+          filterBy="name"
+          (onFilter)="onCustomerFilter($event.filter)"
+          [placeholder]="'commercialPages.opportunities.dialog.customerPlaceholder' | translate"
+          fluid
+          data-testid="opportunity-customer-select"
+        />
+        @if (form.controls.customerId.invalid && form.controls.customerId.touched) {
+          <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="opportunity-contact">{{ 'commercialPages.opportunities.dialog.contactLabel' | translate }}</label>
+        <p-select
+          inputId="opportunity-contact"
+          formControlName="contactId"
+          [options]="contactOptions()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="opportunity-pipeline">{{ 'commercialPages.opportunities.dialog.pipelineLabel' | translate }}</label>
+        <p-select
+          inputId="opportunity-pipeline"
+          [ngModel]="form.controls.pipelineId.value"
+          [ngModelOptions]="{ standalone: true }"
+          (ngModelChange)="onFormPipelineChange($event)"
+          [options]="pipelines()"
+          optionLabel="name"
+          optionValue="id"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+          data-testid="opportunity-pipeline-select"
+        />
+        @if (form.controls.pipelineId.invalid && form.controls.pipelineId.touched) {
+          <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="opportunity-stage">{{ 'commercialPages.opportunities.dialog.stageLabel' | translate }}</label>
+        <p-select
+          inputId="opportunity-stage"
+          formControlName="stageId"
+          [options]="formStages()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.opportunities.dialog.stagePlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="opportunity-amount">{{ 'commercialPages.opportunities.dialog.amountLabel' | translate }}</label>
+        <p-inputnumber
+          inputId="opportunity-amount"
+          formControlName="amount"
+          mode="currency"
+          currency="BRL"
+          locale="pt-BR"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="opportunity-probability">
+          {{ 'commercialPages.opportunities.dialog.probabilityLabel' | translate }}
+        </label>
+        <p-inputnumber
+          inputId="opportunity-probability"
+          formControlName="probability"
+          suffix="%"
+          [min]="0"
+          [max]="100"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="opportunity-owner">{{ 'commercialPages.opportunities.dialog.ownerLabel' | translate }}</label>
+        <p-select
+          inputId="opportunity-owner"
+          formControlName="ownerUserId"
+          [options]="users()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [filter]="true"
+          filterBy="name"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="opportunity-team">{{ 'commercialPages.opportunities.dialog.teamLabel' | translate }}</label>
+        <p-select
+          inputId="opportunity-team"
+          formControlName="teamId"
+          [options]="teams()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="opportunity-expected-close-date">
+          {{ 'commercialPages.opportunities.dialog.expectedCloseDateLabel' | translate }}
+        </label>
+        <p-datepicker
+          inputId="opportunity-expected-close-date"
+          formControlName="expectedCloseDate"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          [showClear]="true"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="opportunity-competitor">
+          {{ 'commercialPages.opportunities.dialog.competitorLabel' | translate }}
+        </label>
+        <input id="opportunity-competitor" pInputText type="text" formControlName="competitor" fluid />
+      </div>
+
+      <div class="field field-span-2">
+        <label for="opportunity-notes">{{ 'commercialPages.opportunities.dialog.notesLabel' | translate }}</label>
+        <textarea id="opportunity-notes" pTextarea formControlName="notes" rows="3" [autoResize]="true" fluid></textarea>
+      </div>
+    </div>
+
+    <div class="dialog-footer">
+      <p-button
+        [label]="'common.actions.cancel' | translate"
+        severity="secondary"
+        [text]="true"
+        type="button"
+        (onClick)="closeDialog()"
+      />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="saving()"
+        data-testid="opportunity-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>
+
+<p-dialog
+  appendTo="body"
+  [visible]="reasonDialogVisible()"
+  (visibleChange)="reasonDialogVisible.set($event)"
+  (onHide)="discardPendingMove()"
+  [modal]="true"
+  [draggable]="false"
+  [closable]="true"
+  [style]="{ width: '30rem' }"
+  [breakpoints]="{ '767px': '96vw' }"
+  [header]="
+    (reasonRequirement() === 'LOSS'
+      ? 'commercialPages.opportunities.reasonDialog.lossTitle'
+      : 'commercialPages.opportunities.reasonDialog.winTitle'
+    ) | translate
+  "
+>
+  <form [formGroup]="reasonForm" (ngSubmit)="confirmReason()" class="dialog-form">
+    <p class="reason-intro">
+      {{
+        'commercialPages.opportunities.reasonDialog.message' | translate: { title: pendingMove()?.cardTitle ?? '' }
+      }}
+    </p>
+
+    <div class="field">
+      <label for="opportunity-reason">
+        {{
+          (reasonRequirement() === 'LOSS'
+            ? 'commercialPages.opportunities.reasonDialog.lossLabel'
+            : 'commercialPages.opportunities.reasonDialog.winLabel'
+          ) | translate
+        }}
+      </label>
+      <p-select
+        inputId="opportunity-reason"
+        formControlName="reasonId"
+        [options]="reasonOptions()"
+        optionLabel="name"
+        optionValue="id"
+        [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+        fluid
+        data-testid="opportunity-reason-select"
+      />
+      @if (reasonForm.controls.reasonId.invalid && reasonForm.controls.reasonId.touched) {
+        <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="opportunity-reason-note">
+        {{ 'commercialPages.opportunities.reasonDialog.noteLabel' | translate }}
+      </label>
+      <textarea
+        id="opportunity-reason-note"
+        pTextarea
+        formControlName="note"
+        rows="3"
+        [autoResize]="true"
+        fluid
+      ></textarea>
+    </div>
+
+    <div class="dialog-footer">
+      <p-button
+        [label]="'common.actions.cancel' | translate"
+        severity="secondary"
+        [text]="true"
+        type="button"
+        (onClick)="cancelReason()"
+        data-testid="opportunity-reason-cancel"
+      />
+      <p-button
+        icon="pi pi-check"
+        [label]="'commercialPages.opportunities.reasonDialog.confirm' | translate"
+        type="submit"
+        data-testid="opportunity-reason-confirm"
+      />
+    </div>
+  </form>
+</p-dialog>
+
+<app-opportunity-detail-drawer
+  [visible]="detailVisible()"
+  (visibleChange)="detailVisible.set($event)"
+  [opportunity]="detailOpportunity()"
+  [history]="detailHistory()"
+  [loading]="detailLoading()"
+  [canEdit]="canEdit()"
+  (editRequested)="onDetailEdit($event)"
+/>

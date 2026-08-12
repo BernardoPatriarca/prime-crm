@@ -1,0 +1,23 @@
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.converted-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: var(--p-green-600, #16a34a);
+}
+
+.app-dark .converted-hint {
+  color: var(--p-green-400, #4ade80);
+}
+
+.convert-intro {
+  margin: 0;
+  color: var(--p-text-muted-color, #6b7280);
+  font-size: 0.925rem;
+}
