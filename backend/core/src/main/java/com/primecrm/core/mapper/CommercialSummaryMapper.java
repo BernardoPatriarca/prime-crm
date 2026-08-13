@@ -4,6 +4,7 @@ import com.primecrm.core.dto.common.ContactSummaryResponse;
 import com.primecrm.core.dto.common.CustomerSummaryResponse;
 import com.primecrm.core.dto.common.DomainValueSummaryResponse;
 import com.primecrm.core.dto.common.LeadSummaryResponse;
+import com.primecrm.core.dto.common.OpportunitySummaryResponse;
 import com.primecrm.core.dto.common.PipelineStageSummaryResponse;
 import com.primecrm.core.dto.common.PipelineSummaryResponse;
 import com.primecrm.core.dto.common.UserSummaryResponse;
@@ -11,6 +12,7 @@ import com.primecrm.infra.entity.auth.User;
 import com.primecrm.infra.entity.commercial.Contact;
 import com.primecrm.infra.entity.commercial.Customer;
 import com.primecrm.infra.entity.commercial.Lead;
+import com.primecrm.infra.entity.commercial.Opportunity;
 import com.primecrm.infra.entity.config.Pipeline;
 import com.primecrm.infra.entity.config.PipelineStage;
 import com.primecrm.infra.entity.domain.DomainValue;
@@ -31,6 +33,8 @@ public interface CommercialSummaryMapper {
     ContactSummaryResponse toContactSummary(Contact contact);
 
     LeadSummaryResponse toLeadSummary(Lead lead);
+
+    OpportunitySummaryResponse toOpportunitySummary(Opportunity opportunity);
 
     PipelineSummaryResponse toPipelineSummary(Pipeline pipeline);
 

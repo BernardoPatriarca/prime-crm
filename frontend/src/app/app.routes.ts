@@ -54,6 +54,25 @@ export const routes: Routes = [
           )
       },
       {
+        path: 'tarefas',
+        canActivate: [permissionGuard],
+        data: { permission: 'TAREFAS_VIEW' },
+        loadComponent: () => import('./features/tasks/tasks-page.component').then((m) => m.TasksPageComponent)
+      },
+      {
+        path: 'relatorios/:report',
+        canActivate: [permissionGuard],
+        data: { permission: 'RELATORIOS_VIEW' },
+        loadComponent: () => import('./features/reports/reports-page.component').then((m) => m.ReportsPageComponent)
+      },
+      {
+        path: 'configuracoes/auditoria',
+        canActivate: [permissionGuard],
+        data: { permission: 'AUDITORIA_VIEW' },
+        loadComponent: () =>
+          import('./features/settings/audit/audit-page.component').then((m) => m.AuditPageComponent)
+      },
+      {
         path: 'configuracoes/dominios/:tipo',
         canActivate: [permissionGuard],
         data: { permission: 'DOMINIOS_VIEW' },

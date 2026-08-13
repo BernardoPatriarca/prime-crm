@@ -561,15 +561,15 @@ tr:hover .row-actions,
 .p-toast.p-toast-top-right,
 .p-toast.p-toast-top-left,
 .p-toast.p-toast-top-center {
-  top: 5.25rem;
+  top: 5.25rem !important;
 }
 
 @media (max-width: 767.98px) {
   .p-toast.p-toast-top-right,
   .p-toast.p-toast-top-left,
   .p-toast.p-toast-top-center {
-    top: 4.75rem;
-    right: 0.75rem;
+    top: 4.75rem !important;
+    right: 0.75rem !important;
     left: 0.75rem;
     width: auto;
   }

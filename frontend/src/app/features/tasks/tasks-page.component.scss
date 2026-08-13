@@ -1,0 +1,10 @@
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.task-due--late {
+  color: var(--p-red-500);
+  font-weight: 600;
+}

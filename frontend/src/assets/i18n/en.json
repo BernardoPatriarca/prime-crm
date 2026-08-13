@@ -168,7 +168,8 @@
       "holidays": "Holidays",
       "users": "Users",
       "roles": "Roles",
-      "permissions": "Permissions"
+      "permissions": "Permissions",
+      "audit": "Audit trail"
     },
     "modules": {
       "root": "Modules",
@@ -177,41 +178,107 @@
       "opportunities": "Opportunities",
       "finance": "Finance",
       "companies": "Companies",
-      "contacts": "Contacts"
+      "contacts": "Contacts",
+      "tasks": "Tasks"
     },
-    "comingSoon": "Coming soon"
+    "comingSoon": "Coming soon",
+    "reports": {
+      "root": "Reports",
+      "customers": "Customers",
+      "opportunities": "Opportunities",
+      "tasks": "Tasks"
+    }
   },
   "dashboard": {
     "title": "Dashboard",
-    "phaseNotice": "The full dashboard with metrics and reports will be delivered in Phase 6 of the project.",
     "greeting": "Hello, {{name}}",
-    "subtitle": "Here is the summary of your sales operation.",
-    "demoNotice": "The cards below are placeholders and do not show real data yet.",
-    "placeholderTag": "Available in Phase 6",
+    "subtitle": "Here's the summary of your sales operation.",
+    "refresh": "Refresh metrics",
+    "retry": "Try again",
+    "loadError": "Could not load the metrics. Check that the API is up and try again.",
+    "period": {
+      "days": "Last {{days}} days"
+    },
+    "trend": {
+      "noBaseline": "no baseline",
+      "noBaselineHint": "No activity in the previous period to compare against.",
+      "up": "Up {{value}}% compared to the previous period.",
+      "down": "Down {{value}}% compared to the previous period."
+    },
     "metrics": {
+      "revenue": {
+        "label": "Won revenue",
+        "hint": "{{count}} deal(s) closed in the period"
+      },
+      "pipeline": {
+        "label": "Open pipeline",
+        "hint": "{{count}} deal(s) in progress"
+      },
+      "winRate": {
+        "label": "Win rate",
+        "hint": "{{won}} won and {{lost}} lost in the period"
+      },
+      "averageTicket": {
+        "label": "Average deal size",
+        "hint": "Average value of the deals won in the period"
+      },
       "leads": {
         "label": "New leads",
-        "hint": "Leads captured in the period"
-      },
-      "opportunities": {
-        "label": "Open opportunities",
-        "hint": "Deals currently in the pipeline"
+        "hint": "{{converted}} converted — {{rate}}% conversion"
       },
       "customers": {
         "label": "Active customers",
-        "hint": "Accounts with an ongoing relationship"
-      },
-      "revenue": {
-        "label": "Forecast revenue",
-        "hint": "Weighted pipeline value"
-      },
+        "hint": "{{count}} new customer(s) in the period"
+      }
+    },
+    "charts": {
+      "monthlyTitle": "Last 12 months",
+      "monthlySubtitle": "Won amount by closing month, compared to the amount opened in the month",
+      "wonAmount": "Won",
+      "openedAmount": "Opened",
+      "monthlyTooltip": "{{month}} — won {{won}} ({{wonCount}} deal(s)) · opened {{opened}}",
+      "outcomeTitle": "Deal outcomes",
+      "outcomeSubtitle": "Won and lost in the period, compared to the open total",
+      "winRate": "win rate",
+      "won": "Won",
+      "lost": "Lost",
+      "open": "Open"
+    },
+    "funnel": {
+      "title": "Pipeline by stage",
+      "noPipeline": "No active pipeline configured",
+      "openBoard": "Open kanban",
+      "empty": "No open deals in this pipeline.",
+      "ofPipeline": "of pipeline",
+      "total": "Total open amount:"
+    },
+    "ranking": {
+      "title": "Owner ranking",
+      "subtitle": "By amount won in the period",
+      "empty": "No deals won in the period.",
+      "deals": "{{count}} deal(s)"
+    },
+    "tasks": {
+      "title": "Tasks",
+      "subtitle": "Current state of your follow-up agenda",
+      "openList": "View tasks",
+      "empty": "No tasks created yet.",
+      "overdue": "Overdue",
+      "dueToday": "Due today",
+      "pending": "Pending",
+      "inProgress": "In progress",
+      "completedThisWeek": "Completed (7 days)"
+    },
+    "tooltips": {
+      "metric": "{{label}}: {{value}} — {{hint}}. {{trend}}",
+      "funnelStage": "Stage {{stage}}: {{count}} open deal(s) totalling {{amount}} ({{share}}% of the pipeline).",
+      "ranking": "{{owner}} won {{amount}} across {{count}} deal(s) — {{share}}% of the ranking total.",
       "tasks": {
-        "label": "Pending tasks",
-        "hint": "Activities assigned to you"
-      },
-      "conversion": {
-        "label": "Conversion rate",
-        "hint": "Leads that became customers"
+        "overdue": "{{count}} task(s) past their due date and still open.",
+        "dueToday": "{{count}} task(s) due today.",
+        "pending": "{{count}} pending task(s), not started yet.",
+        "inProgress": "{{count}} task(s) in progress.",
+        "completedThisWeek": "{{count}} task(s) completed in the last 7 days."
       }
     }
   },
@@ -797,6 +864,175 @@
         "movedFrom": "Came from {{stage}}",
         "daysInStage": "{{days}} day(s) in the previous stage"
       }
+    }
+  },
+  "tasksPage": {
+    "title": "Tasks",
+    "description": "Track the follow-up activities of your sales operation.",
+    "newButton": "New Task",
+    "searchPlaceholder": "Search by title, code or description...",
+    "emptyState": "No tasks found.",
+    "status": {
+      "PENDING": "Pending",
+      "IN_PROGRESS": "In progress",
+      "DONE": "Done",
+      "CANCELED": "Canceled"
+    },
+    "filters": {
+      "status": "Status",
+      "assignee": "Assignee",
+      "due": "Due date",
+      "overdue": "Overdue",
+      "onTime": "On time"
+    },
+    "badges": {
+      "overdue": "Overdue"
+    },
+    "columns": {
+      "code": "Code",
+      "title": "Title",
+      "customer": "Customer",
+      "assignee": "Assignee",
+      "priority": "Priority",
+      "dueAt": "Due date",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "actions": {
+      "complete": "Complete task"
+    },
+    "dialog": {
+      "newTitle": "New Task",
+      "editTitle": "Edit Task",
+      "titleLabel": "Title",
+      "typeLabel": "Type",
+      "priorityLabel": "Priority",
+      "statusLabel": "Status",
+      "assigneeLabel": "Assignee",
+      "dueAtLabel": "Due date",
+      "reminderAtLabel": "Reminder",
+      "customerLabel": "Customer",
+      "descriptionLabel": "Description",
+      "resultNotesLabel": "Result / notes"
+    },
+    "messages": {
+      "created": "Task created successfully",
+      "updated": "Task updated successfully",
+      "deleted": "Task deleted successfully",
+      "completed": "Task completed"
+    }
+  },
+  "reportsPage": {
+    "exportButton": "Export CSV",
+    "emptyState": "No data found for the selected filters.",
+    "notInformed": "(not informed)",
+    "filters": {
+      "groupBy": "Group by",
+      "from": "From",
+      "to": "To",
+      "owner": "Owner",
+      "assignee": "Assignee"
+    },
+    "summary": {
+      "totalCount": "Total records",
+      "groups": "Groups",
+      "totalAmount": "Total amount"
+    },
+    "columns": {
+      "group": "Group",
+      "distribution": "Distribution",
+      "count": "Count",
+      "percentage": "Percentage",
+      "total": "Amount"
+    },
+    "reports": {
+      "customers": {
+        "title": "Customers Report",
+        "description": "Customer base distribution across different dimensions. The period filters the creation date."
+      },
+      "opportunities": {
+        "title": "Opportunities Report",
+        "description": "Opportunity count and amount across different dimensions. The period filters the opening date."
+      },
+      "tasks": {
+        "title": "Tasks Report",
+        "description": "Task distribution across different dimensions. The period filters the due date."
+      }
+    },
+    "groupings": {
+      "CLIENT_TYPE": "Client type",
+      "SEGMENT": "Market segment",
+      "ACTIVITY_BRANCH": "Activity branch",
+      "CATEGORY": "Category",
+      "ORIGIN": "Origin",
+      "STATUS": "Status",
+      "TEAM": "Team",
+      "OWNER": "Owner",
+      "PERSON_TYPE": "Person type",
+      "STATE": "State",
+      "CITY": "City",
+      "ACTIVE": "Active / Inactive",
+      "CREATED_MONTH": "Creation month",
+      "PIPELINE": "Pipeline",
+      "STAGE": "Pipeline stage",
+      "OUTCOME": "Outcome",
+      "CUSTOMER": "Customer",
+      "WIN_REASON": "Win reason",
+      "LOSS_REASON": "Loss reason",
+      "COMPETITOR": "Competitor",
+      "OPENED_MONTH": "Opening month",
+      "EXPECTED_CLOSE_MONTH": "Expected close month",
+      "CLOSED_MONTH": "Close month",
+      "TYPE": "Type",
+      "PRIORITY": "Priority",
+      "ASSIGNEE": "Assignee",
+      "OPPORTUNITY": "Opportunity",
+      "DUE_MONTH": "Due month",
+      "COMPLETED_MONTH": "Completion month",
+      "OVERDUE": "Overdue"
+    }
+  },
+  "auditPage": {
+    "title": "Audit trail",
+    "description": "Complete trail of changes, sign-ins and data extractions.",
+    "exportButton": "Export CSV",
+    "searchPlaceholder": "Search by entity, user or IP...",
+    "emptyState": "No audit entries found.",
+    "actions": {
+      "CREATE": "Create",
+      "UPDATE": "Update",
+      "DELETE": "Delete",
+      "LOGIN": "Login",
+      "LOGIN_FAILED": "Login failed",
+      "LOGOUT": "Logout",
+      "EXPORT": "Export"
+    },
+    "filters": {
+      "entity": "Entity",
+      "action": "Action",
+      "user": "User",
+      "from": "From",
+      "to": "To"
+    },
+    "columns": {
+      "date": "Date",
+      "action": "Action",
+      "entity": "Entity",
+      "record": "Record",
+      "user": "User",
+      "ip": "IP",
+      "details": "Details"
+    },
+    "actionsColumn": {
+      "view": "View details"
+    },
+    "dialog": {
+      "title": "Audit entry details",
+      "field": "Field",
+      "previousValue": "Previous value",
+      "newValue": "New value",
+      "noChanges": "No additional detail was recorded for this event.",
+      "userAgent": "User agent"
     }
   }
 }

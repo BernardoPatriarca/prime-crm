@@ -168,7 +168,8 @@
       "holidays": "Feriados",
       "users": "Usuarios",
       "roles": "Perfiles",
-      "permissions": "Permisos"
+      "permissions": "Permisos",
+      "audit": "Auditoría"
     },
     "modules": {
       "root": "Módulos",
@@ -177,41 +178,107 @@
       "opportunities": "Oportunidades",
       "finance": "Finanzas",
       "companies": "Empresas",
-      "contacts": "Contactos"
+      "contacts": "Contactos",
+      "tasks": "Tareas"
     },
-    "comingSoon": "Próximamente"
+    "comingSoon": "Próximamente",
+    "reports": {
+      "root": "Informes",
+      "customers": "Clientes",
+      "opportunities": "Oportunidades",
+      "tasks": "Tareas"
+    }
   },
   "dashboard": {
-    "title": "Panel",
-    "phaseNotice": "El panel completo con indicadores e informes se entregará en la Fase 6 del proyecto.",
+    "title": "Dashboard",
     "greeting": "Hola, {{name}}",
-    "subtitle": "Aquí está el resumen de tu operación comercial.",
-    "demoNotice": "Las tarjetas siguientes son de muestra y aún no presentan datos reales.",
-    "placeholderTag": "Disponible en la Fase 6",
+    "subtitle": "Aquí está el resumen de su operación comercial.",
+    "refresh": "Actualizar indicadores",
+    "retry": "Intentar de nuevo",
+    "loadError": "No se pudieron cargar los indicadores. Verifique que la API esté activa e intente de nuevo.",
+    "period": {
+      "days": "Últimos {{days}} días"
+    },
+    "trend": {
+      "noBaseline": "sin base",
+      "noBaselineHint": "Sin movimiento en el período anterior para comparar.",
+      "up": "Subida del {{value}}% respecto al período anterior.",
+      "down": "Caída del {{value}}% respecto al período anterior."
+    },
     "metrics": {
+      "revenue": {
+        "label": "Ingresos ganados",
+        "hint": "{{count}} oportunidad(es) cerrada(s) en el período"
+      },
+      "pipeline": {
+        "label": "Embudo abierto",
+        "hint": "{{count}} oportunidad(es) en curso"
+      },
+      "winRate": {
+        "label": "Tasa de ganancia",
+        "hint": "{{won}} ganada(s) y {{lost}} perdida(s) en el período"
+      },
+      "averageTicket": {
+        "label": "Ticket promedio",
+        "hint": "Valor medio de las oportunidades ganadas en el período"
+      },
       "leads": {
         "label": "Nuevos leads",
-        "hint": "Leads captados en el período"
-      },
-      "opportunities": {
-        "label": "Oportunidades abiertas",
-        "hint": "Negocios en curso en el embudo"
+        "hint": "{{converted}} convertido(s) — {{rate}}% de conversión"
       },
       "customers": {
         "label": "Clientes activos",
-        "hint": "Cuentas con relación en curso"
-      },
-      "revenue": {
-        "label": "Ingresos previstos",
-        "hint": "Valor ponderado del embudo"
-      },
+        "hint": "{{count}} nuevo(s) cliente(s) en el período"
+      }
+    },
+    "charts": {
+      "monthlyTitle": "Evolución de los últimos 12 meses",
+      "monthlySubtitle": "Valor ganado por mes de cierre, comparado con el valor abierto en el mes",
+      "wonAmount": "Ganado",
+      "openedAmount": "Abierto",
+      "monthlyTooltip": "{{month}} — ganado {{won}} ({{wonCount}} negocio(s)) · abierto {{opened}}",
+      "outcomeTitle": "Resultado de las oportunidades",
+      "outcomeSubtitle": "Ganadas y perdidas en el período, comparadas con el total abierto",
+      "winRate": "de ganancia",
+      "won": "Ganadas",
+      "lost": "Perdidas",
+      "open": "Abiertas"
+    },
+    "funnel": {
+      "title": "Embudo por etapa",
+      "noPipeline": "Ningún embudo activo configurado",
+      "openBoard": "Abrir kanban",
+      "empty": "Ninguna oportunidad abierta en este embudo.",
+      "ofPipeline": "del embudo",
+      "total": "Valor total abierto:"
+    },
+    "ranking": {
+      "title": "Ranking de responsables",
+      "subtitle": "Por valor ganado en el período",
+      "empty": "Ninguna oportunidad ganada en el período.",
+      "deals": "{{count}} negocio(s)"
+    },
+    "tasks": {
+      "title": "Tareas",
+      "subtitle": "Situación actual de su agenda de seguimiento",
+      "openList": "Ver tareas",
+      "empty": "Ninguna tarea registrada todavía.",
+      "overdue": "Atrasadas",
+      "dueToday": "Vencen hoy",
+      "pending": "Pendientes",
+      "inProgress": "En curso",
+      "completedThisWeek": "Concluidas (7 días)"
+    },
+    "tooltips": {
+      "metric": "{{label}}: {{value}} — {{hint}}. {{trend}}",
+      "funnelStage": "Etapa {{stage}}: {{count}} oportunidad(es) abierta(s), sumando {{amount}} ({{share}}% del embudo).",
+      "ranking": "{{owner}} ganó {{amount}} en {{count}} negocio(s) — {{share}}% del total del ranking.",
       "tasks": {
-        "label": "Tareas pendientes",
-        "hint": "Actividades asignadas a ti"
-      },
-      "conversion": {
-        "label": "Tasa de conversión",
-        "hint": "Leads que se convirtieron en clientes"
+        "overdue": "{{count}} tarea(s) vencida(s) y todavía sin concluir.",
+        "dueToday": "{{count}} tarea(s) que vencen hoy.",
+        "pending": "{{count}} tarea(s) pendiente(s), aún sin iniciar.",
+        "inProgress": "{{count}} tarea(s) en curso.",
+        "completedThisWeek": "{{count}} tarea(s) concluida(s) en los últimos 7 días."
       }
     }
   },
@@ -797,6 +864,175 @@
         "movedFrom": "Vino de {{stage}}",
         "daysInStage": "{{days}} día(s) en la etapa anterior"
       }
+    }
+  },
+  "tasksPage": {
+    "title": "Tareas",
+    "description": "Haga seguimiento de las actividades de su operación comercial.",
+    "newButton": "Nueva Tarea",
+    "searchPlaceholder": "Buscar por título, código o descripción...",
+    "emptyState": "No se encontraron tareas.",
+    "status": {
+      "PENDING": "Pendiente",
+      "IN_PROGRESS": "En curso",
+      "DONE": "Concluida",
+      "CANCELED": "Cancelada"
+    },
+    "filters": {
+      "status": "Estado",
+      "assignee": "Responsable",
+      "due": "Vencimiento",
+      "overdue": "Atrasadas",
+      "onTime": "En plazo"
+    },
+    "badges": {
+      "overdue": "Atrasada"
+    },
+    "columns": {
+      "code": "Código",
+      "title": "Título",
+      "customer": "Cliente",
+      "assignee": "Responsable",
+      "priority": "Prioridad",
+      "dueAt": "Vencimiento",
+      "status": "Estado",
+      "actions": "Acciones"
+    },
+    "actions": {
+      "complete": "Concluir tarea"
+    },
+    "dialog": {
+      "newTitle": "Nueva Tarea",
+      "editTitle": "Editar Tarea",
+      "titleLabel": "Título",
+      "typeLabel": "Tipo",
+      "priorityLabel": "Prioridad",
+      "statusLabel": "Estado",
+      "assigneeLabel": "Responsable",
+      "dueAtLabel": "Vencimiento",
+      "reminderAtLabel": "Recordatorio",
+      "customerLabel": "Cliente",
+      "descriptionLabel": "Descripción",
+      "resultNotesLabel": "Resultado / observaciones"
+    },
+    "messages": {
+      "created": "Tarea creada con éxito",
+      "updated": "Tarea actualizada con éxito",
+      "deleted": "Tarea eliminada con éxito",
+      "completed": "Tarea concluida"
+    }
+  },
+  "reportsPage": {
+    "exportButton": "Exportar CSV",
+    "emptyState": "No se encontraron datos para los filtros seleccionados.",
+    "notInformed": "(no informado)",
+    "filters": {
+      "groupBy": "Agrupar por",
+      "from": "Desde",
+      "to": "Hasta",
+      "owner": "Responsable",
+      "assignee": "Responsable"
+    },
+    "summary": {
+      "totalCount": "Total de registros",
+      "groups": "Grupos",
+      "totalAmount": "Valor total"
+    },
+    "columns": {
+      "group": "Grupo",
+      "distribution": "Distribución",
+      "count": "Cantidad",
+      "percentage": "Porcentaje",
+      "total": "Valor"
+    },
+    "reports": {
+      "customers": {
+        "title": "Informe de Clientes",
+        "description": "Distribución de la cartera de clientes por distintas dimensiones. El período filtra la fecha de alta."
+      },
+      "opportunities": {
+        "title": "Informe de Oportunidades",
+        "description": "Cantidad y valor de las oportunidades por distintas dimensiones. El período filtra la fecha de apertura."
+      },
+      "tasks": {
+        "title": "Informe de Tareas",
+        "description": "Distribución de las tareas por distintas dimensiones. El período filtra la fecha de vencimiento."
+      }
+    },
+    "groupings": {
+      "CLIENT_TYPE": "Tipo de cliente",
+      "SEGMENT": "Segmento de mercado",
+      "ACTIVITY_BRANCH": "Ramo de actividad",
+      "CATEGORY": "Categoría",
+      "ORIGIN": "Origen",
+      "STATUS": "Estado",
+      "TEAM": "Equipo",
+      "OWNER": "Responsable",
+      "PERSON_TYPE": "Tipo de persona",
+      "STATE": "Provincia",
+      "CITY": "Ciudad",
+      "ACTIVE": "Activo / Inactivo",
+      "CREATED_MONTH": "Mes de alta",
+      "PIPELINE": "Embudo",
+      "STAGE": "Etapa del embudo",
+      "OUTCOME": "Resultado",
+      "CUSTOMER": "Cliente",
+      "WIN_REASON": "Motivo de ganancia",
+      "LOSS_REASON": "Motivo de pérdida",
+      "COMPETITOR": "Competidor",
+      "OPENED_MONTH": "Mes de apertura",
+      "EXPECTED_CLOSE_MONTH": "Mes previsto de cierre",
+      "CLOSED_MONTH": "Mes de cierre",
+      "TYPE": "Tipo",
+      "PRIORITY": "Prioridad",
+      "ASSIGNEE": "Responsable",
+      "OPPORTUNITY": "Oportunidad",
+      "DUE_MONTH": "Mes de vencimiento",
+      "COMPLETED_MONTH": "Mes de finalización",
+      "OVERDUE": "Atrasadas"
+    }
+  },
+  "auditPage": {
+    "title": "Auditoría",
+    "description": "Traza completa de cambios, accesos y extracciones de datos.",
+    "exportButton": "Exportar CSV",
+    "searchPlaceholder": "Buscar por entidad, usuario o IP...",
+    "emptyState": "No se encontraron registros de auditoría.",
+    "actions": {
+      "CREATE": "Creación",
+      "UPDATE": "Modificación",
+      "DELETE": "Eliminación",
+      "LOGIN": "Inicio de sesión",
+      "LOGIN_FAILED": "Inicio rechazado",
+      "LOGOUT": "Cierre de sesión",
+      "EXPORT": "Exportación"
+    },
+    "filters": {
+      "entity": "Entidad",
+      "action": "Acción",
+      "user": "Usuario",
+      "from": "Desde",
+      "to": "Hasta"
+    },
+    "columns": {
+      "date": "Fecha",
+      "action": "Acción",
+      "entity": "Entidad",
+      "record": "Registro",
+      "user": "Usuario",
+      "ip": "IP",
+      "details": "Detalles"
+    },
+    "actionsColumn": {
+      "view": "Ver detalles"
+    },
+    "dialog": {
+      "title": "Detalles del registro de auditoría",
+      "field": "Campo",
+      "previousValue": "Valor anterior",
+      "newValue": "Nuevo valor",
+      "noChanges": "No se registró ningún detalle adicional para este evento.",
+      "userAgent": "Navegador"
     }
   }
 }

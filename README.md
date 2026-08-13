@@ -4,7 +4,7 @@
 
 CRM corporativo, configurável e escalável, construído com **Angular + Spring Boot + PostgreSQL + PrimeNG**. Monorepo com backend e frontend no mesmo repositório.
 
-Estado atual: **Fase 0 (Fundação) + Fase 1 (Parametrização e RBAC)** concluídas. Veja [CHANGELOG.md](CHANGELOG.md) para o detalhe do que foi entregue e [Roadmap](#roadmap) para o que vem a seguir.
+Estado atual: **Fase 0 (Fundação)**, **Fase 1 (Parametrização e RBAC)** e **Fase 2 (Núcleo Comercial)** concluídas; **Fase 3** em andamento (Tarefas, Relatórios e Auditoria consultável entregues). Veja [CHANGELOG.md](CHANGELOG.md) para o detalhe do que foi entregue e [Roadmap](#roadmap) para o que vem a seguir.
 
 ## Stack
 
@@ -74,7 +74,7 @@ Esse usuário é criado pela migration de seed com o perfil **Administrador**, q
 ## Testes
 
 ```bash
-cd backend && ./mvnw verify     # 93 testes (services + controllers)
+cd backend && ./mvnw verify     # 177 testes (services + controllers)
 cd frontend && npm test         # testes de componentes, stores e guards
 cd frontend && npm run build    # build de producao
 ```
@@ -93,12 +93,15 @@ Sobe PostgreSQL + backend + frontend (Nginx na porta 4200, API na 8080). Para o 
 
 Depois de logar com o usuário admin:
 
+- **Dashboard**: indicadores do período com variação contra o período anterior, gráfico de 12 meses, rosca de ganhas/perdidas/abertas, funil por etapa e ranking de responsáveis — todos com dados reais do banco.
 - **Layout**: sidebar recolhível, tema claro/escuro (menu do usuário), troca de idioma entre pt-BR, inglês e espanhol em runtime, responsivo em desktop, tablet e mobile.
 - **Cadastros Gerais** (`Configurações → Cadastros Gerais`): 16 cadastros parametrizáveis (tipos de cliente/pessoa/empresa, segmentos, ramos de atividade, origens do lead, motivos de perda/ganho, status, prioridades, tipos de tarefa, categorias, tags, equipes, cargos, departamentos) — todos com CRUD, cor, ícone, ordenação por drag and drop e ativar/inativar.
 - **Pipelines**: funis e suas etapas, com probabilidade padrão, SLA em dias, cor e reordenação.
 - **Campos Personalizados**, **Templates**, **Configurações Gerais** e **Feriados**.
 - **Usuários, Perfis e Permissões**: criar usuários, atribuir perfis, vincular permissões por módulo, ativar/inativar/bloquear, redefinir senha. Crie um usuário com um perfil restrito e faça login com ele para ver os menus e botões sumirem conforme as permissões.
-- **Auditoria**: toda criação, edição e exclusão grava em `audit_log`. Para conferir: `psql -U postgres -d primecrm -c "SELECT entity_name, action, user_email, created_at FROM audit_log ORDER BY created_at DESC LIMIT 10;"`
+- **Tarefas**: atividades de follow-up com tipo, prioridade, responsável, vencimento e vínculo opcional a cliente, contato, lead ou oportunidade. Filtros por status, responsável e atraso, com ação rápida de concluir.
+- **Relatórios** (`Relatórios → Clientes / Oportunidades / Tarefas`): 35 agrupamentos no total (por tipo, segmento, UF, responsável, etapa do funil, desfecho, motivo de perda, mês de abertura/vencimento, em atraso etc.), com filtro de período e responsável, percentual por grupo, soma de valores nas oportunidades e exportação em CSV.
+- **Auditoria** (`Configurações → Auditoria`): tela com filtros por entidade, ação, usuário e período, detalhe do diff campo a campo e exportação CSV. Além de criação/edição/exclusão, o log registra login, login recusado, logout e toda exportação de dados. Também dá para conferir direto no banco: `psql -U postgres -d primecrm -c "SELECT entity_name, action, user_email, created_at FROM audit_log ORDER BY created_at DESC LIMIT 10;"`
 - **API**: todos os endpoints documentados e testáveis pelo Swagger UI.
 
 ## Massa de dados para demonstração
@@ -136,10 +139,10 @@ Ver [CLAUDE.md](CLAUDE.md) — estrutura de pastas, convenções de código, com
 - [x] **Fase 0** — Fundação: monorepo, autenticação JWT, layout base, CI
 - [x] **Fase 1** — Parametrização (engine genérico + módulos dedicados) e RBAC (Usuários/Perfis/Permissões)
 - [x] **Fase 2** — Núcleo Comercial: Clientes, Empresas, Contatos, Leads, Funil/Kanban de Oportunidades
-- [ ] **Fase 3** — Produtividade: Tarefas, Agenda/Calendário, Notificações em tempo real
+- [~] **Fase 3** — Produtividade: **Tarefas** e **Relatórios de extração** entregues; Agenda/Calendário e Notificações em tempo real pendentes
 - [ ] **Fase 4** — Comercial Avançado: Produtos/Serviços, Propostas, Pedidos, Contratos
 - [ ] **Fase 5** — Financeiro e Documentos
-- [ ] **Fase 6** — Dashboards e Relatórios com dados reais
+- [~] **Fase 6** — Dashboards e Relatórios com dados reais: **dashboard e relatórios de extração entregues**; dashboards por módulo e metas pendentes
 - [ ] **Fase 7** — Qualidade e Hardening: auditoria avançada, performance, segurança
 
 Itens fora de escopo até segunda ordem (dependem de credenciais/integrações externas ou de módulos futuros): SMTP real, WhatsApp Business API, Google Calendar/Contacts, Zapier, Meta/Google Ads, Webhooks, Chaves de API, notificações multicanal, backup automatizado, metas comerciais, multi-moeda.

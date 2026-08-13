@@ -32,7 +32,7 @@
   top: 0;
   bottom: 0;
   left: 0;
-  z-index: 1100;
+  z-index: 900;
   width: 280px;
   box-shadow: var(--pc-shadow-lg);
 }
@@ -40,7 +40,7 @@
 .app-sidebar__backdrop {
   position: fixed;
   inset: 0;
-  z-index: 1099;
+  z-index: 899;
   background: rgb(15 23 42 / 42%);
   backdrop-filter: blur(2px);
   animation: pc-fade-in var(--pc-duration) var(--pc-ease-out) both;

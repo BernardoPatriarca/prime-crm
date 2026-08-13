@@ -4,35 +4,222 @@
       <h1>{{ 'dashboard.greeting' | translate: { name: firstName() } }}</h1>
       <p>{{ 'dashboard.subtitle' | translate }}</p>
     </div>
-    <p-tag severity="info" icon="pi pi-clock" [value]="'dashboard.placeholderTag' | translate" />
+
+    <div class="dashboard__actions">
+      <p-selectbutton
+        [ngModel]="periodDays()"
+        (ngModelChange)="onPeriodChange($event)"
+        [options]="periodOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [allowEmpty]="false"
+        size="small"
+        data-testid="dashboard-period"
+      />
+      <p-button
+        icon="pi pi-refresh"
+        severity="secondary"
+        [text]="true"
+        [rounded]="true"
+        [loading]="loading()"
+        [pTooltip]="'dashboard.refresh' | translate"
+        tooltipPosition="left"
+        [ariaLabel]="'dashboard.refresh' | translate"
+        (onClick)="load()"
+        data-testid="dashboard-refresh"
+      />
+    </div>
   </header>
 
-  <p-message severity="info" icon="pi pi-info-circle" styleClass="dashboard__notice pc-enter-fade">
-    {{ 'dashboard.demoNotice' | translate }}
-  </p-message>
+  @if (failed()) {
+    <p-card styleClass="dashboard__empty">
+      <i class="pi pi-exclamation-triangle"></i>
+      <p>{{ 'dashboard.loadError' | translate }}</p>
+      <p-button [label]="'dashboard.retry' | translate" severity="secondary" (onClick)="load()" />
+    </p-card>
+  } @else if (loading() && !data()) {
+    <div class="dashboard__metrics">
+      @for (placeholder of [0, 1, 2, 3, 4, 5]; track placeholder) {
+        <p-skeleton height="7.5rem" />
+      }
+    </div>
+    <div class="dashboard__grid">
+      <p-skeleton height="20rem" />
+      <p-skeleton height="20rem" />
+    </div>
+  } @else if (data(); as dashboard) {
+    <div class="dashboard__metrics pc-stagger">
+      @for (card of metricCards(); track card.key) {
+        <p-card styleClass="dashboard__metric pc-hover-lift">
+          <div class="dashboard__metric-body" [pTooltip]="card.tooltip" tooltipPosition="top" [showDelay]="150">
+            <div class="dashboard__metric-top">
+              <span class="dashboard__metric-icon" [attr.data-accent]="card.accent">
+                <i [class]="card.icon"></i>
+              </span>
+              @if (card.trend !== null) {
+                <p-tag
+                  [severity]="trendSeverity(card.trend)"
+                  [icon]="trendIcon(card.trend)"
+                  [value]="trendLabel(card.trend)"
+                />
+              }
+            </div>
 
-  <div class="dashboard__metrics pc-stagger">
-    @for (metric of metrics; track metric.key) {
-      <p-card styleClass="dashboard__metric pc-hover-lift">
-        <div class="dashboard__metric-top">
-          <span class="dashboard__metric-icon"><i [class]="metric.icon"></i></span>
-          <p-tag severity="secondary" [value]="'dashboard.placeholderTag' | translate" />
+            <p class="dashboard__metric-value">{{ card.value }}</p>
+            <p class="dashboard__metric-label">{{ 'dashboard.metrics.' + card.key + '.label' | translate }}</p>
+            <p class="dashboard__metric-hint">{{ card.hint }}</p>
+          </div>
+        </p-card>
+      }
+    </div>
+
+    <div class="dashboard__grid">
+      <p-card styleClass="dashboard__panel">
+        <div class="dashboard__panel-header">
+          <div>
+            <h2>{{ 'dashboard.charts.monthlyTitle' | translate }}</h2>
+            <p>{{ 'dashboard.charts.monthlySubtitle' | translate }}</p>
+          </div>
+          <div class="dashboard__legend">
+            <span class="dashboard__legend-item dashboard__legend-item--solid">
+              {{ 'dashboard.charts.wonAmount' | translate }}
+            </span>
+            <span class="dashboard__legend-item dashboard__legend-item--dashed">
+              {{ 'dashboard.charts.openedAmount' | translate }}
+            </span>
+          </div>
         </div>
 
-        <p class="dashboard__metric-value" aria-hidden="true">&mdash;</p>
-        <p class="dashboard__metric-label">{{ 'dashboard.metrics.' + metric.key + '.label' | translate }}</p>
-        <p class="dashboard__metric-hint">{{ 'dashboard.metrics.' + metric.key + '.hint' | translate }}</p>
+        <app-area-chart [points]="monthlyPoints()" gradientId="dashboard-monthly" />
+      </p-card>
+
+      <p-card styleClass="dashboard__panel">
+        <div class="dashboard__panel-header">
+          <div>
+            <h2>{{ 'dashboard.charts.outcomeTitle' | translate }}</h2>
+            <p>{{ 'dashboard.charts.outcomeSubtitle' | translate }}</p>
+          </div>
+        </div>
+
+        <div class="dashboard__donut">
+          <app-donut-chart
+            [segments]="outcomeSegments()"
+            [centerValue]="dashboard.metrics.winRate + '%'"
+            [centerLabel]="'dashboard.charts.winRate' | translate"
+          />
+        </div>
+      </p-card>
+    </div>
+
+    @if (canSeeOpportunities()) {
+      <div class="dashboard__grid">
+        <p-card styleClass="dashboard__panel">
+          <div class="dashboard__panel-header">
+            <div>
+              <h2>{{ 'dashboard.funnel.title' | translate }}</h2>
+              <p>{{ dashboard.funnel.pipelineName ?? ('dashboard.funnel.noPipeline' | translate) }}</p>
+            </div>
+            <a routerLink="/oportunidades" class="dashboard__link">
+              {{ 'dashboard.funnel.openBoard' | translate }} <i class="pi pi-arrow-right"></i>
+            </a>
+          </div>
+
+          @if (funnelBars().length === 0) {
+            <p class="dashboard__empty-text">{{ 'dashboard.funnel.empty' | translate }}</p>
+          } @else {
+            <ul class="funnel">
+              @for (stage of funnelBars(); track stage.name) {
+                <li class="funnel__row" [pTooltip]="stage.tooltip" tooltipPosition="top" [showDelay]="150">
+                  <div class="funnel__head">
+                    <span class="funnel__name">
+                      <span class="funnel__dot" [style.background]="stage.color"></span>
+                      {{ stage.name }}
+                    </span>
+                    <span class="funnel__numbers">
+                      <strong>{{ stage.count }}</strong>
+                      <span class="funnel__amount">{{ formatCompact(stage.amount) }}</span>
+                    </span>
+                  </div>
+                  <div class="funnel__track">
+                    <div class="funnel__bar" [style.width.%]="stage.width" [style.background]="stage.color"></div>
+                  </div>
+                  <span class="funnel__share">{{ stage.share }}% {{ 'dashboard.funnel.ofPipeline' | translate }}</span>
+                </li>
+              }
+            </ul>
+
+            <p class="funnel__total">
+              {{ 'dashboard.funnel.total' | translate }} <strong>{{ formatAmount(funnelTotalAmount()) }}</strong>
+            </p>
+          }
+        </p-card>
+
+        <p-card styleClass="dashboard__panel">
+          <div class="dashboard__panel-header">
+            <div>
+              <h2>{{ 'dashboard.ranking.title' | translate }}</h2>
+              <p>{{ 'dashboard.ranking.subtitle' | translate }}</p>
+            </div>
+          </div>
+
+          @if (dashboard.ranking.length === 0) {
+            <p class="dashboard__empty-text">{{ 'dashboard.ranking.empty' | translate }}</p>
+          } @else {
+            <ol class="ranking">
+              @for (row of dashboard.ranking; track row.owner; let index = $index) {
+                <li class="ranking__row" [pTooltip]="rankingTooltip(row)" tooltipPosition="top" [showDelay]="150">
+                  <span class="ranking__position" [class.ranking__position--first]="index === 0">{{ index + 1 }}</span>
+                  <div class="ranking__content">
+                    <div class="ranking__head">
+                      <span class="ranking__name">{{ row.owner }}</span>
+                      <strong>{{ formatAmount(row.amount) }}</strong>
+                    </div>
+                    <div class="ranking__track">
+                      <div class="ranking__bar" [style.width.%]="row.share"></div>
+                    </div>
+                    <span class="ranking__meta">
+                      {{ 'dashboard.ranking.deals' | translate: { count: row.count } }} · {{ row.share }}%
+                    </span>
+                  </div>
+                </li>
+              }
+            </ol>
+          }
+        </p-card>
+      </div>
+    }
+
+    @if (canSeeTasks()) {
+      <p-card styleClass="dashboard__panel">
+        <div class="dashboard__panel-header">
+          <div>
+            <h2>{{ 'dashboard.tasks.title' | translate }}</h2>
+            <p>{{ 'dashboard.tasks.subtitle' | translate }}</p>
+          </div>
+          <a routerLink="/tarefas" class="dashboard__link">
+            {{ 'dashboard.tasks.openList' | translate }} <i class="pi pi-arrow-right"></i>
+          </a>
+        </div>
+
+        @if (!hasTasks()) {
+          <p class="dashboard__empty-text">{{ 'dashboard.tasks.empty' | translate }}</p>
+        } @else {
+          <div class="tasks">
+            @for (card of taskCards(); track card.key) {
+              <div
+                class="tasks__item"
+                [attr.data-variant]="card.variant"
+                [pTooltip]="card.tooltip"
+                tooltipPosition="top"
+                [showDelay]="150"
+              >
+                <span class="tasks__value">{{ card.value }}</span>
+                <span class="tasks__label">{{ 'dashboard.tasks.' + card.key | translate }}</span>
+              </div>
+            }
+          </div>
+        }
       </p-card>
     }
-  </div>
-
-  <p-card styleClass="dashboard__phase pc-enter">
-    <div class="dashboard__phase-content">
-      <span class="dashboard__phase-icon"><i class="pi pi-compass"></i></span>
-      <div>
-        <h2>{{ 'dashboard.title' | translate }}</h2>
-        <p>{{ 'dashboard.phaseNotice' | translate }}</p>
-      </div>
-    </div>
-  </p-card>
+  }
 </section>

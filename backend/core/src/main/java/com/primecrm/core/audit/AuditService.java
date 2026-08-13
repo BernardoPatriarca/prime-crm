@@ -18,8 +18,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuditService {
 
+    private static final String SESSION_ENTITY = "Session";
+
     private final ApplicationEventPublisher eventPublisher;
     private final ObjectProvider<AuditRequestContext> requestContextProvider;
+    private final AuditLogWriter auditLogWriter;
 
     public Map<String, Object> snapshot(Object entity) {
         return AuditChanges.snapshot(entity);
@@ -57,6 +60,20 @@ public class AuditService {
         } catch (RuntimeException ex) {
             log.error("Falha ao preparar registro de auditoria {} de {} [{}]", action, entityName, entityId, ex);
         }
+    }
+
+    public void recordSecurityEvent(AuditAction action, UUID userId, String userEmail, Map<String, Object> details) {
+        AuditRequestContext requestContext = currentRequestContext();
+        auditLogWriter.write(new AuditEntry(
+                SESSION_ENTITY,
+                userId,
+                action,
+                details,
+                userId,
+                userEmail,
+                requestContext == null ? null : requestContext.currentIpAddress(),
+                requestContext == null ? null : requestContext.currentUserAgent(),
+                TenantContext.getCurrentTenant()));
     }
 
     private AuthenticatedUser currentUser() {

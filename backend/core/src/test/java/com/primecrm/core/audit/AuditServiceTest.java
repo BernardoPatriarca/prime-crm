@@ -38,12 +38,14 @@ class AuditServiceTest {
     private ObjectProvider<AuditRequestContext> requestContextProvider;
     @Mock
     private AuditRequestContext requestContext;
+    @Mock
+    private AuditLogWriter auditLogWriter;
 
     private AuditService auditService;
 
     @BeforeEach
     void setUp() {
-        auditService = new AuditService(eventPublisher, requestContextProvider);
+        auditService = new AuditService(eventPublisher, requestContextProvider, auditLogWriter);
     }
 
     @AfterEach

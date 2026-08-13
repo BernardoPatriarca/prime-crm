@@ -1,0 +1,32 @@
+<svg class="area-chart" [attr.viewBox]="viewBox" role="img">
+  <defs>
+    <linearGradient [attr.id]="gradientId()" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" class="area-chart__gradient-start" />
+      <stop offset="100%" class="area-chart__gradient-end" />
+    </linearGradient>
+  </defs>
+
+  @for (line of gridLines(); track line) {
+    <line class="area-chart__grid" x1="0" [attr.y1]="line" x2="720" [attr.y2]="line" />
+  }
+
+  @if (plotted().length > 0) {
+    <path class="area-chart__area" [attr.d]="areaPath()" [attr.fill]="'url(#' + gradientId() + ')'" />
+
+    @if (secondaryPath()) {
+      <path class="area-chart__secondary" [attr.d]="secondaryPath()" />
+    }
+
+    <path class="area-chart__line" [attr.d]="linePath()" />
+
+    @for (point of plotted(); track point.label) {
+      <circle class="area-chart__dot" [attr.cx]="point.x" [attr.cy]="point.y" r="4">
+        <title>{{ point.tooltip ?? point.label }}</title>
+      </circle>
+
+      @if (point.showLabel) {
+        <text class="area-chart__label" [attr.x]="point.x" [attr.y]="labelBaseline">{{ point.label }}</text>
+      }
+    }
+  }
+</svg>

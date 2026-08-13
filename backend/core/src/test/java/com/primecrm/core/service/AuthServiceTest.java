@@ -27,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import com.primecrm.core.audit.AuditService;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,6 +45,8 @@ class AuthServiceTest {
     private JwtTokenProvider jwtTokenProvider;
     @Mock
     private UserAuthorityResolver authorityResolver;
+    @Mock
+    private AuditService auditService;
 
     private AuthService authService;
 
@@ -53,7 +56,7 @@ class AuthServiceTest {
     @BeforeEach
     void setUp() {
         authService = new AuthService(userRepository, refreshTokenRepository, passwordEncoder,
-                jwtTokenProvider, authorityResolver);
+                jwtTokenProvider, authorityResolver, auditService);
 
         adminUser = new User();
         adminUser.setId(UUID.randomUUID());
