@@ -55,6 +55,93 @@ export class SidebarComponent {
       }
     ];
 
+    if (hasPermission('CLIENTES_VIEW')) {
+      items.push({
+        label: t('sidebar.modules.customers'),
+        icon: 'pi pi-building',
+        routerLink: '/clientes'
+      });
+    }
+
+    if (hasPermission('OPORTUNIDADES_VIEW')) {
+      items.push({
+        label: t('sidebar.modules.opportunities'),
+        icon: 'pi pi-chart-line',
+        routerLink: '/oportunidades'
+      });
+    }
+
+    if (hasPermission('TAREFAS_VIEW')) {
+      items.push({
+        label: t('sidebar.modules.tasks'),
+        icon: 'pi pi-check-square',
+        routerLink: '/tarefas'
+      });
+    }
+
+    const commercialChildren: MenuItem[] = [];
+
+    if (hasPermission('LEADS_VIEW')) {
+      commercialChildren.push({
+        label: t('sidebar.modules.leads'),
+        icon: 'pi pi-bullseye',
+        routerLink: '/leads'
+      });
+    }
+
+    if (hasPermission('CONTATOS_VIEW')) {
+      commercialChildren.push({
+        label: t('sidebar.modules.contacts'),
+        icon: 'pi pi-id-card',
+        routerLink: '/contatos'
+      });
+    }
+
+    if (hasPermission('CLIENTES_VIEW')) {
+      commercialChildren.push({
+        label: t('sidebar.modules.companies'),
+        icon: 'pi pi-briefcase',
+        routerLink: '/empresas'
+      });
+    }
+
+    commercialChildren.push({
+      label: t('sidebar.modules.finance'),
+      icon: 'pi pi-wallet',
+      disabled: true,
+      badge: t('sidebar.comingSoon')
+    });
+
+    items.push({
+      label: t('sidebar.modules.root'),
+      icon: 'pi pi-th-large',
+      items: commercialChildren
+    });
+
+    if (hasPermission('RELATORIOS_VIEW')) {
+      items.push({
+        label: t('sidebar.reports.root'),
+        icon: 'pi pi-chart-bar',
+        items: [
+          {
+            label: t('sidebar.reports.customers'),
+            icon: 'pi pi-building',
+            routerLink: '/relatorios/customers'
+          },
+          {
+            label: t('sidebar.reports.opportunities'),
+            icon: 'pi pi-chart-line',
+            routerLink: '/relatorios/opportunities'
+          },
+          {
+            label: t('sidebar.reports.tasks'),
+            icon: 'pi pi-check-square',
+            routerLink: '/relatorios/tasks'
+          }
+        ]
+      });
+    }
+
     const settingsChildren: MenuItem[] = [];
 
     if (hasPermission('DOMINIOS_VIEW')) {
@@ -132,6 +219,14 @@ export class SidebarComponent {
       });
     }
 
+    if (hasPermission('AUDITORIA_VIEW')) {
+      settingsChildren.push({
+        label: t('sidebar.settings.audit'),
+        icon: 'pi pi-history',
+        routerLink: '/configuracoes/auditoria'
+      });
+    }
+
     if (settingsChildren.length > 0) {
       items.push({
         label: t('sidebar.settings.root'),
@@ -139,58 +234,6 @@ export class SidebarComponent {
         items: settingsChildren
       });
     }
-
-    const moduleChildren: MenuItem[] = [];
-
-    if (hasPermission('CLIENTES_VIEW')) {
-      moduleChildren.push({
-        label: t('sidebar.modules.customers'),
-        icon: 'pi pi-building',
-        routerLink: '/clientes'
-      });
-      moduleChildren.push({
-        label: t('sidebar.modules.companies'),
-        icon: 'pi pi-briefcase',
-        routerLink: '/empresas'
-      });
-    }
-
-    if (hasPermission('CONTATOS_VIEW')) {
-      moduleChildren.push({
-        label: t('sidebar.modules.contacts'),
-        icon: 'pi pi-id-card',
-        routerLink: '/contatos'
-      });
-    }
-
-    if (hasPermission('LEADS_VIEW')) {
-      moduleChildren.push({
-        label: t('sidebar.modules.leads'),
-        icon: 'pi pi-bullseye',
-        routerLink: '/leads'
-      });
-    }
-
-    if (hasPermission('OPORTUNIDADES_VIEW')) {
-      moduleChildren.push({
-        label: t('sidebar.modules.opportunities'),
-        icon: 'pi pi-chart-line',
-        routerLink: '/oportunidades'
-      });
-    }
-
-    moduleChildren.push({
-      label: t('sidebar.modules.finance'),
-      icon: 'pi pi-wallet',
-      disabled: true,
-      badge: t('sidebar.comingSoon')
-    });
-
-    items.push({
-      label: t('sidebar.modules.root'),
-      icon: 'pi pi-th-large',
-      items: moduleChildren
-    });
 
     if (!railMode) {
       return items;

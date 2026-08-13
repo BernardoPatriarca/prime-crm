@@ -1,6 +1,7 @@
 package com.primecrm.infra.repository;
 
 import com.primecrm.infra.entity.commercial.Customer;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -25,4 +26,8 @@ public interface CustomerRepository extends JpaRepository<Customer, UUID>, JpaSp
     boolean existsByDocumentAndDeletedAtIsNull(String document);
 
     boolean existsByDocumentAndIdNotAndDeletedAtIsNull(String document, UUID id);
+
+    long countByActiveIsTrueAndDeletedAtIsNull();
+
+    long countByDeletedAtIsNullAndCreatedAtGreaterThanEqualAndCreatedAtLessThan(Instant from, Instant to);
 }

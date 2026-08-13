@@ -1,0 +1,126 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'reportsPage.reports.' + report() + '.title' | translate }}</h1>
+      <p>{{ 'reportsPage.reports.' + report() + '.description' | translate }}</p>
+    </div>
+    @if (canExport()) {
+      <p-button
+        icon="pi pi-download"
+        severity="secondary"
+        [outlined]="true"
+        [label]="'reportsPage.exportButton' | translate"
+        [loading]="exporting()"
+        [disabled]="!result() || result()!.rows.length === 0"
+        (onClick)="export()"
+        data-testid="report-export-button"
+      />
+    }
+  </div>
+
+  <div class="report-filters filter-bar">
+    <p-select
+      [ngModel]="groupBy()"
+      (ngModelChange)="groupBy.set($event); onFilterChange()"
+      [options]="groupByOptions()"
+      optionLabel="label"
+      optionValue="value"
+      [placeholder]="'reportsPage.filters.groupBy' | translate"
+      data-testid="report-groupby-select"
+    />
+    <p-datepicker
+      [ngModel]="from()"
+      (ngModelChange)="from.set($event); onFilterChange()"
+      dateFormat="dd/mm/yy"
+      [showIcon]="true"
+      [showClear]="true"
+      [placeholder]="'reportsPage.filters.from' | translate"
+    />
+    <p-datepicker
+      [ngModel]="to()"
+      (ngModelChange)="to.set($event); onFilterChange()"
+      dateFormat="dd/mm/yy"
+      [showIcon]="true"
+      [showClear]="true"
+      [placeholder]="'reportsPage.filters.to' | translate"
+    />
+    <p-select
+      [ngModel]="userId()"
+      (ngModelChange)="userId.set($event); onFilterChange()"
+      [options]="userOptions()"
+      optionLabel="name"
+      optionValue="id"
+      [showClear]="true"
+      [filter]="true"
+      filterBy="name"
+      [placeholder]="userLabel()"
+    />
+    <p-button
+      icon="pi pi-filter-slash"
+      severity="secondary"
+      [text]="true"
+      [label]="'common.actions.clearFilters' | translate"
+      (onClick)="clearFilters()"
+    />
+  </div>
+
+  @if (loading()) {
+    <div class="report-summary">
+      <p-skeleton height="5rem" />
+      <p-skeleton height="5rem" />
+      <p-skeleton height="5rem" />
+    </div>
+    <p-skeleton height="20rem" />
+  } @else if (result(); as report) {
+    <div class="report-summary">
+      <div class="report-card">
+        <span class="report-card__label">{{ 'reportsPage.summary.totalCount' | translate }}</span>
+        <strong class="report-card__value">{{ report.totalCount }}</strong>
+      </div>
+      <div class="report-card">
+        <span class="report-card__label">{{ 'reportsPage.summary.groups' | translate }}</span>
+        <strong class="report-card__value">{{ report.rows.length }}</strong>
+      </div>
+      @if (report.measured) {
+        <div class="report-card">
+          <span class="report-card__label">{{ 'reportsPage.summary.totalAmount' | translate }}</span>
+          <strong class="report-card__value">{{ formatAmount(report.totalAmount) }}</strong>
+        </div>
+      }
+    </div>
+
+    @if (report.rows.length === 0) {
+      <div class="table-empty-state">
+        <i class="pi pi-chart-bar"></i>
+        <p>{{ 'reportsPage.emptyState' | translate }}</p>
+      </div>
+    } @else {
+      <p-table [value]="report.rows" styleClass="report-table" dataKey="label">
+        <ng-template #header>
+          <tr>
+            <th>{{ 'reportsPage.columns.group' | translate }}</th>
+            <th class="report-table__distribution">{{ 'reportsPage.columns.distribution' | translate }}</th>
+            <th class="report-table__numeric">{{ 'reportsPage.columns.count' | translate }}</th>
+            <th class="report-table__numeric">{{ 'reportsPage.columns.percentage' | translate }}</th>
+            @if (report.measured) {
+              <th class="report-table__numeric">{{ 'reportsPage.columns.total' | translate }}</th>
+            }
+          </tr>
+        </ng-template>
+        <ng-template #body let-row>
+          <tr>
+            <td class="cell-strong">{{ row.label ?? ('reportsPage.notInformed' | translate) }}</td>
+            <td class="report-table__distribution">
+              <div class="report-bar" [style.--report-bar-width.%]="row.percentage"></div>
+            </td>
+            <td class="report-table__numeric">{{ row.count }}</td>
+            <td class="report-table__numeric cell-muted">{{ row.percentage }}%</td>
+            @if (report.measured) {
+              <td class="report-table__numeric">{{ formatAmount(row.total) }}</td>
+            }
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  }
+</div>

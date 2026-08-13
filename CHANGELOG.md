@@ -2,6 +2,52 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fase 3] — Tarefas, Relatórios e Auditoria consultável
+
+### Banco de dados
+Migrations `V19` a `V21`: tabela `tasks` (com sequence do código legível `TAR-001042`), expansão do `CHECK` de `audit_log.action` para incluir eventos de sessão e extração (`LOGIN`, `LOGIN_FAILED`, `LOGOUT`, `EXPORT`) mais índices de apoio à tela de auditoria, e 9 permissões novas (`TAREFAS_*`, `RELATORIOS_*`, `AUDITORIA_*`) concedidas ao perfil Administrador.
+
+**Decisões de modelagem**: a tarefa é genérica e se liga *opcionalmente* a cliente, contato, lead e oportunidade — em vez de uma tabela de atividade por módulo. Tipo e prioridade reaproveitam o engine `domain_values` (`TASK_TYPE` / `PRIORITY`), então não há enum fixo no código para eles; só `status` é enum, por ter regra de negócio associada (concluir preenche `completed_at`, sair de concluída limpa).
+
+### Backend
+- **Tarefas**: CRUD completo com filtros (status, tipo, prioridade, responsável, cliente, lead, oportunidade, período de vencimento e atraso), busca textual, paginação, RBAC e auditoria. `PATCH /tasks/{id}/status` para concluir/reabrir sem enviar o registro inteiro.
+- **Relatórios** (`/api/v1/reports/{customers|opportunities|tasks}`): agregação genérica por dimensão. Um único executor (`ReportAggregator`) monta `group by` + `count` + `sum` via Criteria API; cada relatório declara suas dimensões em um enum (`CustomerReportGroupBy`, `OpportunityReportGroupBy`, `TaskReportGroupBy`), então adicionar um agrupamento novo é uma linha de enum, não um endpoint novo. São 35 agrupamentos no total — inclusive agrupamentos por mês (`to_char`) e um `CASE` para "em atraso". Oportunidades também somam o valor (`amount`). Exportação em CSV por relatório.
+- **Auditoria consultável**: a gravação já existia desde a Fase 1; agora existe API de leitura (`/api/v1/audit-logs`) com filtros por entidade, registro, ação, usuário e período, linha do tempo de um registro específico e exportação CSV. A cobertura foi ampliada para **eventos de sessão** (login, login recusado e logout) e **extrações de dados** — relatórios e exportações registram a si mesmos no log. Eventos de sessão são gravados em transação própria (`REQUIRES_NEW`), e não pelo listener de after-commit, senão um login recusado (que faz rollback) nunca seria auditado.
+
+### Frontend
+- **Sidebar reorganizada**: Clientes, Oportunidades e Tarefas passam a ser itens de primeiro nível, fora de qualquer submenu; Leads, Contatos, Empresas e Financeiro ficam em "Módulos"; e entram os grupos "Relatórios" e "Auditoria" (dentro de Configurações). Todos os itens continuam filtrados por permissão.
+- **Tarefas**: listagem com filtros de status, responsável e atraso, destaque visual de tarefas vencidas, ação rápida de concluir e dialog de CRUD.
+- **Relatórios**: uma única tela (`/relatorios/:report`) atende os três relatórios, com seletor de agrupamento, período, responsável, cartões de totais, barra de distribuição por linha e exportação CSV.
+- **Auditoria**: listagem com filtros e dialog de detalhes que renderiza o diff campo a campo (valor anterior → novo valor) e os metadados do evento (IP, navegador, usuário).
+
+### Dashboard com dados reais
+
+Os cartões demonstrativos saíram; o dashboard agora consome `GET /api/v1/dashboard`, que devolve tudo em **uma chamada** — indicadores do período, funil, série mensal, ranking e tarefas — em vez de a tela orquestrar seis requisições.
+
+- **Seis indicadores** com comparação contra o período imediatamente anterior de mesmo tamanho (receita ganha, pipeline aberto, taxa de ganho, ticket médio, novos leads e clientes ativos). Quando não há período anterior com movimento, a variação vem nula e a tela mostra "sem base" em vez de um falso 0%/100%.
+- **Gráficos em SVG, sem dependência nova**: nenhuma biblioteca de chart foi adicionada. São dois componentes reutilizáveis em `shared/components/charts` — área/linha (12 meses, ganho preenchido + aberto tracejado, com tooltip nativo por ponto) e rosca (ganhas/perdidas/em aberto, com a taxa de ganho no centro). Ambos usam as variáveis de tema do preset, então respondem a tema claro/escuro sem código extra.
+- **Funil por etapa** com barras na cor da própria etapa, proporcionais à maior etapa, e o percentual de cada uma sobre o funil; **ranking de responsáveis** por valor ganho, com barra de participação.
+- **Período selecionável** (7/30/90 dias) e recarga manual, com skeleton no primeiro carregamento e estado de erro com botão de tentar novamente.
+- Os blocos de funil/ranking e de tarefas só aparecem para quem tem `OPORTUNIDADES_VIEW` e `TAREFAS_VIEW`; o endpoint em si exige apenas usuário autenticado.
+
+**Fuso horário**: as fronteiras de período são calculadas em `America/Sao_Paulo` e não em UTC — senão "hoje" e "este mês" mudariam de valor às 21h no horário de Brasília.
+
+**Grid e responsividade**: o layout usa **container queries** (`@container`), não media queries de viewport. A diferença importa porque a sidebar recolhe: em 768px de viewport com a sidebar aberta sobram 414px de conteúdo, e uma media query de viewport acharia que "cabe bastante". Os cartões reagem à largura real da área de conteúdo — 6 colunas acima de 78rem, 3 acima de 48rem, 2 acima de 25rem e 1 abaixo disso. O valor de cada cartão também escala pela largura do próprio cartão (`clamp(1.1rem, 10cqi, 1.5rem)`), o que resolve o estouro de números longos como `R$ 34.146.000,00` sem depender de fonte fixa. Medido em 1920/1440/768/375: nenhum valor truncado e nenhum overflow horizontal.
+
+**Tooltips**: cartões de indicador, etapas do funil, linhas do ranking e cartões de tarefa têm tooltip com o número por extenso e a leitura da variação ("Alta de 153,92% em relação ao período anterior"). Nos gráficos SVG o tooltip é `<title>` nativo — ponto do gráfico mensal e fatia da rosca —, sem JavaScript de posicionamento.
+
+### Correções
+
+**Não era possível criar nenhum registro pela API estando logado** (`409 CONFLICT — "Operacao viola uma restricao de unicidade ou integridade dos dados"`). A causa não era unicidade: o `AuditorAware` do JPA usa `authentication.getName()` para preencher `created_by`/`updated_by` (`VARCHAR(120)`), e o principal `AuthenticatedUser` era um record comum — o Spring Security então caía no `principal.toString()`, que traz id, e-mail, login, nome, perfis **e a lista inteira de permissões**, passando de 120 caracteres. O erro real no Postgres era `valor é muito longo para tipo character varying(120)`, mascarado pelo `DataIntegrityViolationException` genérico. `AuthenticatedUser` passou a implementar `AuthenticatedPrincipal`, expondo o login como nome de autenticação — que é o valor que deveria estar em `created_by` desde o início. Coberto por teste de regressão contra o banco real (`AuditorColumnRegressionTest`), que falha com a mensagem original se a correção for revertida.
+
+**Toasts e diálogos apareciam atrás da topbar.** Duas causas somadas: a escala de z-index da aplicação (topbar 1200, sidebar 1100) estava **acima** da camada flutuante do PrimeNG (overlays 1000+, modais 1100+), e o deslocamento vertical do toast (`top: 5.25rem`) nunca chegou a valer porque o PrimeNG escreve `top: 20px` por style inline. Corrigido invertendo a escala — o "chrome" da aplicação foi para baixo da camada de overlays (sidebar 899/900, topbar 950) em vez de empurrar cada componente do PrimeNG para cima — e mantendo o deslocamento do toast com `!important`, único jeito de vencer o inline style. Isso corrige junto o mask de diálogo, que agora escurece a topbar, e o drawer da sidebar no mobile. A configuração `zIndex` do `providePrimeNG` não serve para isso: o `setConfig` do PrimeNG 20.1 ignora essa chave.
+
+### Qualidade
+- Backend: 177 testes (`./mvnw verify` verde), com testes novos de `TaskService`, `ReportService`, `AuditLogService`, `DashboardService`, do escritor de CSV e das duas correções acima. As agregações do dashboard também têm teste rodando contra o Postgres local, que quebra se alguma query JPQL parar de compilar no banco.
+- Frontend: 201 testes (`npm test` verde) e `npm run build` verde.
+
+---
+
 ## [Fase 2] — Núcleo Comercial
 
 ### Banco de dados

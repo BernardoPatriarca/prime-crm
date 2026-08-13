@@ -1,6 +1,7 @@
 package com.primecrm.infra.repository;
 
 import com.primecrm.infra.entity.commercial.Lead;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -21,4 +22,8 @@ public interface LeadRepository extends JpaRepository<Lead, UUID>, JpaSpecificat
     boolean existsByCodeAndDeletedAtIsNull(String code);
 
     boolean existsByCodeAndIdNotAndDeletedAtIsNull(String code, UUID id);
+
+    long countByDeletedAtIsNullAndCreatedAtGreaterThanEqualAndCreatedAtLessThan(Instant from, Instant to);
+
+    long countByDeletedAtIsNullAndConvertedAtGreaterThanEqualAndConvertedAtLessThan(Instant from, Instant to);
 }
