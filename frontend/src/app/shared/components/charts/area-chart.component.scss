@@ -1,0 +1,59 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.area-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.area-chart__grid {
+  stroke: var(--p-content-border-color);
+  stroke-width: 1;
+  opacity: 0.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.area-chart__gradient-start {
+  stop-color: var(--p-primary-color);
+  stop-opacity: 0.35;
+}
+
+.area-chart__gradient-end {
+  stop-color: var(--p-primary-color);
+  stop-opacity: 0;
+}
+
+.area-chart__line {
+  fill: none;
+  stroke: var(--p-primary-color);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.area-chart__secondary {
+  fill: none;
+  stroke: var(--p-text-muted-color);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 5;
+  opacity: 0.75;
+  vector-effect: non-scaling-stroke;
+}
+
+.area-chart__dot {
+  fill: var(--p-content-background);
+  stroke: var(--p-primary-color);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.area-chart__label {
+  fill: var(--p-text-muted-color);
+  font-size: 13px;
+  text-anchor: middle;
+}

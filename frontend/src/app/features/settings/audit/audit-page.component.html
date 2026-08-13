@@ -1,0 +1,208 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'auditPage.title' | translate }}</h1>
+      <p>{{ 'auditPage.description' | translate }}</p>
+    </div>
+    @if (canExport()) {
+      <p-button
+        icon="pi pi-download"
+        severity="secondary"
+        [outlined]="true"
+        [label]="'auditPage.exportButton' | translate"
+        [loading]="exporting()"
+        (onClick)="export()"
+        data-testid="audit-export-button"
+      />
+    }
+  </div>
+
+  <app-generic-table
+    [items]="entries()"
+    [totalRecords]="total()"
+    [loading]="loading()"
+    [columnsCount]="7"
+    emptyIcon="pi-history"
+    emptyMessageKey="auditPage.emptyState"
+    searchPlaceholderKey="auditPage.searchPlaceholder"
+    (queryChange)="onQueryChange($event)"
+  >
+    <div tableActions class="filter-bar">
+      <p-select
+        [ngModel]="entityFilter()"
+        (ngModelChange)="entityFilter.set($event); onFilterChange()"
+        [options]="entityNames()"
+        [showClear]="true"
+        [filter]="true"
+        [placeholder]="'auditPage.filters.entity' | translate"
+        data-testid="audit-entity-filter"
+      />
+      <p-select
+        [ngModel]="actionFilter()"
+        (ngModelChange)="actionFilter.set($event); onFilterChange()"
+        [options]="actionOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"
+        [placeholder]="'auditPage.filters.action' | translate"
+        data-testid="audit-action-filter"
+      />
+      <p-select
+        [ngModel]="userFilter()"
+        (ngModelChange)="userFilter.set($event); onFilterChange()"
+        [options]="userOptions()"
+        optionLabel="name"
+        optionValue="id"
+        [showClear]="true"
+        [filter]="true"
+        filterBy="name"
+        [placeholder]="'auditPage.filters.user' | translate"
+      />
+      <p-datepicker
+        [ngModel]="from()"
+        (ngModelChange)="from.set($event); onFilterChange()"
+        dateFormat="dd/mm/yy"
+        [showIcon]="true"
+        [showClear]="true"
+        [placeholder]="'auditPage.filters.from' | translate"
+      />
+      <p-datepicker
+        [ngModel]="to()"
+        (ngModelChange)="to.set($event); onFilterChange()"
+        dateFormat="dd/mm/yy"
+        [showIcon]="true"
+        [showClear]="true"
+        [placeholder]="'auditPage.filters.to' | translate"
+      />
+      <p-button
+        icon="pi pi-filter-slash"
+        severity="secondary"
+        [text]="true"
+        [label]="'common.actions.clearFilters' | translate"
+        (onClick)="clearFilters()"
+      />
+    </div>
+
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="createdAt">
+          {{ 'auditPage.columns.date' | translate }}
+          <p-sortIcon field="createdAt" />
+        </th>
+        <th>{{ 'auditPage.columns.action' | translate }}</th>
+        <th pSortableColumn="entityName">
+          {{ 'auditPage.columns.entity' | translate }}
+          <p-sortIcon field="entityName" />
+        </th>
+        <th>{{ 'auditPage.columns.record' | translate }}</th>
+        <th>{{ 'auditPage.columns.user' | translate }}</th>
+        <th>{{ 'auditPage.columns.ip' | translate }}</th>
+        <th class="col-actions">{{ 'auditPage.columns.details' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-item>
+      <tr>
+        <td class="cell-muted">{{ formatDateTime(item.createdAt) }}</td>
+        <td>
+          <p-tag [severity]="actionSeverity(item.action)" [value]="'auditPage.actions.' + item.action | translate" />
+        </td>
+        <td class="cell-strong">{{ item.entityName }}</td>
+        <td class="cell-muted audit-record-id">{{ item.entityId ?? '-' }}</td>
+        <td class="cell-muted">{{ item.userEmail ?? '-' }}</td>
+        <td class="cell-muted cell-numeric">{{ item.ipAddress ?? '-' }}</td>
+        <td>
+          <div class="row-actions">
+            <p-button
+              icon="pi pi-eye"
+              [text]="true"
+              [rounded]="true"
+              severity="secondary"
+              [pTooltip]="'auditPage.actionsColumn.view' | translate"
+              tooltipPosition="top"
+              [ariaLabel]="'auditPage.actionsColumn.view' | translate"
+              (onClick)="openDetails(item)"
+              [attr.data-testid]="'audit-view-' + item.id"
+            />
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </app-generic-table>
+</div>
+
+<p-dialog
+  appendTo="body"
+  [visible]="!!selectedEntry()"
+  (visibleChange)="!$event && closeDetails()"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '46rem' }"
+  [breakpoints]="{ '1024px': '92vw', '767px': '96vw' }"
+  [header]="'auditPage.dialog.title' | translate"
+>
+  @if (selectedEntry(); as entry) {
+    <dl class="audit-meta">
+      <div>
+        <dt>{{ 'auditPage.columns.date' | translate }}</dt>
+        <dd>{{ formatDateTime(entry.createdAt) }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'auditPage.columns.action' | translate }}</dt>
+        <dd>{{ 'auditPage.actions.' + entry.action | translate }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'auditPage.columns.entity' | translate }}</dt>
+        <dd>{{ entry.entityName }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'auditPage.columns.record' | translate }}</dt>
+        <dd class="audit-record-id">{{ entry.entityId ?? '-' }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'auditPage.columns.user' | translate }}</dt>
+        <dd>{{ entry.userEmail ?? '-' }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'auditPage.columns.ip' | translate }}</dt>
+        <dd>{{ entry.ipAddress ?? '-' }}</dd>
+      </div>
+      <div class="audit-meta__wide">
+        <dt>{{ 'auditPage.dialog.userAgent' | translate }}</dt>
+        <dd class="cell-muted">{{ entry.userAgent ?? '-' }}</dd>
+      </div>
+    </dl>
+
+    @if (changeEntries().length === 0) {
+      <p class="cell-muted">{{ 'auditPage.dialog.noChanges' | translate }}</p>
+    } @else {
+      <p-table [value]="changeEntries()" styleClass="audit-changes-table" dataKey="field">
+        <ng-template #header>
+          <tr>
+            <th>{{ 'auditPage.dialog.field' | translate }}</th>
+            <th>{{ 'auditPage.dialog.previousValue' | translate }}</th>
+            <th>{{ 'auditPage.dialog.newValue' | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-change>
+          <tr>
+            <td class="cell-strong">{{ change.field }}</td>
+            <td class="cell-muted">{{ change.hasPrevious ? change.oldValue : '-' }}</td>
+            <td>{{ change.newValue }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  }
+
+  <div class="dialog-footer">
+    <p-button
+      [label]="'common.actions.close' | translate"
+      severity="secondary"
+      [text]="true"
+      type="button"
+      (onClick)="closeDetails()"
+    />
+  </div>
+</p-dialog>

@@ -1,0 +1,299 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'tasksPage.title' | translate }}</h1>
+      <p>{{ 'tasksPage.description' | translate }}</p>
+    </div>
+    @if (canCreate()) {
+      <p-button
+        icon="pi pi-plus"
+        [label]="'tasksPage.newButton' | translate"
+        (onClick)="openCreateDialog()"
+        data-testid="tasks-new-button"
+      />
+    }
+  </div>
+
+  <app-generic-table
+    [items]="tasks()"
+    [totalRecords]="total()"
+    [loading]="loading()"
+    [columnsCount]="8"
+    emptyIcon="pi-check-square"
+    emptyMessageKey="tasksPage.emptyState"
+    searchPlaceholderKey="tasksPage.searchPlaceholder"
+    (queryChange)="onQueryChange($event)"
+  >
+    <div tableActions class="filter-bar">
+      <p-select
+        [ngModel]="statusFilter()"
+        (ngModelChange)="statusFilter.set($event); onFilterChange()"
+        [options]="statusOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"
+        [placeholder]="'tasksPage.filters.status' | translate"
+        data-testid="tasks-status-filter"
+      />
+      <p-select
+        [ngModel]="assigneeFilter()"
+        (ngModelChange)="assigneeFilter.set($event); onFilterChange()"
+        [options]="userOptions()"
+        optionLabel="name"
+        optionValue="id"
+        [showClear]="true"
+        [filter]="true"
+        filterBy="name"
+        [placeholder]="'tasksPage.filters.assignee' | translate"
+        data-testid="tasks-assignee-filter"
+      />
+      <p-select
+        [ngModel]="overdueFilter()"
+        (ngModelChange)="overdueFilter.set($event); onFilterChange()"
+        [options]="overdueOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"
+        [placeholder]="'tasksPage.filters.due' | translate"
+        data-testid="tasks-overdue-filter"
+      />
+    </div>
+
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="code">
+          {{ 'tasksPage.columns.code' | translate }}
+          <p-sortIcon field="code" />
+        </th>
+        <th pSortableColumn="title">
+          {{ 'tasksPage.columns.title' | translate }}
+          <p-sortIcon field="title" />
+        </th>
+        <th>{{ 'tasksPage.columns.customer' | translate }}</th>
+        <th>{{ 'tasksPage.columns.assignee' | translate }}</th>
+        <th>{{ 'tasksPage.columns.priority' | translate }}</th>
+        <th pSortableColumn="dueAt">
+          {{ 'tasksPage.columns.dueAt' | translate }}
+          <p-sortIcon field="dueAt" />
+        </th>
+        <th>{{ 'tasksPage.columns.status' | translate }}</th>
+        <th class="col-actions">{{ 'tasksPage.columns.actions' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-item>
+      <tr>
+        <td class="cell-muted cell-numeric">{{ item.code }}</td>
+        <td class="cell-strong">{{ item.title }}</td>
+        <td class="cell-muted">{{ item.customer?.name ?? '-' }}</td>
+        <td class="cell-muted">{{ item.assignee?.name ?? '-' }}</td>
+        <td class="cell-muted">{{ item.priority?.name ?? '-' }}</td>
+        <td class="cell-muted">
+          <span [class.task-due--late]="item.overdue">{{ formatDateTime(item.dueAt) }}</span>
+        </td>
+        <td>
+          <div class="chip-list">
+            <p-tag [severity]="statusSeverity(item.status)" [value]="'tasksPage.status.' + item.status | translate" />
+            @if (item.overdue) {
+              <p-tag severity="danger" icon="pi pi-clock" [value]="'tasksPage.badges.overdue' | translate" />
+            }
+          </div>
+        </td>
+        <td>
+          <div class="row-actions">
+            @if (canEdit() && item.status !== 'DONE') {
+              <p-button
+                icon="pi pi-check"
+                [text]="true"
+                [rounded]="true"
+                severity="success"
+                [pTooltip]="'tasksPage.actions.complete' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'tasksPage.actions.complete' | translate"
+                (onClick)="complete(item)"
+                [attr.data-testid]="'task-complete-' + item.id"
+              />
+            }
+            @if (canEdit()) {
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'common.actions.edit' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.edit' | translate"
+                (onClick)="openEditDialog(item)"
+                [attr.data-testid]="'task-edit-' + item.id"
+              />
+            }
+            @if (canDelete()) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                [pTooltip]="'common.actions.delete' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.delete' | translate"
+                (onClick)="confirmDelete(item)"
+                [attr.data-testid]="'task-delete-' + item.id"
+              />
+            }
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </app-generic-table>
+</div>
+
+<p-dialog
+  appendTo="body"
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '42rem' }"
+  [breakpoints]="{ '1024px': '92vw', '767px': '96vw' }"
+  [header]="(editingTask() ? 'tasksPage.dialog.editTitle' : 'tasksPage.dialog.newTitle') | translate"
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+    <div class="form-grid">
+      <div class="field field-span-2">
+        <label for="task-title">{{ 'tasksPage.dialog.titleLabel' | translate }}</label>
+        <input id="task-title" pInputText type="text" formControlName="title" fluid data-testid="task-title-input" />
+        @if (form.controls.title.invalid && form.controls.title.touched) {
+          <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="task-type">{{ 'tasksPage.dialog.typeLabel' | translate }}</label>
+        <p-select
+          inputId="task-type"
+          formControlName="typeId"
+          [options]="types()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="task-priority">{{ 'tasksPage.dialog.priorityLabel' | translate }}</label>
+        <p-select
+          inputId="task-priority"
+          formControlName="priorityId"
+          [options]="priorities()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="task-status">{{ 'tasksPage.dialog.statusLabel' | translate }}</label>
+        <p-select
+          inputId="task-status"
+          formControlName="status"
+          [options]="statusOptions()"
+          optionLabel="label"
+          optionValue="value"
+          fluid
+          data-testid="task-status-select"
+        />
+      </div>
+
+      <div class="field">
+        <label for="task-assignee">{{ 'tasksPage.dialog.assigneeLabel' | translate }}</label>
+        <p-select
+          inputId="task-assignee"
+          formControlName="assignedUserId"
+          [options]="userOptions()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [filter]="true"
+          filterBy="name"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="task-due-at">{{ 'tasksPage.dialog.dueAtLabel' | translate }}</label>
+        <p-datepicker
+          inputId="task-due-at"
+          formControlName="dueAt"
+          dateFormat="dd/mm/yy"
+          [showTime]="true"
+          [showIcon]="true"
+          [showClear]="true"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="task-reminder-at">{{ 'tasksPage.dialog.reminderAtLabel' | translate }}</label>
+        <p-datepicker
+          inputId="task-reminder-at"
+          formControlName="reminderAt"
+          dateFormat="dd/mm/yy"
+          [showTime]="true"
+          [showIcon]="true"
+          [showClear]="true"
+          fluid
+        />
+      </div>
+
+      <div class="field field-span-2">
+        <label for="task-customer">{{ 'tasksPage.dialog.customerLabel' | translate }}</label>
+        <p-select
+          inputId="task-customer"
+          formControlName="customerId"
+          [options]="customerOptions()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [filter]="true"
+          filterBy="name"
+          (onFilter)="onCustomerFilter($event.filter)"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field field-span-2">
+        <label for="task-description">{{ 'tasksPage.dialog.descriptionLabel' | translate }}</label>
+        <textarea id="task-description" pTextarea formControlName="description" rows="3" [autoResize]="true" fluid></textarea>
+      </div>
+
+      <div class="field field-span-2">
+        <label for="task-result-notes">{{ 'tasksPage.dialog.resultNotesLabel' | translate }}</label>
+        <textarea id="task-result-notes" pTextarea formControlName="resultNotes" rows="2" [autoResize]="true" fluid></textarea>
+      </div>
+    </div>
+
+    <div class="dialog-footer">
+      <p-button
+        [label]="'common.actions.cancel' | translate"
+        severity="secondary"
+        [text]="true"
+        type="button"
+        (onClick)="closeDialog()"
+      />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="saving()"
+        data-testid="task-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>

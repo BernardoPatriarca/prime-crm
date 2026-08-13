@@ -1,0 +1,32 @@
+<div class="donut">
+  <svg class="donut__svg" viewBox="0 0 160 160" role="img">
+    <circle class="donut__track" cx="80" cy="80" [attr.r]="radius" />
+
+    @for (segment of plotted(); track segment.label) {
+      <circle
+        class="donut__segment"
+        cx="80"
+        cy="80"
+        [attr.r]="radius"
+        [attr.stroke]="segment.color"
+        [attr.stroke-dasharray]="segment.dashArray"
+        [attr.stroke-dashoffset]="segment.dashOffset"
+      >
+        <title>{{ segment.label }}: {{ segment.value }} ({{ segment.share }}%)</title>
+      </circle>
+    }
+
+    <text class="donut__value" x="80" y="76">{{ centerValue() }}</text>
+    <text class="donut__label" x="80" y="96">{{ centerLabel() }}</text>
+  </svg>
+
+  <ul class="donut__legend">
+    @for (segment of plotted(); track segment.label) {
+      <li>
+        <span class="donut__bullet" [style.background]="segment.color"></span>
+        <span class="donut__legend-label">{{ segment.label }}</span>
+        <strong>{{ segment.value }}</strong>
+      </li>
+    }
+  </ul>
+</div>

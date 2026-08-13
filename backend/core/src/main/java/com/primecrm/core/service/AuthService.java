@@ -1,5 +1,6 @@
 package com.primecrm.core.service;
 
+import com.primecrm.core.audit.AuditService;
 import com.primecrm.core.dto.auth.LoginRequest;
 import com.primecrm.core.dto.auth.LoginResponse;
 import com.primecrm.core.dto.auth.MeResponse;
@@ -7,6 +8,7 @@ import com.primecrm.core.dto.auth.RefreshTokenRequest;
 import com.primecrm.core.security.JwtTokenProvider;
 import com.primecrm.core.service.support.UserAuthorityResolver;
 import com.primecrm.core.specification.UserSpecifications;
+import com.primecrm.infra.entity.audit.AuditAction;
 import com.primecrm.infra.entity.auth.Role;
 import com.primecrm.infra.entity.auth.User;
 import com.primecrm.infra.entity.auth.UserStatus;
@@ -25,6 +27,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,25 +49,29 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserAuthorityResolver authorityResolver;
+    private final AuditService auditService;
     private final SecureRandom secureRandom = new SecureRandom();
 
     @Transactional
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findOne(UserSpecifications.byLoginOrEmail(request.usernameOrEmail()))
-                .orElseThrow(() -> new UnauthorizedException(INVALID_CREDENTIALS, "Credenciais invalidas"));
+                .orElse(null);
 
-        if (user.isDeleted()) {
-            throw new UnauthorizedException(INVALID_CREDENTIALS, "Credenciais invalidas");
+        if (user == null || user.isDeleted()) {
+            throw loginFailure(null, request.usernameOrEmail(), INVALID_CREDENTIALS, "Credenciais invalidas");
         }
         if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
-            throw new UnauthorizedException(INVALID_CREDENTIALS, "Credenciais invalidas");
+            throw loginFailure(user, request.usernameOrEmail(), INVALID_CREDENTIALS, "Credenciais invalidas");
         }
         if (user.getStatus() != UserStatus.ACTIVE) {
-            throw new UnauthorizedException(USER_NOT_ACTIVE, "Usuario inativo ou bloqueado");
+            throw loginFailure(user, request.usernameOrEmail(), USER_NOT_ACTIVE, "Usuario inativo ou bloqueado");
         }
 
         user.setLastLoginAt(Instant.now());
         userRepository.save(user);
+
+        auditService.recordSecurityEvent(AuditAction.LOGIN, user.getId(), user.getEmail(),
+                Map.of("login", user.getLogin()));
 
         return issueTokenPair(user);
     }
@@ -94,10 +101,20 @@ public class AuthService {
     public void logout(RefreshTokenRequest request) {
         String hash = hash(request.refreshToken());
         refreshTokenRepository.findOne(RefreshTokenSpecifications.byTokenHash(hash))
-                .ifPresent(rt -> {
-                    rt.setRevoked(true);
-                    refreshTokenRepository.save(rt);
+                .ifPresent(refreshToken -> {
+                    refreshToken.setRevoked(true);
+                    refreshTokenRepository.save(refreshToken);
+                    User user = refreshToken.getUser();
+                    auditService.recordSecurityEvent(AuditAction.LOGOUT, user.getId(), user.getEmail(), Map.of());
                 });
+    }
+
+    private UnauthorizedException loginFailure(User user, String usernameOrEmail, String errorCode, String message) {
+        auditService.recordSecurityEvent(AuditAction.LOGIN_FAILED,
+                user == null ? null : user.getId(),
+                user == null ? null : user.getEmail(),
+                Map.of("usernameOrEmail", usernameOrEmail, "reason", errorCode));
+        return new UnauthorizedException(errorCode, message);
     }
 
     @Transactional(readOnly = true)
