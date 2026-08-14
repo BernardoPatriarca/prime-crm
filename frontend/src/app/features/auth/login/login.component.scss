@@ -31,20 +31,12 @@
 }
 
 .login-wordmark__mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  display: block;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: 12px;
-  background: var(--pc-brand-gradient);
-  color: #ffffff;
   box-shadow: var(--pc-shadow-md);
   flex: 0 0 auto;
-
-  i {
-    font-size: 1.35rem;
-  }
 }
 
 .login-brand {
@@ -190,16 +182,10 @@
 }
 
 .login-brand-panel .login-wordmark__mark {
-  width: 3rem;
-  height: 3rem;
+  width: 3.5rem;
+  height: 3.5rem;
   border-radius: 14px;
-  background: rgb(255 255 255 / 16%);
-  border: 1px solid rgb(255 255 255 / 24%);
-  backdrop-filter: blur(6px);
-
-  i {
-    font-size: 1.6rem;
-  }
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 24%), var(--pc-shadow-md);
 }
 
 .login-slogan {

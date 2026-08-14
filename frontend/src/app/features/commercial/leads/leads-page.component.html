@@ -26,9 +26,11 @@
   >
     <div tableActions class="filter-bar">
       <p-select
+        appendTo="body"
         [ngModel]="originFilter()"
         (ngModelChange)="originFilter.set($event); onFilterChange()"
-        [options]="origins()"
+        [options]="origins.items()"
+          [emptyMessage]="origins.emptyMessage()"
         optionLabel="name"
         optionValue="id"
         [showClear]="true"
@@ -36,9 +38,11 @@
         data-testid="leads-origin-filter"
       />
       <p-select
+        appendTo="body"
         [ngModel]="statusFilter()"
         (ngModelChange)="statusFilter.set($event); onFilterChange()"
-        [options]="statuses()"
+        [options]="statuses.items()"
+          [emptyMessage]="statuses.emptyMessage()"
         optionLabel="name"
         optionValue="id"
         [showClear]="true"
@@ -46,9 +50,11 @@
         data-testid="leads-status-filter"
       />
       <p-select
+        appendTo="body"
         [ngModel]="priorityFilter()"
         (ngModelChange)="priorityFilter.set($event); onFilterChange()"
-        [options]="priorities()"
+        [options]="priorities.items()"
+          [emptyMessage]="priorities.emptyMessage()"
         optionLabel="name"
         optionValue="id"
         [showClear]="true"
@@ -56,9 +62,11 @@
         data-testid="leads-priority-filter"
       />
       <p-select
+        appendTo="body"
         [ngModel]="ownerFilter()"
         (ngModelChange)="ownerFilter.set($event); onFilterChange()"
-        [options]="users()"
+        [options]="users.items()"
+          [emptyMessage]="users.emptyMessage()"
         optionLabel="name"
         optionValue="id"
         [showClear]="true"
@@ -278,9 +286,11 @@
       <div class="field">
         <label for="lead-origin">{{ 'commercialPages.leads.dialog.originLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="lead-origin"
           formControlName="originId"
-          [options]="origins()"
+          [options]="origins.items()"
+          [emptyMessage]="origins.emptyMessage()"
           optionLabel="name"
           optionValue="id"
           [showClear]="true"
@@ -292,9 +302,11 @@
       <div class="field">
         <label for="lead-status">{{ 'commercialPages.leads.dialog.statusLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="lead-status"
           formControlName="statusId"
-          [options]="statuses()"
+          [options]="statuses.items()"
+          [emptyMessage]="statuses.emptyMessage()"
           optionLabel="name"
           optionValue="id"
           [showClear]="true"
@@ -306,9 +318,11 @@
       <div class="field">
         <label for="lead-priority">{{ 'commercialPages.leads.dialog.priorityLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="lead-priority"
           formControlName="priorityId"
-          [options]="priorities()"
+          [options]="priorities.items()"
+          [emptyMessage]="priorities.emptyMessage()"
           optionLabel="name"
           optionValue="id"
           [showClear]="true"
@@ -320,9 +334,11 @@
       <div class="field">
         <label for="lead-owner">{{ 'commercialPages.leads.dialog.ownerLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="lead-owner"
           formControlName="ownerUserId"
-          [options]="users()"
+          [options]="users.items()"
+          [emptyMessage]="users.emptyMessage()"
           optionLabel="name"
           optionValue="id"
           [showClear]="true"
@@ -336,11 +352,13 @@
       <div class="field">
         <label for="lead-pipeline">{{ 'commercialPages.leads.dialog.pipelineLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="lead-pipeline"
           [ngModel]="form.controls.pipelineId.value"
           [ngModelOptions]="{ standalone: true }"
           (ngModelChange)="onFormPipelineChange($event)"
-          [options]="pipelines()"
+          [options]="pipelines.items()"
+          [emptyMessage]="pipelines.emptyMessage()"
           optionLabel="name"
           optionValue="id"
           [showClear]="true"
@@ -352,13 +370,20 @@
       <div class="field">
         <label for="lead-stage">{{ 'commercialPages.leads.dialog.stageLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="lead-stage"
           formControlName="stageId"
           [options]="formStages()"
+          [emptyMessage]="stageEmptyMessage()"
           optionLabel="name"
           optionValue="id"
           [showClear]="true"
-          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          [placeholder]="
+            (form.controls.pipelineId.value
+              ? 'commercialPages.common.selectPlaceholder'
+              : 'commercialPages.leads.dialog.stagePlaceholderNoPipeline'
+            ) | translate
+          "
           fluid
         />
       </div>
@@ -378,6 +403,7 @@
       <div class="field">
         <label for="lead-expected-close-date">{{ 'commercialPages.leads.dialog.expectedCloseDateLabel' | translate }}</label>
         <p-datepicker
+        appendTo="body"
           inputId="lead-expected-close-date"
           formControlName="expectedCloseDate"
           dateFormat="dd/mm/yy"
@@ -400,9 +426,11 @@
       <div class="field field-span-2">
         <label for="lead-tags">{{ 'commercialPages.leads.dialog.tagsLabel' | translate }}</label>
         <p-multiselect
+        appendTo="body"
           inputId="lead-tags"
           formControlName="tagIds"
-          [options]="tags()"
+          [options]="tags.items()"
+          [emptyMessage]="tags.emptyMessage()"
           optionLabel="name"
           optionValue="id"
           display="chip"
@@ -474,9 +502,11 @@
     <div class="field">
       <label for="convert-client-type">{{ 'commercialPages.leads.convertDialog.clientTypeLabel' | translate }}</label>
       <p-select
+        appendTo="body"
         inputId="convert-client-type"
         formControlName="clientTypeId"
-        [options]="clientTypes()"
+        [options]="clientTypes.items()"
+          [emptyMessage]="clientTypes.emptyMessage()"
         optionLabel="name"
         optionValue="id"
         [showClear]="true"
@@ -489,11 +519,13 @@
       <div class="field">
         <label for="convert-pipeline">{{ 'commercialPages.leads.convertDialog.pipelineLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="convert-pipeline"
           [ngModel]="convertForm.controls.pipelineId.value"
           [ngModelOptions]="{ standalone: true }"
           (ngModelChange)="onConvertPipelineChange($event)"
-          [options]="pipelines()"
+          [options]="pipelines.items()"
+          [emptyMessage]="pipelines.emptyMessage()"
           optionLabel="name"
           optionValue="id"
           [placeholder]="'commercialPages.leads.convertDialog.pipelinePlaceholder' | translate"
@@ -508,13 +540,20 @@
       <div class="field">
         <label for="convert-stage">{{ 'commercialPages.leads.convertDialog.stageLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="convert-stage"
           formControlName="stageId"
           [options]="convertStages()"
+          [emptyMessage]="stageEmptyMessage()"
           optionLabel="name"
           optionValue="id"
           [showClear]="true"
-          [placeholder]="'commercialPages.leads.convertDialog.stagePlaceholder' | translate"
+          [placeholder]="
+            (convertForm.controls.pipelineId.value
+              ? 'commercialPages.leads.convertDialog.stagePlaceholder'
+              : 'commercialPages.leads.dialog.stagePlaceholderNoPipeline'
+            ) | translate
+          "
           fluid
         />
       </div>
@@ -534,6 +573,7 @@
           {{ 'commercialPages.leads.convertDialog.expectedCloseDateLabel' | translate }}
         </label>
         <p-datepicker
+        appendTo="body"
           inputId="convert-expected-close-date"
           formControlName="expectedCloseDate"
           dateFormat="dd/mm/yy"

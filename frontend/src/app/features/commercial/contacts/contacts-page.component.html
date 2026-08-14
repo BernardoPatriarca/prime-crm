@@ -26,6 +26,7 @@
   >
     <div tableActions class="filter-bar">
       <p-select
+        appendTo="body"
         [ngModel]="customerFilter()"
         (ngModelChange)="onCustomerFilterChange($event)"
         [options]="customerOptions()"
@@ -134,6 +135,7 @@
       <div class="field field-span-2">
         <label for="contact-customer">{{ 'commercialPages.contacts.dialog.customerLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="contact-customer"
           formControlName="customerId"
           [options]="customerOptions()"
@@ -167,6 +169,7 @@
       <div class="field">
         <label for="contact-department">{{ 'commercialPages.contacts.dialog.departmentLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="contact-department"
           formControlName="departmentId"
           [options]="departments()"
@@ -224,6 +227,7 @@
       <div class="field">
         <label for="contact-birth-date">{{ 'commercialPages.contacts.dialog.birthDateLabel' | translate }}</label>
         <p-datepicker
+        appendTo="body"
           inputId="contact-birth-date"
           formControlName="birthDate"
           dateFormat="dd/mm/yy"

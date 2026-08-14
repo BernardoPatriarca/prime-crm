@@ -26,6 +26,7 @@
   >
     <div tableActions class="filter-bar">
       <p-select
+        appendTo="body"
         [ngModel]="statusFilter()"
         (ngModelChange)="statusFilter.set($event); onFilterChange()"
         [options]="statusOptions()"
@@ -36,6 +37,7 @@
         data-testid="tasks-status-filter"
       />
       <p-select
+        appendTo="body"
         [ngModel]="assigneeFilter()"
         (ngModelChange)="assigneeFilter.set($event); onFilterChange()"
         [options]="userOptions()"
@@ -48,6 +50,7 @@
         data-testid="tasks-assignee-filter"
       />
       <p-select
+        appendTo="body"
         [ngModel]="overdueFilter()"
         (ngModelChange)="overdueFilter.set($event); onFilterChange()"
         [options]="overdueOptions()"
@@ -171,6 +174,7 @@
       <div class="field">
         <label for="task-type">{{ 'tasksPage.dialog.typeLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="task-type"
           formControlName="typeId"
           [options]="types()"
@@ -185,6 +189,7 @@
       <div class="field">
         <label for="task-priority">{{ 'tasksPage.dialog.priorityLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="task-priority"
           formControlName="priorityId"
           [options]="priorities()"
@@ -199,6 +204,7 @@
       <div class="field">
         <label for="task-status">{{ 'tasksPage.dialog.statusLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="task-status"
           formControlName="status"
           [options]="statusOptions()"
@@ -212,6 +218,7 @@
       <div class="field">
         <label for="task-assignee">{{ 'tasksPage.dialog.assigneeLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="task-assignee"
           formControlName="assignedUserId"
           [options]="userOptions()"
@@ -228,6 +235,7 @@
       <div class="field">
         <label for="task-due-at">{{ 'tasksPage.dialog.dueAtLabel' | translate }}</label>
         <p-datepicker
+        appendTo="body"
           inputId="task-due-at"
           formControlName="dueAt"
           dateFormat="dd/mm/yy"
@@ -241,6 +249,7 @@
       <div class="field">
         <label for="task-reminder-at">{{ 'tasksPage.dialog.reminderAtLabel' | translate }}</label>
         <p-datepicker
+        appendTo="body"
           inputId="task-reminder-at"
           formControlName="reminderAt"
           dateFormat="dd/mm/yy"
@@ -254,6 +263,7 @@
       <div class="field field-span-2">
         <label for="task-customer">{{ 'tasksPage.dialog.customerLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="task-customer"
           formControlName="customerId"
           [options]="customerOptions()"

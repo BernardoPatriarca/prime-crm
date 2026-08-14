@@ -33,6 +33,7 @@ import { CustomerService } from '../../../core/services/customer.service';
 import { DomainValueService } from '../../../core/services/domain-value.service';
 import { OpportunityService } from '../../../core/services/opportunity.service';
 import { PipelineService } from '../../../core/services/pipeline.service';
+import { openCreateDialogFromRoute } from '../../../shared/utils/creation-route.util';
 import { SessionStore } from '../../../core/store/session.store';
 import { GenericTableComponent, TableQuery } from '../../../shared/components/generic-table/generic-table.component';
 import { domainChipStyle } from '../../../shared/utils/domain-color.util';
@@ -244,6 +245,12 @@ export class OpportunitiesPageComponent {
   });
 
   constructor() {
+    openCreateDialogFromRoute(() => {
+      if (this.canCreate()) {
+        this.openCreateDialog();
+      }
+    });
+
     this.customerSearch
       .pipe(
         debounceTime(CUSTOMER_SEARCH_DEBOUNCE_MS),

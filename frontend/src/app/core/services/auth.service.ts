@@ -2,7 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { LoginRequest, LoginResponse, LogoutRequest, RefreshTokenRequest } from '../models/auth.model';
+import {
+  ChangeOwnPasswordRequest,
+  LoginRequest,
+  LoginResponse,
+  LogoutRequest,
+  RefreshTokenRequest
+} from '../models/auth.model';
 import { MeResponse } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
@@ -24,5 +30,9 @@ export class AuthService {
 
   me(): Observable<MeResponse> {
     return this.http.get<MeResponse>(`${this.baseUrl}/me`);
+  }
+
+  changeOwnPassword(request: ChangeOwnPasswordRequest): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/password`, request);
   }
 }

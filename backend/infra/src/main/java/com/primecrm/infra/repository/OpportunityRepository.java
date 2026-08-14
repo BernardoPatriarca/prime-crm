@@ -7,6 +7,7 @@ import com.primecrm.infra.repository.projection.LabeledAmountAggregate;
 import com.primecrm.infra.repository.projection.StageAggregate;
 import com.primecrm.infra.repository.projection.StageAmountAggregate;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +52,9 @@ public interface OpportunityRepository
             """)
     List<StageAggregate> summarizeByPipelineAndOutcome(@Param("pipelineId") UUID pipelineId,
                                                        @Param("outcome") OpportunityOutcome outcome);
+
+    List<Opportunity> findTop10ByOwner_IdAndOutcomeAndExpectedCloseDateLessThanAndDeletedAtIsNullOrderByExpectedCloseDateAsc(
+            UUID ownerId, OpportunityOutcome outcome, LocalDate limit);
 
     @Query("""
             select count(o) as itemCount, coalesce(sum(o.amount), 0) as totalAmount

@@ -27,6 +27,7 @@
     <div tableActions class="filter-bar">
       @if (!lockedPersonType()) {
         <p-select
+        appendTo="body"
           [ngModel]="personTypeFilter()"
           (ngModelChange)="personTypeFilter.set($event); onFilterChange()"
           [options]="personTypeOptions()"
@@ -38,6 +39,7 @@
         />
       }
       <p-select
+        appendTo="body"
         [ngModel]="clientTypeFilter()"
         (ngModelChange)="clientTypeFilter.set($event); onFilterChange()"
         [options]="clientTypes()"
@@ -50,6 +52,7 @@
         data-testid="customers-client-type-filter"
       />
       <p-select
+        appendTo="body"
         [ngModel]="segmentFilter()"
         (ngModelChange)="segmentFilter.set($event); onFilterChange()"
         [options]="segments()"
@@ -62,6 +65,7 @@
         data-testid="customers-segment-filter"
       />
       <p-select
+        appendTo="body"
         [ngModel]="activeFilter()"
         (ngModelChange)="activeFilter.set($event); onFilterChange()"
         [options]="activeOptions()"
@@ -225,6 +229,7 @@
                 />
               } @else {
                 <p-select
+        appendTo="body"
                   inputId="customer-person-type"
                   formControlName="personType"
                   [options]="personTypeOptions()"
@@ -271,6 +276,7 @@
             <div class="field">
               <label for="customer-client-type">{{ 'commercialPages.customers.dialog.clientTypeLabel' | translate }}</label>
               <p-select
+        appendTo="body"
                 inputId="customer-client-type"
                 formControlName="clientTypeId"
                 [options]="clientTypes()"
@@ -287,6 +293,7 @@
             <div class="field">
               <label for="customer-segment">{{ 'commercialPages.customers.dialog.segmentLabel' | translate }}</label>
               <p-select
+        appendTo="body"
                 inputId="customer-segment"
                 formControlName="segmentId"
                 [options]="segments()"
@@ -303,6 +310,7 @@
             <div class="field">
               <label for="customer-branch">{{ 'commercialPages.customers.dialog.activityBranchLabel' | translate }}</label>
               <p-select
+        appendTo="body"
                 inputId="customer-branch"
                 formControlName="activityBranchId"
                 [options]="activityBranches()"
@@ -319,6 +327,7 @@
             <div class="field">
               <label for="customer-category">{{ 'commercialPages.customers.dialog.categoryLabel' | translate }}</label>
               <p-select
+        appendTo="body"
                 inputId="customer-category"
                 formControlName="categoryId"
                 [options]="categories()"
@@ -333,6 +342,7 @@
             <div class="field">
               <label for="customer-origin">{{ 'commercialPages.customers.dialog.originLabel' | translate }}</label>
               <p-select
+        appendTo="body"
                 inputId="customer-origin"
                 formControlName="originId"
                 [options]="origins()"
@@ -347,6 +357,7 @@
             <div class="field">
               <label for="customer-status">{{ 'commercialPages.customers.dialog.statusLabel' | translate }}</label>
               <p-select
+        appendTo="body"
                 inputId="customer-status"
                 formControlName="statusId"
                 [options]="statuses()"
@@ -471,6 +482,7 @@
             <div class="field">
               <label for="customer-state">{{ 'commercialPages.customers.dialog.stateLabel' | translate }}</label>
               <p-select
+        appendTo="body"
                 inputId="customer-state"
                 formControlName="state"
                 [options]="states"
@@ -493,6 +505,7 @@
             <div class="field">
               <label for="customer-owner">{{ 'commercialPages.customers.dialog.ownerLabel' | translate }}</label>
               <p-select
+        appendTo="body"
                 inputId="customer-owner"
                 formControlName="ownerUserId"
                 [options]="users()"
@@ -510,6 +523,7 @@
             <div class="field">
               <label for="customer-team">{{ 'commercialPages.customers.dialog.teamLabel' | translate }}</label>
               <p-select
+        appendTo="body"
                 inputId="customer-team"
                 formControlName="teamId"
                 [options]="teams()"
@@ -541,6 +555,7 @@
             <div class="field field-span-2">
               <label for="customer-tags">{{ 'commercialPages.customers.dialog.tagsLabel' | translate }}</label>
               <p-multiselect
+        appendTo="body"
                 inputId="customer-tags"
                 formControlName="tagIds"
                 [options]="tags()"
