@@ -75,7 +75,13 @@
     "yes": "Yes",
     "no": "No",
     "notInformed": "Not informed",
-    "never": "Never"
+    "never": "Never",
+    "select": {
+      "empty": "No results found",
+      "emptyFilter": "No results for this filter",
+      "loadError": "Could not load the options"
+    },
+    "loading": "Loading..."
   },
   "auth": {
     "login": {
@@ -102,7 +108,17 @@
       "default": "Main Workspace"
     },
     "search": {
-      "placeholder": "Search the entire system..."
+      "placeholder": "Search the entire system...",
+      "hint": "Type at least 2 characters to search.",
+      "searching": "Searching...",
+      "empty": "No results found.",
+      "types": {
+        "CUSTOMER": "Customer",
+        "CONTACT": "Contact",
+        "LEAD": "Lead",
+        "OPPORTUNITY": "Opportunity",
+        "TASK": "Task"
+      }
     },
     "menu": {
       "toggle": "Toggle navigation menu",
@@ -110,7 +126,14 @@
     },
     "notifications": {
       "label": "Notifications",
-      "empty": "No notifications"
+      "empty": "No notifications",
+      "refresh": "Refresh notifications",
+      "types": {
+        "TASK_OVERDUE": "Overdue task",
+        "TASK_DUE_TODAY": "Task due today",
+        "OPPORTUNITY_CLOSE_DATE_PASSED": "Expected close date passed",
+        "LEAD_WITHOUT_OWNER": "Lead without owner"
+      }
     },
     "newButton": {
       "label": "New",
@@ -120,9 +143,7 @@
       "task": "New Task"
     },
     "userMenu": {
-      "editProfile": "Edit Profile",
       "changePassword": "Change Password",
-      "preferences": "Preferences",
       "theme": {
         "label": "Theme",
         "light": "Light Theme",
@@ -134,8 +155,15 @@
         "en": "English",
         "es": "Spanish"
       },
-      "helpCenter": "Help Center",
       "logout": "Sign out"
+    },
+    "password": {
+      "title": "Change password",
+      "currentLabel": "Current password",
+      "newLabel": "New password",
+      "confirmLabel": "Confirm new password",
+      "mismatch": "The confirmation does not match the new password.",
+      "success": "Password changed. Other devices will have to sign in again."
     }
   },
   "sidebar": {
@@ -763,7 +791,8 @@
         "tagsLabel": "Tags",
         "tagsPlaceholder": "Select tags",
         "notesLabel": "Notes",
-        "activeLabel": "Active lead"
+        "activeLabel": "Active lead",
+        "stagePlaceholderNoPipeline": "Select a pipeline first"
       },
       "convertDialog": {
         "title": "Convert Lead into Customer",

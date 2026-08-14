@@ -16,6 +16,7 @@
 
   <div class="board-toolbar">
     <p-select
+        appendTo="body"
       [ngModel]="selectedPipelineId()"
       (ngModelChange)="onPipelineChange($event)"
       [options]="pipelines()"
@@ -80,6 +81,7 @@
     >
       <div tableActions class="filter-bar">
         <p-select
+        appendTo="body"
           [ngModel]="stageFilter()"
           (ngModelChange)="stageFilter.set($event); onFilterChange()"
           [options]="pipelineStages()"
@@ -90,6 +92,7 @@
           data-testid="opportunities-stage-filter"
         />
         <p-select
+        appendTo="body"
           [ngModel]="customerFilter()"
           (ngModelChange)="customerFilter.set($event); onFilterChange()"
           [options]="customerOptions()"
@@ -103,6 +106,7 @@
           data-testid="opportunities-customer-filter"
         />
         <p-select
+        appendTo="body"
           [ngModel]="ownerFilter()"
           (ngModelChange)="ownerFilter.set($event); onFilterChange()"
           [options]="users()"
@@ -115,6 +119,7 @@
           data-testid="opportunities-owner-filter"
         />
         <p-select
+        appendTo="body"
           [ngModel]="outcomeFilter()"
           (ngModelChange)="outcomeFilter.set($event); onFilterChange()"
           [options]="outcomeOptions()"
@@ -282,6 +287,7 @@
       <div class="field">
         <label for="opportunity-customer">{{ 'commercialPages.opportunities.dialog.customerLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="opportunity-customer"
           [ngModel]="form.controls.customerId.value"
           [ngModelOptions]="{ standalone: true }"
@@ -304,6 +310,7 @@
       <div class="field">
         <label for="opportunity-contact">{{ 'commercialPages.opportunities.dialog.contactLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="opportunity-contact"
           formControlName="contactId"
           [options]="contactOptions()"
@@ -318,6 +325,7 @@
       <div class="field">
         <label for="opportunity-pipeline">{{ 'commercialPages.opportunities.dialog.pipelineLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="opportunity-pipeline"
           [ngModel]="form.controls.pipelineId.value"
           [ngModelOptions]="{ standalone: true }"
@@ -337,6 +345,7 @@
       <div class="field">
         <label for="opportunity-stage">{{ 'commercialPages.opportunities.dialog.stageLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="opportunity-stage"
           formControlName="stageId"
           [options]="formStages()"
@@ -377,6 +386,7 @@
       <div class="field">
         <label for="opportunity-owner">{{ 'commercialPages.opportunities.dialog.ownerLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="opportunity-owner"
           formControlName="ownerUserId"
           [options]="users()"
@@ -393,6 +403,7 @@
       <div class="field">
         <label for="opportunity-team">{{ 'commercialPages.opportunities.dialog.teamLabel' | translate }}</label>
         <p-select
+        appendTo="body"
           inputId="opportunity-team"
           formControlName="teamId"
           [options]="teams()"
@@ -409,6 +420,7 @@
           {{ 'commercialPages.opportunities.dialog.expectedCloseDateLabel' | translate }}
         </label>
         <p-datepicker
+        appendTo="body"
           inputId="opportunity-expected-close-date"
           formControlName="expectedCloseDate"
           dateFormat="dd/mm/yy"
@@ -484,6 +496,7 @@
         }}
       </label>
       <p-select
+        appendTo="body"
         inputId="opportunity-reason"
         formControlName="reasonId"
         [options]="reasonOptions()"

@@ -32,21 +32,13 @@
 }
 
 .app-topbar__brand-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   width: 2rem;
   height: 2rem;
   border-radius: 9px;
-  background: var(--pc-brand-gradient);
-  color: #ffffff;
   box-shadow: var(--pc-shadow-xs);
   transition: transform var(--pc-duration) var(--pc-ease),
     box-shadow var(--pc-duration) var(--pc-ease);
-
-  i {
-    font-size: 1.05rem;
-  }
 }
 
 .app-topbar__brand:hover .app-topbar__brand-mark {
@@ -56,6 +48,10 @@
 
 .app-topbar__workspace {
   min-width: 200px;
+}
+
+.app-topbar__search-wrapper {
+  display: contents;
 }
 
 .app-topbar__search {
@@ -139,7 +135,8 @@
 
 @media (max-width: 900px) {
   .app-topbar__workspace,
-  .app-topbar__search {
+  .app-topbar__search,
+  .app-topbar__search-wrapper {
     display: none;
   }
 }

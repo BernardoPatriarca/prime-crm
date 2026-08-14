@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { of } from 'rxjs';
@@ -57,6 +58,7 @@ describe('TasksPageComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideNoopAnimations(),
+        provideRouter([]),
         provideTranslateService({ lang: 'pt-BR', fallbackLang: 'pt-BR' }),
         MessageService,
         ConfirmationService,

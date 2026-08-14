@@ -23,6 +23,7 @@ import { DomainValueService } from '../../core/services/domain-value.service';
 import { TaskService } from '../../core/services/task.service';
 import { SessionStore } from '../../core/store/session.store';
 import { GenericTableComponent, TableQuery } from '../../shared/components/generic-table/generic-table.component';
+import { openCreateDialogFromRoute } from '../../shared/utils/creation-route.util';
 import { formatInstant } from '../../shared/utils/format.util';
 
 const CUSTOMER_SEARCH_DEBOUNCE_MS = 300;
@@ -149,6 +150,12 @@ export class TasksPageComponent {
         takeUntilDestroyed()
       )
       .subscribe((response) => this.customerOptions.set(response.content));
+
+    openCreateDialogFromRoute(() => {
+      if (this.canCreate()) {
+        this.openCreateDialog();
+      }
+    });
 
     this.load();
     this.customerService

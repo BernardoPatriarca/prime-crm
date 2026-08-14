@@ -69,7 +69,7 @@ prime-crm/
 **Backend** (a partir de `backend/`):
 ```bash
 ./mvnw clean install          # build completo de todos os modulos
-./mvnw verify                 # build + todos os testes (177 atualmente)
+./mvnw verify                 # build + todos os testes (182 atualmente)
 ./mvnw -pl api -am spring-boot:run   # roda a API (perfil dev por padrao, Postgres local)
 ```
 

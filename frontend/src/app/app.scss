@@ -2,10 +2,28 @@
   display: contents;
 }
 
-::ng-deep .pc-global-progress {
+.pc-loading-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  inset: 0;
   z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(15 23 42 / 22%);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: pc-fade-in var(--pc-duration-fast) var(--pc-ease-out) both;
+}
+
+.pc-loading-overlay__spinner {
+  width: 5.5rem;
+  height: 5.5rem;
+  filter: drop-shadow(0 6px 16px rgb(15 23 42 / 35%));
+}
+
+@media (max-width: 767.98px) {
+  .pc-loading-overlay__spinner {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
 }

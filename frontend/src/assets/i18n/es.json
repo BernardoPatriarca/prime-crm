@@ -75,7 +75,13 @@
     "yes": "Sí",
     "no": "No",
     "notInformed": "No informado",
-    "never": "Nunca"
+    "never": "Nunca",
+    "select": {
+      "empty": "Ningún resultado encontrado",
+      "emptyFilter": "Ningún resultado para ese filtro",
+      "loadError": "No se pudo cargar"
+    },
+    "loading": "Cargando..."
   },
   "auth": {
     "login": {
@@ -102,7 +108,17 @@
       "default": "Espacio de Trabajo Principal"
     },
     "search": {
-      "placeholder": "Buscar en todo el sistema..."
+      "placeholder": "Buscar en todo el sistema...",
+      "hint": "Escriba al menos 2 caracteres para buscar.",
+      "searching": "Buscando...",
+      "empty": "Ningún resultado encontrado.",
+      "types": {
+        "CUSTOMER": "Cliente",
+        "CONTACT": "Contacto",
+        "LEAD": "Lead",
+        "OPPORTUNITY": "Oportunidad",
+        "TASK": "Tarea"
+      }
     },
     "menu": {
       "toggle": "Alternar menú de navegación",
@@ -110,7 +126,14 @@
     },
     "notifications": {
       "label": "Notificaciones",
-      "empty": "Sin notificaciones"
+      "empty": "Sin notificaciones",
+      "refresh": "Actualizar notificaciones",
+      "types": {
+        "TASK_OVERDUE": "Tarea atrasada",
+        "TASK_DUE_TODAY": "Tarea vence hoy",
+        "OPPORTUNITY_CLOSE_DATE_PASSED": "Previsión de cierre vencida",
+        "LEAD_WITHOUT_OWNER": "Lead sin responsable"
+      }
     },
     "newButton": {
       "label": "Nuevo",
@@ -120,9 +143,7 @@
       "task": "Nueva Tarea"
     },
     "userMenu": {
-      "editProfile": "Editar Perfil",
       "changePassword": "Cambiar Contraseña",
-      "preferences": "Preferencias",
       "theme": {
         "label": "Tema",
         "light": "Tema Claro",
@@ -134,8 +155,15 @@
         "en": "Inglés",
         "es": "Español"
       },
-      "helpCenter": "Centro de Ayuda",
       "logout": "Cerrar sesión"
+    },
+    "password": {
+      "title": "Cambiar contraseña",
+      "currentLabel": "Contraseña actual",
+      "newLabel": "Nueva contraseña",
+      "confirmLabel": "Confirmar nueva contraseña",
+      "mismatch": "La confirmación no coincide con la nueva contraseña.",
+      "success": "Contraseña cambiada. Los demás dispositivos deberán iniciar sesión de nuevo."
     }
   },
   "sidebar": {
@@ -763,7 +791,8 @@
         "tagsLabel": "Etiquetas",
         "tagsPlaceholder": "Seleccione las etiquetas",
         "notesLabel": "Observaciones",
-        "activeLabel": "Lead activo"
+        "activeLabel": "Lead activo",
+        "stagePlaceholderNoPipeline": "Seleccione un embudo primero"
       },
       "convertDialog": {
         "title": "Convertir Lead en Cliente",

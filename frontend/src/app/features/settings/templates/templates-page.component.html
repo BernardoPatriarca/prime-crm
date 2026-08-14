@@ -25,6 +25,7 @@
   >
     <div tableActions>
       <p-select
+        appendTo="body"
         [ngModel]="typeFilter()"
         (ngModelChange)="onTypeFilterChange($event)"
         [options]="templateTypes"
@@ -113,7 +114,7 @@
     <div class="field-row">
       <div class="field">
         <label for="tpl-type">{{ 'settingsPages.templates.dialog.typeLabel' | translate }}</label>
-        <p-select inputId="tpl-type" formControlName="type" [options]="templateTypes" fluid data-testid="template-type-select" />
+        <p-select appendTo="body" inputId="tpl-type" formControlName="type" [options]="templateTypes" fluid data-testid="template-type-select" />
       </div>
       <div class="field">
         <label for="tpl-name">{{ 'settingsPages.templates.dialog.nameLabel' | translate }}</label>

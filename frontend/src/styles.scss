@@ -7,6 +7,7 @@
   --pc-brand-vibrant: #1E5EFF;
   --pc-brand-accent: #3B82F6;
   --pc-radius: 8px;
+  --pc-dialog-padding: 1.25rem;
 
   --pc-ease: cubic-bezier(0.4, 0, 0.2, 1);
   --pc-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -294,13 +295,115 @@ body {
   }
 }
 
+// O rodape gruda no fim da area rolavel do dialog (o proprio .p-dialog-content),
+// entao os botoes ficam sempre visiveis e os campos rolam por baixo deles.
+// As margens negativas sao o que faz a faixa cobrir o padding do dialog.
+.p-dialog .p-dialog-content {
+  padding: 0 var(--pc-dialog-padding) var(--pc-dialog-padding);
+}
+
+// Os paineis flutuantes (select, multiselect, datepicker, autocomplete) sao anexados
+// ao body por overlayOptions.appendTo. Sem z-index explicito eles ficam abaixo do
+// dialog (1100+) e, dentro dele, do rodape fixo.
+.p-overlay {
+  z-index: 1250;
+}
+
+// Paineis do topbar (busca e notificacoes): renderizados com appendTo="body",
+// entao precisam viver aqui e nao no SCSS encapsulado do componente.
+.app-topbar__search-panel,
+.app-topbar__notification-panel {
+  width: min(26rem, calc(100vw - 2rem));
+  max-height: min(28rem, 70vh);
+  overflow-y: auto;
+}
+
+.app-topbar__panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.app-topbar__panel-empty {
+  margin: 0;
+  padding: 0.75rem 0.25rem;
+  color: var(--p-text-muted-color, #6b7280);
+  font-size: 0.875rem;
+}
+
+.app-topbar__results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.app-topbar__results button {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.6rem 0.5rem;
+  border: 0;
+  border-radius: var(--p-content-border-radius);
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--pc-duration) var(--pc-ease);
+
+  &:hover,
+  &:focus-visible {
+    background: var(--p-content-hover-background, rgb(30 94 255 / 8%));
+  }
+
+  i {
+    margin-top: 0.15rem;
+    color: var(--p-primary-color);
+
+    &[data-severity='DANGER'] {
+      color: var(--p-red-500, #ef4444);
+    }
+
+    &[data-severity='WARN'] {
+      color: var(--p-orange-500, #f59e0b);
+    }
+  }
+}
+
+.app-topbar__result-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+
+  strong {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  small {
+    color: var(--p-text-muted-color, #6b7280);
+    font-size: 0.775rem;
+  }
+}
+
 .dialog-footer {
+  position: sticky;
+  bottom: calc(var(--pc-dialog-padding) * -1);
+  z-index: 1;
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
-  margin-top: 0.75rem;
-  padding-top: 1rem;
+  margin: 0.75rem calc(var(--pc-dialog-padding) * -1) calc(var(--pc-dialog-padding) * -1);
+  padding: 1rem var(--pc-dialog-padding);
   border-top: 1px solid var(--p-content-border-color, #dde2ea);
+  border-radius: 0 0 var(--p-dialog-border-radius, 0) var(--p-dialog-border-radius, 0);
+  background: var(--p-dialog-background, var(--p-content-background, #ffffff));
 }
 
 .row-actions {

@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { of } from 'rxjs';
@@ -67,6 +68,7 @@ describe('LeadsPageComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideNoopAnimations(),
+        provideRouter([]),
         provideTranslateService({ lang: 'pt-BR', fallbackLang: 'pt-BR' }),
         MessageService,
         ConfirmationService,
@@ -111,6 +113,59 @@ describe('LeadsPageComponent', () => {
 
     expect(component['form'].controls.name.invalid).toBeTrue();
     expect(component['form'].controls.name.touched).toBeTrue();
+  });
+
+  it('keeps the stage select disabled until a pipeline is chosen', () => {
+    component['openCreateDialog']();
+
+    expect(component['form'].controls.stageId.disabled).toBeTrue();
+    expect(component['formStages']()).toEqual([]);
+  });
+
+  it('enables the stage select with the stages of the chosen pipeline', () => {
+    component['pipelines'].items.set([
+      {
+        id: 'pipeline-1',
+        name: 'Funil B2B',
+        businessType: null,
+        active: true,
+        stages: [
+          {
+            id: 'stage-1',
+            pipelineId: 'pipeline-1',
+            name: 'Qualificação',
+            displayOrder: 1,
+            defaultProbability: 10,
+            slaDays: null,
+            color: null,
+            requiresLossReason: false
+          }
+        ]
+      }
+    ]);
+
+    component['onFormPipelineChange']('pipeline-1');
+
+    expect(component['form'].controls.stageId.disabled).toBeFalse();
+    expect(component['formStages']().map((stage) => stage.name)).toEqual(['Qualificação']);
+  });
+
+  it('disables the stage select again when the pipeline is cleared', () => {
+    component['onFormPipelineChange']('pipeline-1');
+    component['onFormPipelineChange'](null);
+
+    expect(component['form'].controls.stageId.disabled).toBeTrue();
+    expect(component['form'].controls.stageId.value).toBeNull();
+  });
+
+  it('announces a load failure instead of an empty list when the options request breaks', () => {
+    component['pipelines'].failed.set(true);
+
+    expect(component['stageEmptyMessage']()).toContain('common.select.loadError');
+
+    component['pipelines'].failed.set(false);
+
+    expect(component['stageEmptyMessage']()).toContain('common.select.empty');
   });
 
   it('prefills the convert dialog from the lead', () => {

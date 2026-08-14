@@ -75,7 +75,13 @@
     "yes": "Sim",
     "no": "Não",
     "notInformed": "Não informado",
-    "never": "Nunca"
+    "never": "Nunca",
+    "select": {
+      "empty": "Nenhum resultado encontrado",
+      "emptyFilter": "Nenhum resultado para esse filtro",
+      "loadError": "Não foi possível carregar"
+    },
+    "loading": "Carregando..."
   },
   "auth": {
     "login": {
@@ -102,7 +108,17 @@
       "default": "Workspace Principal"
     },
     "search": {
-      "placeholder": "Buscar em todo o sistema..."
+      "placeholder": "Buscar em todo o sistema...",
+      "hint": "Digite ao menos 2 caracteres para buscar.",
+      "searching": "Buscando...",
+      "empty": "Nenhum resultado encontrado.",
+      "types": {
+        "CUSTOMER": "Cliente",
+        "CONTACT": "Contato",
+        "LEAD": "Lead",
+        "OPPORTUNITY": "Oportunidade",
+        "TASK": "Tarefa"
+      }
     },
     "menu": {
       "toggle": "Alternar menu de navegação",
@@ -110,7 +126,14 @@
     },
     "notifications": {
       "label": "Notificações",
-      "empty": "Nenhuma notificação"
+      "empty": "Nenhuma notificação",
+      "refresh": "Atualizar notificações",
+      "types": {
+        "TASK_OVERDUE": "Tarefa atrasada",
+        "TASK_DUE_TODAY": "Tarefa vence hoje",
+        "OPPORTUNITY_CLOSE_DATE_PASSED": "Previsão de fechamento vencida",
+        "LEAD_WITHOUT_OWNER": "Lead sem responsável"
+      }
     },
     "newButton": {
       "label": "Novo",
@@ -120,9 +143,7 @@
       "task": "Nova Tarefa"
     },
     "userMenu": {
-      "editProfile": "Editar Perfil",
       "changePassword": "Alterar Senha",
-      "preferences": "Preferências",
       "theme": {
         "label": "Tema",
         "light": "Tema Claro",
@@ -134,8 +155,15 @@
         "en": "Inglês",
         "es": "Espanhol"
       },
-      "helpCenter": "Central de Ajuda",
       "logout": "Sair"
+    },
+    "password": {
+      "title": "Alterar senha",
+      "currentLabel": "Senha atual",
+      "newLabel": "Nova senha",
+      "confirmLabel": "Confirmar nova senha",
+      "mismatch": "A confirmação não confere com a nova senha.",
+      "success": "Senha alterada com sucesso. Os outros dispositivos precisarão entrar de novo."
     }
   },
   "sidebar": {
@@ -763,7 +791,8 @@
         "tagsLabel": "Tags",
         "tagsPlaceholder": "Selecione as tags",
         "notesLabel": "Observações",
-        "activeLabel": "Lead ativo"
+        "activeLabel": "Lead ativo",
+        "stagePlaceholderNoPipeline": "Selecione um funil primeiro"
       },
       "convertDialog": {
         "title": "Converter Lead em Cliente",

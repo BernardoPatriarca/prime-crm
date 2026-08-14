@@ -74,7 +74,7 @@ Esse usuário é criado pela migration de seed com o perfil **Administrador**, q
 ## Testes
 
 ```bash
-cd backend && ./mvnw verify     # 177 testes (services + controllers)
+cd backend && ./mvnw verify     # 182 testes (services + controllers)
 cd frontend && npm test         # testes de componentes, stores e guards
 cd frontend && npm run build    # build de producao
 ```
@@ -102,6 +102,7 @@ Depois de logar com o usuário admin:
 - **Tarefas**: atividades de follow-up com tipo, prioridade, responsável, vencimento e vínculo opcional a cliente, contato, lead ou oportunidade. Filtros por status, responsável e atraso, com ação rápida de concluir.
 - **Relatórios** (`Relatórios → Clientes / Oportunidades / Tarefas`): 35 agrupamentos no total (por tipo, segmento, UF, responsável, etapa do funil, desfecho, motivo de perda, mês de abertura/vencimento, em atraso etc.), com filtro de período e responsável, percentual por grupo, soma de valores nas oportunidades e exportação em CSV.
 - **Auditoria** (`Configurações → Auditoria`): tela com filtros por entidade, ação, usuário e período, detalhe do diff campo a campo e exportação CSV. Além de criação/edição/exclusão, o log registra login, login recusado, logout e toda exportação de dados. Também dá para conferir direto no banco: `psql -U postgres -d primecrm -c "SELECT entity_name, action, user_email, created_at FROM audit_log ORDER BY created_at DESC LIMIT 10;"`
+- **Topbar**: busca global (clientes, contatos, leads, oportunidades e tarefas em uma consulta só), sino de notificações com alertas reais (tarefas atrasadas/do dia, oportunidades com previsão vencida, leads sem responsável), atalhos "+ Novo" que já abrem o diálogo de criação do módulo e troca de senha do próprio usuário.
 - **API**: todos os endpoints documentados e testáveis pelo Swagger UI.
 
 ## Massa de dados para demonstração

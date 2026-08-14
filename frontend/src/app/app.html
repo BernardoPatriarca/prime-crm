@@ -1,5 +1,13 @@
 @if (loadingStore.isLoading()) {
-  <p-progressBar mode="indeterminate" [style]="{ height: '3px' }" styleClass="pc-global-progress" />
+  <div
+    class="pc-loading-overlay"
+    role="status"
+    aria-live="polite"
+    [attr.aria-label]="'common.loading' | translate"
+    data-testid="global-loading"
+  >
+    <img class="pc-loading-overlay__spinner" src="loading.gif" alt="" width="150" height="150" />
+  </div>
 }
 
 <p-toast />

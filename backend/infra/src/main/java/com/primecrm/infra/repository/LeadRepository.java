@@ -26,4 +26,6 @@ public interface LeadRepository extends JpaRepository<Lead, UUID>, JpaSpecificat
     long countByDeletedAtIsNullAndCreatedAtGreaterThanEqualAndCreatedAtLessThan(Instant from, Instant to);
 
     long countByDeletedAtIsNullAndConvertedAtGreaterThanEqualAndConvertedAtLessThan(Instant from, Instant to);
+
+    List<Lead> findTop10ByOwnerIsNullAndConvertedAtIsNullAndDeletedAtIsNullOrderByCreatedAtDesc();
 }

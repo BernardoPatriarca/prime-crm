@@ -20,6 +20,7 @@
 
   <div class="report-filters filter-bar">
     <p-select
+        appendTo="body"
       [ngModel]="groupBy()"
       (ngModelChange)="groupBy.set($event); onFilterChange()"
       [options]="groupByOptions()"
@@ -29,6 +30,7 @@
       data-testid="report-groupby-select"
     />
     <p-datepicker
+        appendTo="body"
       [ngModel]="from()"
       (ngModelChange)="from.set($event); onFilterChange()"
       dateFormat="dd/mm/yy"
@@ -37,6 +39,7 @@
       [placeholder]="'reportsPage.filters.from' | translate"
     />
     <p-datepicker
+        appendTo="body"
       [ngModel]="to()"
       (ngModelChange)="to.set($event); onFilterChange()"
       dateFormat="dd/mm/yy"
@@ -45,6 +48,7 @@
       [placeholder]="'reportsPage.filters.to' | translate"
     />
     <p-select
+        appendTo="body"
       [ngModel]="userId()"
       (ngModelChange)="userId.set($event); onFilterChange()"
       [options]="userOptions()"

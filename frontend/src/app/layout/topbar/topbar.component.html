@@ -12,11 +12,12 @@
   }
 
   <div class="app-topbar__brand">
-    <span class="app-topbar__brand-mark"><i class="pi pi-verified"></i></span>
+    <img class="app-topbar__brand-mark" src="logo.svg" alt="" width="144" height="144" />
     <span class="app-topbar__brand-name">Prime CRM</span>
   </div>
 
   <p-select
+        appendTo="body"
     class="app-topbar__workspace"
     [options]="workspaceOptions"
     [ngModel]="selectedWorkspace"
@@ -26,22 +27,120 @@
     data-testid="workspace-select"
   />
 
-  <p-iconfield class="app-topbar__search">
-    <p-inputicon class="pi pi-search" />
-    <input type="text" pInputText [placeholder]="'topbar.search.placeholder' | translate" data-testid="global-search" />
-  </p-iconfield>
+  <div class="app-topbar__search-wrapper">
+    <p-iconfield class="app-topbar__search">
+      <p-inputicon class="pi pi-search" />
+      <input
+        type="text"
+        pInputText
+        [ngModel]="searchTerm()"
+        (ngModelChange)="onSearchInput($event)"
+        (focus)="searchPanel.show($event)"
+        [placeholder]="'topbar.search.placeholder' | translate"
+        data-testid="global-search"
+      />
+    </p-iconfield>
+
+    <p-popover #searchPanel appendTo="body" styleClass="app-topbar__search-panel">
+      @if (searching()) {
+        <p class="app-topbar__panel-empty">{{ 'topbar.search.searching' | translate }}</p>
+      } @else if (searchTerm().trim().length < 2) {
+        <p class="app-topbar__panel-empty">{{ 'topbar.search.hint' | translate }}</p>
+      } @else if (searchResults().length === 0) {
+        <p class="app-topbar__panel-empty">{{ 'topbar.search.empty' | translate }}</p>
+      } @else {
+        <ul class="app-topbar__results" data-testid="search-results">
+          @for (result of searchResults(); track result.type + result.id) {
+            <li>
+              <button type="button" (click)="searchPanel.hide(); goTo(result.link)">
+                <i [class]="searchIcon(result)"></i>
+                <span class="app-topbar__result-text">
+                  <strong>{{ result.title }}</strong>
+                  <small>
+                    {{ 'topbar.search.types.' + result.type | translate }}
+                    @if (result.code) {
+                      · {{ result.code }}
+                    }
+                    @if (result.subtitle) {
+                      · {{ result.subtitle }}
+                    }
+                  </small>
+                </span>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </p-popover>
+  </div>
 
   <div class="app-topbar__spacer"></div>
 
-  <p-overlayBadge value="0" severity="danger" class="app-topbar__notifications" data-testid="notifications-badge">
-    <p-button icon="pi pi-bell" [text]="true" [rounded]="true" severity="secondary" [attr.aria-label]="'topbar.notifications.label' | translate" />
+  <p-overlayBadge
+    [value]="badgeValue()"
+    severity="danger"
+    class="app-topbar__notifications"
+    data-testid="notifications-badge"
+  >
+    <p-button
+      icon="pi pi-bell"
+      [text]="true"
+      [rounded]="true"
+      severity="secondary"
+      (onClick)="notificationPanel.toggle($event)"
+      [attr.aria-label]="'topbar.notifications.label' | translate"
+      data-testid="notifications-button"
+    />
   </p-overlayBadge>
+
+  <p-popover #notificationPanel appendTo="body" styleClass="app-topbar__notification-panel">
+    <div class="app-topbar__panel-header">
+      <strong>{{ 'topbar.notifications.label' | translate }}</strong>
+      <p-button
+        icon="pi pi-refresh"
+        [text]="true"
+        [rounded]="true"
+        severity="secondary"
+        size="small"
+        [loading]="notificationsLoading()"
+        (onClick)="loadNotifications()"
+        [attr.aria-label]="'topbar.notifications.refresh' | translate"
+      />
+    </div>
+
+    @if (notifications().length === 0) {
+      <p class="app-topbar__panel-empty">{{ 'topbar.notifications.empty' | translate }}</p>
+    } @else {
+      <ul class="app-topbar__results" data-testid="notification-items">
+        @for (notification of notifications(); track notification.type + notification.referenceId) {
+          <li>
+            <button type="button" (click)="notificationPanel.hide(); goTo(notification.link)">
+              <i [class]="notificationIcon(notification)" [attr.data-severity]="notification.severity"></i>
+              <span class="app-topbar__result-text">
+                <strong>{{ notification.title }}</strong>
+                <small>
+                  {{ 'topbar.notifications.types.' + notification.type | translate }}
+                  @if (notification.description) {
+                    · {{ notification.description }}
+                  }
+                  @if (formatDate(notification.date)) {
+                    · {{ formatDate(notification.date) }}
+                  }
+                </small>
+              </span>
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  </p-popover>
 
   <p-splitButton
     [label]="layoutStore.isMobile() ? undefined : ('topbar.newButton.label' | translate)"
     icon="pi pi-plus"
     [model]="newButtonItems()"
     severity="primary"
+    (onClick)="openDefaultCreation()"
     data-testid="new-split-button"
   />
 
@@ -65,3 +164,78 @@
     (onHide)="userMenuOpen.set(false)"
   />
 </header>
+
+<p-dialog
+  appendTo="body"
+  [visible]="passwordDialogVisible()"
+  (visibleChange)="passwordDialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '28rem' }"
+  [breakpoints]="{ '767px': '92vw' }"
+  [header]="'topbar.password.title' | translate"
+>
+  <form [formGroup]="passwordForm" (ngSubmit)="savePassword()" class="dialog-form">
+    <div class="field">
+      <label for="current-password">{{ 'topbar.password.currentLabel' | translate }}</label>
+      <p-password
+        inputId="current-password"
+        formControlName="currentPassword"
+        [feedback]="false"
+        [toggleMask]="true"
+        fluid
+        data-testid="current-password-input"
+      />
+      @if (passwordForm.controls.currentPassword.invalid && passwordForm.controls.currentPassword.touched) {
+        <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="new-password">{{ 'topbar.password.newLabel' | translate }}</label>
+      <p-password
+        inputId="new-password"
+        formControlName="newPassword"
+        [toggleMask]="true"
+        fluid
+        data-testid="new-password-input"
+      />
+      @if (passwordForm.controls.newPassword.invalid && passwordForm.controls.newPassword.touched) {
+        <small class="field-error">{{ 'common.validation.minLength' | translate: { min: 8 } }}</small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="confirm-password">{{ 'topbar.password.confirmLabel' | translate }}</label>
+      <p-password
+        inputId="confirm-password"
+        formControlName="confirmPassword"
+        [feedback]="false"
+        [toggleMask]="true"
+        fluid
+        data-testid="confirm-password-input"
+      />
+      @if (passwordMismatch) {
+        <small class="field-error">{{ 'topbar.password.mismatch' | translate }}</small>
+      }
+    </div>
+
+    <div class="dialog-footer">
+      <p-button
+        [label]="'common.actions.cancel' | translate"
+        severity="secondary"
+        [text]="true"
+        type="button"
+        (onClick)="closePasswordDialog()"
+      />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="savingPassword()"
+        data-testid="save-password-button"
+      />
+    </div>
+  </form>
+</p-dialog>

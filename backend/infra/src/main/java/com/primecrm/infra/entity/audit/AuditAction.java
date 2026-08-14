@@ -7,5 +7,6 @@ public enum AuditAction {
     LOGIN,
     LOGIN_FAILED,
     LOGOUT,
+    PASSWORD_CHANGED,
     EXPORT
 }
