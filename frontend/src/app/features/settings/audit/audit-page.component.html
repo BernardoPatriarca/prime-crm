@@ -29,6 +29,7 @@
   >
     <div tableActions class="filter-bar">
       <p-select
+        appendTo="body"
         [ngModel]="entityFilter()"
         (ngModelChange)="entityFilter.set($event); onFilterChange()"
         [options]="entityNames()"
@@ -38,6 +39,7 @@
         data-testid="audit-entity-filter"
       />
       <p-select
+        appendTo="body"
         [ngModel]="actionFilter()"
         (ngModelChange)="actionFilter.set($event); onFilterChange()"
         [options]="actionOptions()"
@@ -48,6 +50,7 @@
         data-testid="audit-action-filter"
       />
       <p-select
+        appendTo="body"
         [ngModel]="userFilter()"
         (ngModelChange)="userFilter.set($event); onFilterChange()"
         [options]="userOptions()"
@@ -59,6 +62,7 @@
         [placeholder]="'auditPage.filters.user' | translate"
       />
       <p-datepicker
+        appendTo="body"
         [ngModel]="from()"
         (ngModelChange)="from.set($event); onFilterChange()"
         dateFormat="dd/mm/yy"
@@ -67,6 +71,7 @@
         [placeholder]="'auditPage.filters.from' | translate"
       />
       <p-datepicker
+        appendTo="body"
         [ngModel]="to()"
         (ngModelChange)="to.set($event); onFilterChange()"
         dateFormat="dd/mm/yy"

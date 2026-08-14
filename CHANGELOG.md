@@ -36,6 +36,38 @@ Os cartões demonstrativos saíram; o dashboard agora consome `GET /api/v1/dashb
 
 **Tooltips**: cartões de indicador, etapas do funil, linhas do ranking e cartões de tarefa têm tooltip com o número por extenso e a leitura da variação ("Alta de 153,92% em relação ao período anterior"). Nos gráficos SVG o tooltip é `<title>` nativo — ponto do gráfico mensal e fatia da rosca —, sem JavaScript de posicionamento.
 
+### Topbar funcional e ergonomia dos diálogos
+
+- **Rodapé fixo nos diálogos**: os botões Salvar/Cancelar param de rolar junto com o formulário. O rodapé gruda no fim da área rolável (`position: sticky` ancorado no `.p-dialog-content`) e os campos rolam por baixo dele. Foi feito no `.dialog-footer` global, então vale para os 17 diálogos do sistema de uma vez, sem tocar em nenhum template. As margens negativas cobrem o padding do diálogo — e para essa conta fechar o padding do `.p-dialog-content` passou a ser definido por `--pc-dialog-padding` em vez de depender do valor interno do tema.
+- **Notificações** (`GET /api/v1/notifications`): o sino deixou de ser enfeite. Os alertas são derivados dos dados reais — tarefas do usuário atrasadas e vencendo hoje, oportunidades dele com previsão de fechamento vencida e leads sem responsável — com badge de contagem, ícone por severidade, atualização a cada 2 minutos e clique navegando para o módulo. Não há tabela de "lida/não lida": o alerta some quando o motivo dele deixa de existir, que é o comportamento honesto para algo derivado.
+- **Busca global** (`GET /api/v1/search`): busca única sobre clientes, contatos, leads, oportunidades e tarefas, com no máximo 5 resultados por módulo, debounce de 300 ms e mínimo de 2 caracteres. Cada módulo só é consultado se o usuário tiver a permissão de visualização correspondente — a checagem é passada como predicado para o service, então a regra fica em um lugar só.
+- **Botão "+ Novo"**: os atalhos passaram a navegar para o módulo com `?novo=1`, e a página abre o diálogo de criação sozinha. O parâmetro é limpo da URL logo depois, senão o atalho só funcionaria uma vez por página. Itens sem permissão de criação continuam desabilitados.
+- **Alterar senha** (`PATCH /api/v1/auth/password`): o próprio usuário troca a senha informando a atual, sem depender de `USUARIOS_EDIT`. A troca revoga os refresh tokens ativos (os outros dispositivos precisam entrar de novo) e é auditada como `PASSWORD_CHANGED` (migration `V22`).
+- Os itens "Editar Perfil", "Preferências" e "Central de Ajuda" foram **removidos** do menu do usuário em vez de continuarem desabilitados: os três dependem de telas que ainda não existem, e menu morto é pior que menu ausente.
+
+### Indicador de carregamento
+
+A barra de progresso no topo saiu: ela ficava no fluxo do documento, e seus 3px ligavam a barra de rolagem vertical, encolhendo a largura útil da página a cada requisição. No lugar dela entrou um **overlay centralizado** com o `loading.gif`, em `position: fixed` cobrindo a viewport — como não ocupa espaço no fluxo, a página não muda de tamanho durante o carregamento.
+
+O overlay fica acima dos diálogos (z-index 2000 contra 1102 do dialog), traz `role="status"` com rótulo traduzido para leitores de tela e escurece levemente o fundo com desfoque, o que também impede cliques enquanto a requisição está em andamento. A `LoadingStore` e o interceptor continuam iguais — a contagem de requisições ativas é que liga e desliga o overlay.
+
+### Selects: dependência, mensagem vazia e sobreposição
+
+Três problemas somados no diálogo de lead — o campo Etapa devolvia "No results found" ao ser aberto:
+
+- **Causa real**: Etapa depende de Funil. Enquanto nenhum funil estava escolhido a lista era legitimamente vazia, e o PrimeNG exibia a mensagem padrão dele, em inglês. O campo agora **fica desabilitado** com o texto "Selecione um funil primeiro" e só libera quando o funil escolhido tem etapas — a dependência ficou explícita em vez de aparecer como erro. Vale para o diálogo de criação e para o de conversão de lead.
+- **Vazio × falha**: as mensagens de lista vazia do PrimeNG passaram a vir do i18n (`PrimeNG.setTranslation` sincronizado com o `ngx-translate`, reaplicado a cada troca de idioma), então todo select/multiselect do sistema diz "Nenhum resultado encontrado" no idioma ativo. Para distinguir de uma falha de carga, um helper (`createOptionsState`) guarda `items` + `failed` por lista e escolhe a mensagem: quando a requisição das opções quebra, o select mostra **"Não foi possível carregar"** em vez de sugerir que o banco está vazio.
+- **Painel atrás do rodapé**: regressão do rodapé fixo introduzido nesta mesma fase — com `z-index: 1` ele passou a pintar por cima dos painéis, que o PrimeNG renderiza *dentro* do formulário. `overlayOptions.appendTo` no `providePrimeNG` não resolve (o `p-select` não consulta essa chave), então o `appendTo="body"` foi aplicado nos próprios componentes: os painéis saem do diálogo, deixam de ser recortados pela área rolável e passam a flutuar acima de tudo. Verificado no navegador: painel fora do diálogo, fundo opaco e a opção como elemento no topo do ponto de sobreposição.
+
+### Identidade visual
+
+A marca do produto passou a ser um SVG único (`P` branco sobre quadrado azul da paleta primária, com o ponto âmbar). O mesmo arquivo alimenta a aba do navegador, a topbar e as duas marcas da tela de login — antes cada lugar usava o ícone `pi-verified` do PrimeIcons dentro de um quadrado com gradiente CSS.
+
+- `favicon.svg` (64px, para a aba) e `logo.svg` (mesmo desenho em 144px, para uso na interface).
+- `favicon.ico` **multi-resolução** (16/32/48/64) para os casos que não aceitam SVG — abas de navegadores antigos, favoritos, atalho do Windows — e `apple-touch-icon.png` (180px) para iOS.
+- Sem ImageMagick ou biblioteca de imagem no ambiente, os PNGs foram rasterizados pelo próprio Chrome (canvas a partir do SVG) e o container `.ico` foi montado em Node — cabeçalho ICONDIR + entradas apontando para PNGs embutidos, formato aceito de Windows Vista em diante. A estrutura do arquivo foi validada lendo o binário de volta: 4 imagens, dimensões conferindo entre a entrada do diretório e o cabeçalho de cada PNG.
+- Os contêineres CSS das marcas perderam `background`/`gradiente` próprios (o SVG já traz o fundo), mantendo só tamanho, raio e sombra.
+
 ### Correções
 
 **Não era possível criar nenhum registro pela API estando logado** (`409 CONFLICT — "Operacao viola uma restricao de unicidade ou integridade dos dados"`). A causa não era unicidade: o `AuditorAware` do JPA usa `authentication.getName()` para preencher `created_by`/`updated_by` (`VARCHAR(120)`), e o principal `AuthenticatedUser` era um record comum — o Spring Security então caía no `principal.toString()`, que traz id, e-mail, login, nome, perfis **e a lista inteira de permissões**, passando de 120 caracteres. O erro real no Postgres era `valor é muito longo para tipo character varying(120)`, mascarado pelo `DataIntegrityViolationException` genérico. `AuthenticatedUser` passou a implementar `AuthenticatedPrincipal`, expondo o login como nome de autenticação — que é o valor que deveria estar em `created_by` desde o início. Coberto por teste de regressão contra o banco real (`AuditorColumnRegressionTest`), que falha com a mensagem original se a correção for revertida.
@@ -43,8 +75,8 @@ Os cartões demonstrativos saíram; o dashboard agora consome `GET /api/v1/dashb
 **Toasts e diálogos apareciam atrás da topbar.** Duas causas somadas: a escala de z-index da aplicação (topbar 1200, sidebar 1100) estava **acima** da camada flutuante do PrimeNG (overlays 1000+, modais 1100+), e o deslocamento vertical do toast (`top: 5.25rem`) nunca chegou a valer porque o PrimeNG escreve `top: 20px` por style inline. Corrigido invertendo a escala — o "chrome" da aplicação foi para baixo da camada de overlays (sidebar 899/900, topbar 950) em vez de empurrar cada componente do PrimeNG para cima — e mantendo o deslocamento do toast com `!important`, único jeito de vencer o inline style. Isso corrige junto o mask de diálogo, que agora escurece a topbar, e o drawer da sidebar no mobile. A configuração `zIndex` do `providePrimeNG` não serve para isso: o `setConfig` do PrimeNG 20.1 ignora essa chave.
 
 ### Qualidade
-- Backend: 177 testes (`./mvnw verify` verde), com testes novos de `TaskService`, `ReportService`, `AuditLogService`, `DashboardService`, do escritor de CSV e das duas correções acima. As agregações do dashboard também têm teste rodando contra o Postgres local, que quebra se alguma query JPQL parar de compilar no banco.
-- Frontend: 201 testes (`npm test` verde) e `npm run build` verde.
+- Backend: 182 testes (`./mvnw verify` verde), com testes novos de `TaskService`, `ReportService`, `AuditLogService`, `DashboardService`, do escritor de CSV e das duas correções acima. As agregações do dashboard também têm teste rodando contra o Postgres local, que quebra se alguma query JPQL parar de compilar no banco.
+- Frontend: 227 testes (`npm test` verde) e `npm run build` verde.
 
 ---
 

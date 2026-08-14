@@ -1,6 +1,7 @@
 package com.primecrm.core.service;
 
 import com.primecrm.core.audit.AuditService;
+import com.primecrm.core.dto.auth.ChangeOwnPasswordRequest;
 import com.primecrm.core.dto.auth.LoginRequest;
 import com.primecrm.core.dto.auth.LoginResponse;
 import com.primecrm.core.dto.auth.MeResponse;
@@ -115,6 +116,27 @@ public class AuthService {
                 user == null ? null : user.getEmail(),
                 Map.of("usernameOrEmail", usernameOrEmail, "reason", errorCode));
         return new UnauthorizedException(errorCode, message);
+    }
+
+    @Transactional
+    public void changeOwnPassword(UUID userId, ChangeOwnPasswordRequest request) {
+        User user = userRepository.findById(userId)
+                .filter(candidate -> !candidate.isDeleted())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", userId));
+
+        if (!passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())) {
+            throw new UnauthorizedException(INVALID_CREDENTIALS, "Senha atual invalida");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
+        userRepository.save(user);
+
+        List<RefreshToken> activeTokens = refreshTokenRepository
+                .findAll(RefreshTokenSpecifications.activeByUserId(userId));
+        activeTokens.forEach(token -> token.setRevoked(true));
+        refreshTokenRepository.saveAll(activeTokens);
+
+        auditService.recordSecurityEvent(AuditAction.PASSWORD_CHANGED, userId, user.getEmail(), Map.of());
     }
 
     @Transactional(readOnly = true)

@@ -23,6 +23,7 @@ import { DomainValue } from '../../../core/models/domain-value.model';
 import { AdminUserService } from '../../../core/services/admin-user.service';
 import { CustomerService } from '../../../core/services/customer.service';
 import { DomainValueService } from '../../../core/services/domain-value.service';
+import { openCreateDialogFromRoute } from '../../../shared/utils/creation-route.util';
 import { SessionStore } from '../../../core/store/session.store';
 import { GenericTableComponent, TableQuery } from '../../../shared/components/generic-table/generic-table.component';
 import { DocumentPipe } from '../../../shared/pipes/document.pipe';
@@ -211,6 +212,12 @@ export class CustomersPageComponent {
       const upperCased = (document ?? '').toUpperCase();
       if (document !== upperCased) {
         this.form.controls.document.setValue(upperCased, { emitEvent: false });
+      }
+    });
+
+    openCreateDialogFromRoute(() => {
+      if (this.canCreate()) {
+        this.openCreateDialog();
       }
     });
 

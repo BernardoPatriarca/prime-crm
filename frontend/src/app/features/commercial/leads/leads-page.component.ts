@@ -1,5 +1,6 @@
 import { Component, WritableSignal, computed, inject, signal } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { map } from 'rxjs';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MessageService, SharedModule } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -25,10 +26,12 @@ import { AdminUserService } from '../../../core/services/admin-user.service';
 import { DomainValueService } from '../../../core/services/domain-value.service';
 import { LeadService } from '../../../core/services/lead.service';
 import { PipelineService } from '../../../core/services/pipeline.service';
+import { openCreateDialogFromRoute } from '../../../shared/utils/creation-route.util';
 import { SessionStore } from '../../../core/store/session.store';
 import { GenericTableComponent, TableQuery } from '../../../shared/components/generic-table/generic-table.component';
 import { domainChipStyle } from '../../../shared/utils/domain-color.util';
 import { phoneValidator } from '../../../shared/validators/contact.validators';
+import { OptionsState, createOptionsState } from '../../../shared/utils/options-state.util';
 
 function toSort(query: TableQuery): string | undefined {
   if (!query.sortField) {
@@ -115,13 +118,13 @@ export class LeadsPageComponent {
   protected readonly convertingLead = signal<Lead | null>(null);
   protected readonly converting = signal(false);
 
-  protected readonly origins = signal<DomainValue[]>([]);
-  protected readonly statuses = signal<DomainValue[]>([]);
-  protected readonly priorities = signal<DomainValue[]>([]);
-  protected readonly tags = signal<DomainValue[]>([]);
-  protected readonly clientTypes = signal<DomainValue[]>([]);
-  protected readonly users = signal<AdminUser[]>([]);
-  protected readonly pipelines = signal<Pipeline[]>([]);
+  protected readonly origins = createOptionsState<DomainValue>(this.translate);
+  protected readonly statuses = createOptionsState<DomainValue>(this.translate);
+  protected readonly priorities = createOptionsState<DomainValue>(this.translate);
+  protected readonly tags = createOptionsState<DomainValue>(this.translate);
+  protected readonly clientTypes = createOptionsState<DomainValue>(this.translate);
+  protected readonly users = createOptionsState<AdminUser>(this.translate);
+  protected readonly pipelines = createOptionsState<Pipeline>(this.translate);
 
   protected readonly canCreate = computed(() => this.sessionStore.hasPermission('LEADS_CREATE'));
   protected readonly canEdit = computed(() => this.sessionStore.hasPermission('LEADS_EDIT'));
@@ -169,39 +172,71 @@ export class LeadsPageComponent {
   protected readonly convertStages = signal<PipelineStage[]>([]);
 
   constructor() {
+    openCreateDialogFromRoute(() => {
+      if (this.canCreate()) {
+        this.openCreateDialog();
+      }
+    });
+
     this.load();
     this.loadDomain('LEAD_ORIGIN', this.origins);
     this.loadDomain('GENERIC_STATUS', this.statuses);
     this.loadDomain('PRIORITY', this.priorities);
     this.loadDomain('TAG', this.tags);
     this.loadDomain('CLIENT_TYPE', this.clientTypes);
-    this.adminUserService.list({ size: 200, sort: 'name,asc' }).subscribe((response) => this.users.set(response.content));
-    this.pipelineService.list({ active: true, size: 100 }).subscribe((response) => this.pipelines.set(response.content));
+    this.users.load(this.adminUserService.list({ size: 200, sort: 'name,asc' }).pipe(map((page) => page.content)));
+    this.pipelines.load(
+      this.pipelineService.list({ active: true, size: 100 }).pipe(map((page) => page.content))
+    );
   }
 
-  private loadDomain(type: string, target: WritableSignal<DomainValue[]>): void {
-    this.domainValueService
-      .list({ type, active: true, size: 200, sort: 'displayOrder,asc' })
-      .subscribe((response) => target.set(response.content));
+  private loadDomain(type: string, target: OptionsState<DomainValue>): void {
+    target.load(
+      this.domainValueService
+        .list({ type, active: true, size: 200, sort: 'displayOrder,asc' })
+        .pipe(map((page) => page.content))
+    );
   }
 
   private stagesOf(pipelineId: string | null): PipelineStage[] {
     if (!pipelineId) {
       return [];
     }
-    return this.pipelines().find((pipeline) => pipeline.id === pipelineId)?.stages ?? [];
+    return this.pipelines.items().find((pipeline) => pipeline.id === pipelineId)?.stages ?? [];
   }
+
+  protected readonly stageEmptyMessage = computed(() => {
+    this.translate.currentLang();
+    if (this.pipelines.failed()) {
+      return this.translate.instant('common.select.loadError');
+    }
+    return this.translate.instant('common.select.empty');
+  });
 
   protected onFormPipelineChange(pipelineId: string | null): void {
     this.form.controls.pipelineId.setValue(pipelineId);
     this.form.controls.stageId.setValue(null);
-    this.formStages.set(this.stagesOf(pipelineId));
+    this.applyStages(pipelineId, this.formStages, this.form.controls.stageId);
   }
 
   protected onConvertPipelineChange(pipelineId: string | null): void {
     this.convertForm.controls.pipelineId.setValue(pipelineId);
     this.convertForm.controls.stageId.setValue(null);
-    this.convertStages.set(this.stagesOf(pipelineId));
+    this.applyStages(pipelineId, this.convertStages, this.convertForm.controls.stageId);
+  }
+
+  private applyStages(
+    pipelineId: string | null,
+    target: WritableSignal<PipelineStage[]>,
+    stageControl: FormControl<string | null>
+  ): void {
+    const stages = this.stagesOf(pipelineId);
+    target.set(stages);
+    if (stages.length > 0) {
+      stageControl.enable({ emitEvent: false });
+    } else {
+      stageControl.disable({ emitEvent: false });
+    }
   }
 
   protected onQueryChange(query: TableQuery): void {
@@ -247,7 +282,7 @@ export class LeadsPageComponent {
 
   protected openCreateDialog(): void {
     this.editingLead.set(null);
-    this.formStages.set([]);
+    this.applyStages(null, this.formStages, this.form.controls.stageId);
     this.form.reset({
       name: '',
       companyName: '',
@@ -275,7 +310,7 @@ export class LeadsPageComponent {
 
   protected openEditDialog(lead: Lead): void {
     this.editingLead.set(lead);
-    this.formStages.set(this.stagesOf(lead.pipeline?.id ?? null));
+    this.applyStages(lead.pipeline?.id ?? null, this.formStages, this.form.controls.stageId);
     this.form.reset({
       name: lead.name,
       companyName: lead.companyName ?? '',
@@ -376,7 +411,7 @@ export class LeadsPageComponent {
 
   protected openConvertDialog(lead: Lead): void {
     this.convertingLead.set(lead);
-    this.convertStages.set(this.stagesOf(lead.pipeline?.id ?? null));
+    this.applyStages(lead.pipeline?.id ?? null, this.convertStages, this.convertForm.controls.stageId);
     this.convertForm.reset({
       createOpportunity: true,
       pipelineId: lead.pipeline?.id ?? null,

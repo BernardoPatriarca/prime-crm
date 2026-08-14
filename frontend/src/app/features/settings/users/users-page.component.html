@@ -25,6 +25,7 @@
   >
     <div tableActions>
       <p-select
+        appendTo="body"
         [ngModel]="statusFilter()"
         (ngModelChange)="onStatusFilterChange($event)"
         [options]="statuses"
@@ -236,6 +237,7 @@
       <div class="field">
         <label for="user-roles">{{ 'settingsPages.users.dialog.rolesLabel' | translate }}</label>
         <p-multiselect
+        appendTo="body"
           inputId="user-roles"
           formControlName="roleIds"
           [options]="roles()"

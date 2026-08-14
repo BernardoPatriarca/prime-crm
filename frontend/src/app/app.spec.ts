@@ -7,6 +7,7 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { providePrimeNG } from 'primeng/config';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { App } from './app';
+import { LoadingStore } from './core/store/loading.store';
 import { PrimeCrmPreset } from './core/theme/prime-crm-preset';
 
 describe('App', () => {
@@ -42,5 +43,43 @@ describe('App', () => {
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('router-outlet')).toBeTruthy();
+  });
+
+  it('keeps the loading overlay out of the DOM while nothing is loading', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.querySelector('[data-testid="global-loading"]')).toBeNull();
+  });
+
+  it('shows the centered gif overlay while a request is running', () => {
+    const fixture = TestBed.createComponent(App);
+    const loadingStore = TestBed.inject(LoadingStore);
+    fixture.detectChanges();
+
+    loadingStore.start();
+    fixture.detectChanges();
+
+    const overlay = (fixture.nativeElement as HTMLElement).querySelector('[data-testid="global-loading"]');
+    expect(overlay).toBeTruthy();
+    expect(overlay?.getAttribute('role')).toBe('status');
+    expect(overlay?.querySelector('img')?.getAttribute('src')).toBe('loading.gif');
+  });
+
+  it('removes the overlay when the last request finishes', () => {
+    const fixture = TestBed.createComponent(App);
+    const loadingStore = TestBed.inject(LoadingStore);
+    loadingStore.start();
+    loadingStore.start();
+    fixture.detectChanges();
+
+    loadingStore.stop();
+    fixture.detectChanges();
+    expect((fixture.nativeElement as HTMLElement).querySelector('[data-testid="global-loading"]')).toBeTruthy();
+
+    loadingStore.stop();
+    fixture.detectChanges();
+    expect((fixture.nativeElement as HTMLElement).querySelector('[data-testid="global-loading"]')).toBeNull();
   });
 });
