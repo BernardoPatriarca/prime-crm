@@ -13,10 +13,10 @@ export const LoadingStore = signalStore(
   })),
   withMethods((store) => ({
     start(): void {
-      patchState(store, { activeRequests: store.activeRequests() + 1 });
+      patchState(store, (state) => ({ activeRequests: state.activeRequests + 1 }));
     },
     stop(): void {
-      patchState(store, { activeRequests: Math.max(0, store.activeRequests() - 1) });
+      patchState(store, (state) => ({ activeRequests: Math.max(0, state.activeRequests - 1) }));
     }
   }))
 );

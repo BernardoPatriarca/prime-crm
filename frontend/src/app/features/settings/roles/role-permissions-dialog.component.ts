@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
@@ -53,10 +53,13 @@ export class RolePermissionsDialogComponent {
 
   constructor() {
     effect(() => {
-      if (this.visible()) {
-        this.loadPermissions();
-        const role = this.role();
-        this.selectedIds.set(new Set(role?.permissions.map((permission) => permission.id) ?? []));
+      const visible = this.visible();
+      const role = this.role();
+      if (visible) {
+        untracked(() => {
+          this.loadPermissions();
+          this.selectedIds.set(new Set(role?.permissions.map((permission) => permission.id) ?? []));
+        });
       }
     });
   }

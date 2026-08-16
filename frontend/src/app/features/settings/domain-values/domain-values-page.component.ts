@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ConfirmationService, MessageService, SharedModule } from 'primeng/api';
@@ -119,9 +119,11 @@ export class DomainValuesPageComponent {
   constructor() {
     effect(() => {
       const tipo = this.tipo();
-      this.loadDomainType(tipo);
-      this.lastQuery = { page: 0, size: this.lastQuery.size };
-      this.load();
+      untracked(() => {
+        this.loadDomainType(tipo);
+        this.lastQuery = { page: 0, size: this.lastQuery.size };
+        this.load();
+      });
     });
   }
 
