@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal, untracked } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -71,8 +71,10 @@ export class PipelineStagesDialogComponent {
 
   constructor() {
     effect(() => {
-      if (this.visible() && this.pipelineId()) {
-        this.load();
+      const visible = this.visible();
+      const pipelineId = this.pipelineId();
+      if (visible && pipelineId) {
+        untracked(() => this.load());
       }
     });
   }
