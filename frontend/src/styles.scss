@@ -623,9 +623,32 @@ tr:hover .row-actions,
     display: flex;
     flex-direction: column;
     gap: 0.1rem;
-    padding: 0;
     margin: 0;
     list-style: none;
+  }
+
+  .p-panelmenu-root-list {
+    padding: 0;
+  }
+
+  // PrimeNG marca a lista raiz com as duas classes (p-panelmenu-root-list E
+  // p-panelmenu-submenu); o :not() garante que so listas REALMENTE aninhadas
+  // (ex.: item dentro de "Cadastros Gerais" dentro de "Configuracoes") recebam
+  // este indent. Sem isso um item de terceiro nivel ficava no mesmo x dos
+  // irmaos de segundo nivel, sem indicar a hierarquia.
+  .p-panelmenu-submenu:not(.p-panelmenu-root-list) {
+    padding: 0.15rem 0 0.15rem 0.85rem;
+    position: relative;
+  }
+
+  .p-panelmenu-submenu:not(.p-panelmenu-root-list)::before {
+    content: "";
+    position: absolute;
+    left: 1.05rem;
+    top: 0.3rem;
+    bottom: 0.3rem;
+    width: 1px;
+    background: var(--p-content-border-color, #dde2ea);
   }
 
   .p-panelmenu-item-link {

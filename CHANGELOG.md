@@ -36,6 +36,24 @@ Os cartões demonstrativos saíram; o dashboard agora consome `GET /api/v1/dashb
 
 **Tooltips**: cartões de indicador, etapas do funil, linhas do ranking e cartões de tarefa têm tooltip com o número por extenso e a leitura da variação ("Alta de 153,92% em relação ao período anterior"). Nos gráficos SVG o tooltip é `<title>` nativo — ponto do gráfico mensal e fatia da rosca —, sem JavaScript de posicionamento.
 
+### Trava total do navegador ao abrir "Cadastros Gerais" (e outros dois diálogos de configuração)
+
+Clicar em qualquer cadastro dentro de `Configurações → Cadastros Gerais` (ex.: Tipo de Cliente) travava a aba inteira — nenhuma interação, nem o DevTools, respondia mais.
+
+**Causa raiz**: o `loadingInterceptor` global (que liga/desliga a barra de carregamento) lê e escreve o signal `LoadingStore.activeRequests` de forma **síncrona**, no meio de toda chamada HTTP — antes mesmo de qualquer resposta chegar. `domain-values-page.component.ts` disparava essa chamada (`domainTypeService.list()`) de dentro de um `effect()` do construtor sem envolver a chamada em `untracked()`. Como o Angular Signals rastreia **qualquer** leitura de signal que ocorra durante a execução síncrona de um `effect()` — mesmo dentro de serviços/interceptors injetados, várias camadas abaixo —, a leitura de `activeRequests()` feita pelo interceptor virou dependência implícita desse `effect`. E como o próprio interceptor escreve nesse signal logo em seguida, o `effect` era marcado sujo e reagendado — disparando `load()` de novo, uma nova requisição, uma nova leitura+escrita do interceptor, e assim indefinidamente. Cada iteração é agendada via microtask, então o navegador nunca chega a "devolver" o controle para pintar a tela ou responder ao DevTools: trava de verdade, não só fica lento.
+
+Diagnosticado ao vivo, sem alterar comportamento: um contador temporário dentro do `effect` (removido depois) mostrou o padrão exato — cada nova requisição XHR (capturada via `XMLHttpRequest.prototype.open` interceptado) correspondia a exatamente mais uma execução do `effect`, comprovando o ciclo.
+
+**Correção em duas camadas**:
+- Nos três pontos que tinham o mesmo padrão perigoso (`effect()` chamando um `load()` que faz HTTP, sem `untracked()`) — `domain-values-page.component.ts`, `pipeline-stages-dialog.component.ts` ("Gerenciar Etapas" de um pipeline) e `role-permissions-dialog.component.ts` ("Gerenciar Permissões" de um perfil) —, o corpo que dispara a chamada HTTP passou a rodar dentro de `untracked()`, igual ao padrão já usado em `reports-page.component.ts` (que por isso nunca teve esse problema).
+- Na raiz, `LoadingStore.start()`/`.stop()` pararam de ler `store.activeRequests()` via getter reativa e passaram a usar a forma de **updater function** do `patchState` (`(state) => ({...})`), que recebe um snapshot em vez de fazer uma leitura reativa. Isso elimina a classe inteira do problema: nenhum `effect()` futuro — mesmo esquecendo o `untracked()` — pode mais ser capturado como dependente do contador de requisições globais.
+
+Coberto por `loading.store.spec.ts`: um teste isolado recria o mecanismo exato (um `effect()` ambiente que chama `store.start()`/`.stop()` de forma síncrona) e comprova que ele executa uma única vez mesmo após múltiplos `TestBed.tick()`. Validado que esse teste realmente pega o bug — revertendo `LoadingStore` para a versão antiga, o próprio Chrome Headless do Karma travou e caiu por timeout, igual ao navegador real.
+
+### Indent ausente no terceiro nível da sidebar
+
+Itens dentro de um grupo aninhado (ex.: "Tipo de Cliente" dentro de "Cadastros Gerais" dentro de "Configurações") apareciam no mesmo x que "Cadastros Gerais" e que os irmãos de segundo nível, sem indicar a hierarquia. Causa: a regra global `.p-panelmenu-submenu { padding: 0; }` zerava o indent de **qualquer** submenu aninhado, mas o PrimeNG marca a lista raiz do menu com as classes `p-panelmenu-root-list` E `p-panelmenu-submenu` ao mesmo tempo — então a mesma regra também afetava (sem querer) uma lista que não devia ganhar indent. Corrigido separando as duas: `.p-panelmenu-root-list` continua sem padding extra (o indent do primeiro nível já vem de `.p-panelmenu-content`), e `.p-panelmenu-submenu:not(.p-panelmenu-root-list)` — ou seja, apenas listas *realmente* aninhadas — ganha `padding-left: 0.85rem` e a mesma linha guia vertical sutil já usada no primeiro nível. Medido no navegador: nível 1 permanece em 23px (inalterado), nível 2 passa a 37px.
+
 ### Topbar funcional e ergonomia dos diálogos
 
 - **Rodapé fixo nos diálogos**: os botões Salvar/Cancelar param de rolar junto com o formulário. O rodapé gruda no fim da área rolável (`position: sticky` ancorado no `.p-dialog-content`) e os campos rolam por baixo dele. Foi feito no `.dialog-footer` global, então vale para os 17 diálogos do sistema de uma vez, sem tocar em nenhum template. As margens negativas cobrem o padding do diálogo — e para essa conta fechar o padding do `.p-dialog-content` passou a ser definido por `--pc-dialog-padding` em vez de depender do valor interno do tema.
@@ -76,7 +94,7 @@ A marca do produto passou a ser um SVG único (`P` branco sobre quadrado azul da
 
 ### Qualidade
 - Backend: 182 testes (`./mvnw verify` verde), com testes novos de `TaskService`, `ReportService`, `AuditLogService`, `DashboardService`, do escritor de CSV e das duas correções acima. As agregações do dashboard também têm teste rodando contra o Postgres local, que quebra se alguma query JPQL parar de compilar no banco.
-- Frontend: 227 testes (`npm test` verde) e `npm run build` verde.
+- Frontend: 231 testes (`npm test` verde) e `npm run build` verde.
 
 ---
 
