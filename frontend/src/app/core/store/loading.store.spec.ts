@@ -37,20 +37,8 @@ describe('LoadingStore', () => {
     'regressao: start()/stop() nao podem virar dependencia reativa de um effect ambiente ' +
       '(travava a tela de Cadastros Gerais)',
     () => {
-      // O loadingInterceptor chama loadingStore.start()/.stop() de forma SINCRONA no meio de
-      // toda chamada HTTP disparada pela aplicacao. Se start()/stop() lessem o valor atual do
-      // signal atraves da getter reativa (`store.activeRequests()`) para calcular o incremento —
-      // como faziam antes desta correcao — qualquer effect() que disparasse uma chamada HTTP
-      // sincronamente (ex.: um efeito de tela que chama um service.list().subscribe(...) sem
-      // envolver a chamada em untracked()) passaria a "depender" desse signal. Como o proprio
-      // start() ESCREVE nesse signal logo em seguida, o efeito seria marcado como sujo e
-      // reagendado — chamando load() de novo, disparando outra requisicao, chamando start() de
-      // novo, e assim indefinidamente. Foi exatamente isso que travou a aba inteira ao abrir
-      // "Configuracoes > Cadastros Gerais > Tipo de Cliente".
-      //
-      // A correcao usa a forma de updater function do patchState (que recebe um snapshot do
-      // estado, nao uma leitura reativa do signal), entao start()/stop() nunca mais podem ser
-      // capturados como dependencia de um effect ambiente, nao importa de onde sejam chamados.
+      // Ler o signal pela getter reativa dentro de start()/stop() os tornava dependencia de
+      // qualquer effect que dispare HTTP, gerando loop infinito. patchState com updater evita isso.
       let runs = 0;
       const unrelatedTrigger = signal(0);
 
