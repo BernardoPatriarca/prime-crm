@@ -99,7 +99,13 @@
       "invalidCredentials": "Credenciales inválidas. Verifica tu usuario y contraseña e inténtalo de nuevo.",
       "userNotActive": "Tu usuario está inactivo o bloqueado. Contacta a un administrador del sistema.",
       "connectionError": "No fue posible conectar con el servidor. Verifica que el backend esté activo e inténtalo de nuevo.",
-      "serverError": "El servidor no pudo procesar el inicio de sesión. Inténtalo de nuevo en unos instantes."
+      "serverError": "El servidor no pudo procesar el inicio de sesión. Inténtalo de nuevo en unos instantes.",
+      "footer": "© 2026 Prime CRM · CRM corporativo configurable",
+      "highlights": {
+        "customers": "Clientes, contactos y leads en un único registro",
+        "pipeline": "Embudo de ventas configurable por pipeline",
+        "insights": "Indicadores e informes en tiempo real"
+      }
     }
   },
   "topbar": {

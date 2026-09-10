@@ -32,13 +32,13 @@
   gap: 0.85rem 1rem;
   margin: 0;
   padding: 1rem;
-  border: 1px solid var(--p-content-border-color, #dde2ea);
-  border-radius: 10px;
+  border: 1px solid var(--p-content-border-color, #e5e8ef);
+  border-radius: var(--pc-radius-sm);
   background: var(--p-surface-50, #f8fafc);
 }
 
 :host-context(.app-dark) .detail__facts {
-  background: var(--p-surface-800, #1f2937);
+  background: var(--p-surface-800, #1a1f27);
 }
 
 .detail__facts dt {
@@ -47,7 +47,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--p-text-muted-color, #5b6474);
 }
 
 .detail__facts dd {
@@ -66,14 +66,14 @@
 .detail__notes p {
   margin: 0;
   font-size: 0.875rem;
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--p-text-muted-color, #5b6474);
   white-space: pre-line;
 }
 
 .detail__history-empty {
   margin: 0;
   font-size: 0.875rem;
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--p-text-muted-color, #5b6474);
 }
 
 .detail__marker {
@@ -84,7 +84,7 @@
   height: 1.6rem;
   border-radius: 50%;
   font-size: 0.7rem;
-  background: var(--p-primary-color, #1e5eff);
+  background: var(--p-primary-color, #4f46e5);
   color: var(--p-primary-contrast-color, #ffffff);
 }
 
@@ -101,7 +101,7 @@
 
 .detail__history-from {
   font-size: 0.78rem;
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--p-text-muted-color, #5b6474);
 }
 
 .detail__history-meta {
@@ -109,14 +109,14 @@
   align-items: center;
   gap: 0.35rem;
   font-size: 0.75rem;
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--p-text-muted-color, #5b6474);
 }
 
 .detail__history-note {
   margin: 0.25rem 0 0;
   font-size: 0.78rem;
   font-style: italic;
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--p-text-muted-color, #5b6474);
 }
 
 @media (max-width: 767.98px) {

@@ -3,51 +3,41 @@
   z-index: 950;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  height: 64px;
-  padding: 0 1.25rem;
-  border-bottom: 1px solid var(--p-content-border-color, #dde2ea);
-  background: var(--pc-surface-glass);
-  backdrop-filter: blur(14px) saturate(180%);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  gap: var(--pc-space-2);
+  flex: 0 0 auto;
+  height: 60px;
+  padding: 0 var(--pc-space-4);
+  border-bottom: 1px solid var(--pc-hairline);
+  background: var(--p-content-background, #ffffff);
   transition: box-shadow var(--pc-duration) var(--pc-ease),
-    border-color var(--pc-duration) var(--pc-ease),
-    background-color var(--pc-duration) var(--pc-ease);
+    border-color var(--pc-duration) var(--pc-ease);
 }
 
 .app-topbar--scrolled {
   box-shadow: var(--pc-shadow-sm);
-  border-bottom-color: transparent;
 }
 
 .app-topbar__brand {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: var(--pc-space-2);
+  font-family: var(--pc-font-display);
   font-weight: 700;
-  font-size: 1.05rem;
-  letter-spacing: -0.01em;
+  font-size: var(--pc-text-md);
+  letter-spacing: -0.015em;
   white-space: nowrap;
-  color: var(--p-text-color, #1f2937);
+  color: var(--p-text-color, #1a1f27);
 }
 
 .app-topbar__brand-mark {
   display: block;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 9px;
-  box-shadow: var(--pc-shadow-xs);
-  transition: transform var(--pc-duration) var(--pc-ease),
-    box-shadow var(--pc-duration) var(--pc-ease);
-}
-
-.app-topbar__brand:hover .app-topbar__brand-mark {
-  transform: translateY(-1px);
-  box-shadow: var(--pc-shadow-sm);
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: var(--pc-radius-sm);
 }
 
 .app-topbar__workspace {
-  min-width: 200px;
+  min-width: 190px;
 }
 
 .app-topbar__search-wrapper {
@@ -55,14 +45,24 @@
 }
 
 .app-topbar__search {
-  min-width: 260px;
-  flex: 0 1 320px;
+  min-width: 240px;
+  flex: 0 1 340px;
 
   input {
-    transition: box-shadow var(--pc-duration) var(--pc-ease),
+    background: var(--p-surface-50, #f8f9fb);
+    transition: background-color var(--pc-duration) var(--pc-ease),
       border-color var(--pc-duration) var(--pc-ease),
-      background-color var(--pc-duration) var(--pc-ease);
+      box-shadow var(--pc-duration) var(--pc-ease);
+
+    &:hover,
+    &:focus {
+      background: var(--p-content-background, #ffffff);
+    }
   }
+}
+
+:host-context(.app-dark) .app-topbar__search input {
+  background: var(--p-surface-900, #161b24);
 }
 
 .app-topbar__spacer {
@@ -81,12 +81,13 @@
 .app-topbar__user-trigger {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--pc-space-2);
+  margin-left: var(--pc-space-1);
   border: 1px solid transparent;
   background: transparent;
   cursor: pointer;
-  padding: 0.3rem 0.55rem;
-  border-radius: 999px;
+  padding: 0.25rem 0.5rem 0.25rem 0.3rem;
+  border-radius: var(--pc-radius-sm);
   color: inherit;
   font: inherit;
   transition: background-color var(--pc-duration-fast) var(--pc-ease),
@@ -94,29 +95,36 @@
 
   &:hover,
   &--open {
-    background: var(--p-highlight-background, rgb(30 94 255 / 8%));
-    border-color: var(--p-content-border-color, #dde2ea);
+    background: var(--p-surface-100, #f1f3f7);
+    border-color: var(--pc-hairline);
   }
 
   &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 4px rgb(30 94 255 / 16%);
-    border-color: var(--p-primary-color, #1e5eff);
+    box-shadow: 0 0 0 3px rgb(79 70 229 / 18%);
+    border-color: var(--p-primary-color, #4f46e5);
+  }
+}
+
+:host-context(.app-dark) {
+  .app-topbar__user-trigger:hover,
+  .app-topbar__user-trigger--open {
+    background: var(--p-surface-800, #212733);
   }
 }
 
 ::ng-deep .p-avatar.app-topbar__avatar {
-  background: var(--pc-brand-gradient);
-  color: #ffffff;
+  background: var(--p-primary-color, #4f46e5);
+  color: var(--p-primary-contrast-color, #ffffff);
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   letter-spacing: 0.02em;
-  box-shadow: var(--pc-shadow-xs);
+  border-radius: var(--pc-radius-sm);
 }
 
 .app-topbar__user-name {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: var(--pc-text-base);
   max-width: 140px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -124,8 +132,8 @@
 }
 
 .app-topbar__user-caret {
-  font-size: 0.75rem;
-  color: var(--p-text-muted-color, #6b7280);
+  font-size: 0.7rem;
+  color: var(--p-text-muted-color, #5b6474);
   transition: transform var(--pc-duration) var(--pc-ease);
 }
 
@@ -143,8 +151,8 @@
 
 @media (max-width: 767.98px) {
   .app-topbar {
-    gap: 0.25rem;
-    padding: 0 0.5rem;
+    gap: var(--pc-space-1);
+    padding: 0 var(--pc-space-2);
   }
 
   .app-topbar__brand-name,

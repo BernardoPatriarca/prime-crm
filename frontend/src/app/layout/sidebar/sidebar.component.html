@@ -37,8 +37,12 @@
       [class.app-sidebar--collapsed]="layoutStore.sidebarIconMode()"
       [class.app-sidebar--overlay]="layoutStore.sidebarOverlay()"
     >
-      <div class="app-sidebar__toggle">
+      <div class="app-sidebar__brand">
+        <img class="app-sidebar__brand-mark" src="logo.svg" alt="" width="144" height="144" />
+        <span class="app-sidebar__brand-name">{{ 'app.name' | translate }}</span>
+
         <p-button
+          styleClass="app-sidebar__toggle-button"
           [icon]="layoutStore.sidebarIconMode() ? 'pi pi-angle-right' : 'pi pi-angle-left'"
           [text]="true"
           [rounded]="true"

@@ -1,9 +1,5 @@
 <div class="login-page">
   <aside class="login-brand-panel">
-    <div class="login-brand-panel__glow login-brand-panel__glow--one"></div>
-    <div class="login-brand-panel__glow login-brand-panel__glow--two"></div>
-    <div class="login-brand-panel__grid"></div>
-
     <div class="login-brand-panel__content">
       <div class="login-wordmark">
         <img class="login-wordmark__mark" src="logo.svg" alt="" width="144" height="144" />
@@ -11,7 +7,18 @@
       </div>
 
       <p class="login-slogan">{{ 'app.slogan' | translate }}</p>
+
+      <ul class="login-highlights">
+        @for (highlight of highlights; track highlight.icon) {
+          <li class="login-highlights__item">
+            <i [class]="highlight.icon"></i>
+            <span>{{ highlight.labelKey | translate }}</span>
+          </li>
+        }
+      </ul>
     </div>
+
+    <p class="login-brand-panel__footer">{{ 'auth.login.footer' | translate }}</p>
   </aside>
 
   <main class="login-form-panel">

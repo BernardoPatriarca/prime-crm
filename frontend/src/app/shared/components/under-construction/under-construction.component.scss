@@ -17,8 +17,8 @@
   height: 4.5rem;
   border-radius: 50%;
   font-size: 1.75rem;
-  background: color-mix(in srgb, var(--p-primary-color, #1e5eff) 10%, transparent);
-  color: var(--p-primary-color, #1e5eff);
+  background: color-mix(in srgb, var(--p-primary-color, #4f46e5) 10%, transparent);
+  color: var(--p-primary-color, #4f46e5);
   box-shadow: var(--pc-shadow-xs);
 }
 
@@ -32,7 +32,7 @@
 .uc-state__description,
 .uc-state__message {
   margin: 0;
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--p-text-muted-color, #5b6474);
   font-size: 0.925rem;
   line-height: 1.6;
 }

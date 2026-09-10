@@ -6,7 +6,7 @@
 
 .permissions-card {
   background: var(--p-content-background, #ffffff);
-  border: 1px solid var(--p-content-border-color, #dde2ea);
+  border: 1px solid var(--p-content-border-color, #e5e8ef);
   border-radius: var(--p-content-border-radius, 12px);
   box-shadow: var(--pc-shadow-xs);
   padding: 1rem 1.1rem 1.1rem;
@@ -20,7 +20,7 @@
   align-items: center;
   gap: 0.65rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--p-content-border-color, #dde2ea);
+  border-bottom: 1px solid var(--p-content-border-color, #e5e8ef);
 
   h2 {
     margin: 0;
@@ -43,8 +43,8 @@
   height: 2.25rem;
   border-radius: 50%;
   flex: none;
-  background: color-mix(in srgb, var(--p-primary-color, #1e5eff) 12%, transparent);
-  color: var(--p-primary-color, #1e5eff);
+  background: color-mix(in srgb, var(--p-primary-color, #4f46e5) 12%, transparent);
+  color: var(--p-primary-color, #4f46e5);
 }
 
 .permissions-card__list {
@@ -65,7 +65,7 @@
   transition: background-color var(--pc-duration-fast) var(--pc-ease);
 
   &:hover {
-    background: var(--p-highlight-background, rgba(30, 94, 255, 0.08));
+    background: var(--p-highlight-background, rgb(79 70 229 / 7%));
   }
 }
 
@@ -85,5 +85,5 @@
 
 .permissions-card__description {
   font-size: 0.75rem;
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--p-text-muted-color, #5b6474);
 }

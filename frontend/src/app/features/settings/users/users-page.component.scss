@@ -18,7 +18,7 @@
   font-size: 0.75rem;
   font-weight: 700;
   flex: none;
-  background: var(--pc-brand-gradient);
-  color: #ffffff;
-  box-shadow: var(--pc-shadow-xs);
+  border-radius: var(--pc-radius-sm);
+  background: var(--p-primary-color, #4f46e5);
+  color: var(--p-primary-contrast-color, #ffffff);
 }

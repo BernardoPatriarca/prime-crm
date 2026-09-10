@@ -5,14 +5,14 @@
 .app-sidebar-dock {
   position: relative;
   flex: 0 0 auto;
-  width: 280px;
+  width: 262px;
   height: 100%;
   transition: width var(--pc-duration) var(--pc-ease);
 }
 
 .app-sidebar-dock--icon,
 .app-sidebar-dock--overlay {
-  width: 72px;
+  width: 68px;
 }
 
 .app-sidebar {
@@ -21,10 +21,10 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  border-right: 1px solid var(--p-content-border-color, #dde2ea);
-  background: var(--p-content-background, #ffffff);
-  transition: width var(--pc-duration) var(--pc-ease),
-    box-shadow var(--pc-duration) var(--pc-ease);
+  border-right: 1px solid var(--pc-rail-border);
+  background: var(--pc-rail-bg);
+  color: var(--pc-rail-text);
+  transition: width var(--pc-duration) var(--pc-ease);
 }
 
 .app-sidebar--overlay {
@@ -33,7 +33,7 @@
   bottom: 0;
   left: 0;
   z-index: 900;
-  width: 280px;
+  width: 262px;
   box-shadow: var(--pc-shadow-lg);
 }
 
@@ -41,22 +41,49 @@
   position: fixed;
   inset: 0;
   z-index: 899;
-  background: rgb(15 23 42 / 42%);
-  backdrop-filter: blur(2px);
+  background: rgb(14 17 22 / 48%);
   animation: pc-fade-in var(--pc-duration) var(--pc-ease-out) both;
 }
 
-.app-sidebar__toggle {
+.app-sidebar__brand {
   display: flex;
-  justify-content: flex-end;
-  padding: 0.5rem 0.6rem;
+  align-items: center;
+  gap: 0.65rem;
   flex: 0 0 auto;
-  transition: justify-content var(--pc-duration) var(--pc-ease);
+  height: 60px;
+  padding: 0 0.6rem 0 0.85rem;
+  border-bottom: 1px solid var(--pc-rail-border);
 }
 
-.app-sidebar--collapsed .app-sidebar__toggle {
-  justify-content: center;
-  padding: 0.5rem 0;
+.app-sidebar__brand-mark {
+  display: block;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: var(--pc-radius-sm);
+  flex: 0 0 auto;
+}
+
+.app-sidebar__brand-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  font-family: var(--pc-font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+  color: var(--pc-rail-text-strong);
+  transition: opacity var(--pc-duration-fast) var(--pc-ease);
+}
+
+::ng-deep .p-button.app-sidebar__toggle-button {
+  flex: 0 0 auto;
+  color: var(--pc-rail-muted);
+
+  &:hover {
+    background: rgb(255 255 255 / 8%);
+    color: var(--pc-rail-text-strong);
+  }
 }
 
 .app-sidebar__nav {
@@ -64,26 +91,36 @@
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 0 0.6rem 1rem;
+  padding: var(--pc-space-3) 0.6rem var(--pc-space-4);
   transition: padding var(--pc-duration) var(--pc-ease);
 }
 
-.app-sidebar--collapsed .app-sidebar__nav {
-  padding: 0 0.5rem 1rem;
-}
-
 .app-sidebar--collapsed {
+  .app-sidebar__brand {
+    justify-content: center;
+    padding: 0 0.5rem;
+  }
+
+  .app-sidebar__brand-mark {
+    display: none;
+  }
+
+  .app-sidebar__brand-name {
+    flex: 0 0 0;
+    max-width: 0;
+    opacity: 0;
+  }
+
+  .app-sidebar__nav {
+    padding: var(--pc-space-3) 0.5rem var(--pc-space-4);
+  }
+
   ::ng-deep .app-sidebar__menu {
     .p-panelmenu-header-link,
     .p-panelmenu-item-link {
       justify-content: center;
       gap: 0;
-      padding: 0.65rem 0;
-    }
-
-    .p-panelmenu-header-link:hover,
-    .p-panelmenu-item-link:hover {
-      transform: none;
+      padding: 0.6rem 0;
     }
 
     .p-panelmenu-header-label,
@@ -102,7 +139,7 @@
 
     .p-panelmenu-header-icon,
     .p-panelmenu-item-icon {
-      font-size: 1.15rem;
+      font-size: 1.05rem;
       width: auto;
     }
 

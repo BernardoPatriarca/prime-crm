@@ -99,7 +99,13 @@
       "invalidCredentials": "Invalid credentials. Check your username and password and try again.",
       "userNotActive": "Your account is inactive or blocked. Contact a system administrator.",
       "connectionError": "Could not reach the server. Make sure the backend is running and try again.",
-      "serverError": "The server could not process the sign-in. Please try again shortly."
+      "serverError": "The server could not process the sign-in. Please try again shortly.",
+      "footer": "© 2026 Prime CRM · Configurable corporate CRM",
+      "highlights": {
+        "customers": "Customers, contacts and leads in a single record",
+        "pipeline": "Sales funnel configurable per pipeline",
+        "insights": "Real-time indicators and reports"
+      }
     }
   },
   "topbar": {

@@ -11,10 +11,12 @@
     />
   }
 
-  <div class="app-topbar__brand">
-    <img class="app-topbar__brand-mark" src="logo.svg" alt="" width="144" height="144" />
-    <span class="app-topbar__brand-name">Prime CRM</span>
-  </div>
+  @if (layoutStore.isMobile()) {
+    <div class="app-topbar__brand">
+      <img class="app-topbar__brand-mark" src="logo.svg" alt="" width="144" height="144" />
+      <span class="app-topbar__brand-name">Prime CRM</span>
+    </div>
+  }
 
   <p-select
         appendTo="body"

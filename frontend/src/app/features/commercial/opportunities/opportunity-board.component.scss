@@ -16,14 +16,14 @@
   display: flex;
   flex-direction: column;
   max-height: calc(100vh - 21rem);
-  border: 1px solid var(--p-content-border-color, #dde2ea);
-  border-radius: 12px;
+  border: 1px solid var(--p-content-border-color, #e5e8ef);
+  border-radius: var(--pc-radius);
   background: var(--p-surface-50, #f8fafc);
   box-shadow: var(--pc-shadow-xs);
 }
 
 :host-context(.app-dark) .kanban__column {
-  background: var(--p-surface-800, #1f2937);
+  background: var(--p-surface-800, #1a1f27);
 }
 
 .kanban__column-header {
@@ -32,7 +32,7 @@
   justify-content: space-between;
   gap: 0.5rem;
   padding: 0.75rem 0.85rem;
-  border-bottom: 1px solid var(--p-content-border-color, #dde2ea);
+  border-bottom: 1px solid var(--p-content-border-color, #e5e8ef);
 }
 
 .kanban__column-title {
@@ -64,7 +64,7 @@
   font-size: 0.8125rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: var(--p-primary-color, #1e5eff);
+  color: var(--p-primary-color, #4f46e5);
   white-space: nowrap;
 }
 
@@ -82,13 +82,13 @@
   margin: 0;
   text-align: center;
   font-size: 0.78rem;
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--p-text-muted-color, #5b6474);
 }
 
 .kanban__column-empty {
   padding: 1.25rem 0.5rem;
-  border: 1px dashed var(--p-content-border-color, #dde2ea);
-  border-radius: 10px;
+  border: 1px dashed var(--p-content-border-color, #e5e8ef);
+  border-radius: var(--pc-radius-sm);
 }
 
 .kanban__card {
@@ -96,8 +96,8 @@
   flex-direction: column;
   gap: 0.4rem;
   padding: 0.7rem 0.75rem;
-  border: 1px solid var(--p-content-border-color, #dde2ea);
-  border-radius: 10px;
+  border: 1px solid var(--p-content-border-color, #e5e8ef);
+  border-radius: var(--pc-radius-sm);
   background: var(--p-content-background, #ffffff);
   box-shadow: var(--pc-shadow-xs);
   cursor: pointer;
@@ -108,12 +108,12 @@
 .kanban__card:hover {
   transform: translateY(-2px);
   box-shadow: var(--pc-shadow-md);
-  border-color: var(--p-primary-color, #1e5eff);
+  border-color: var(--p-primary-color, #4f46e5);
 }
 
 .kanban__card:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px var(--p-primary-color, #1e5eff);
+  box-shadow: 0 0 0 2px var(--p-primary-color, #4f46e5);
 }
 
 .kanban__card--moving {
@@ -130,7 +130,7 @@
 
 .kanban__card-spinner {
   font-size: 0.8rem;
-  color: var(--p-primary-color, #1e5eff);
+  color: var(--p-primary-color, #4f46e5);
 }
 
 .kanban__card-title {
@@ -145,7 +145,7 @@
   align-items: center;
   gap: 0.35rem;
   font-size: 0.78rem;
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--p-text-muted-color, #5b6474);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -169,7 +169,7 @@
   justify-content: space-between;
   gap: 0.5rem;
   padding-top: 0.35rem;
-  border-top: 1px dashed var(--p-content-border-color, #dde2ea);
+  border-top: 1px dashed var(--p-content-border-color, #e5e8ef);
 }
 
 .kanban__card-date {
@@ -178,7 +178,7 @@
   gap: 0.35rem;
   font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--p-text-muted-color, #5b6474);
 }
 
 .kanban__card-footer .p-avatar {
@@ -186,20 +186,20 @@
   height: 1.65rem;
   font-size: 0.7rem;
   font-weight: 700;
-  background: var(--p-primary-color, #1e5eff);
+  background: var(--p-primary-color, #4f46e5);
   color: var(--p-primary-contrast-color, #ffffff);
 }
 
 .kanban__card-ghost {
   height: 4.5rem;
-  border: 1px dashed var(--p-primary-color, #1e5eff);
-  border-radius: 10px;
-  background: var(--p-highlight-background, rgb(30 94 255 / 8%));
+  border: 1px dashed var(--p-primary-color, #4f46e5);
+  border-radius: var(--pc-radius-sm);
+  background: var(--p-highlight-background, rgb(79 70 229 / 7%));
 }
 
 .kanban__card.cdk-drag-preview {
   box-shadow: var(--pc-shadow-lg);
-  border-color: var(--p-primary-color, #1e5eff);
+  border-color: var(--p-primary-color, #4f46e5);
   cursor: grabbing;
 }
 
@@ -208,8 +208,8 @@
 }
 
 .kanban__column-body.cdk-drop-list-receiving {
-  background: var(--p-highlight-background, rgb(30 94 255 / 8%));
-  border-radius: 0 0 12px 12px;
+  background: var(--p-highlight-background, rgb(79 70 229 / 7%));
+  border-radius: 0 0 var(--pc-radius) var(--pc-radius);
 }
 
 .cdk-drag-animating {

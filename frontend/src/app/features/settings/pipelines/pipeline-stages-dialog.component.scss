@@ -12,11 +12,11 @@
   align-items: center;
   gap: 0.4rem;
   font-size: 0.8125rem;
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--p-text-muted-color, #5b6474);
 }
 
 .stages-surface {
-  border: 1px solid var(--p-content-border-color, #dde2ea);
+  border: 1px solid var(--p-content-border-color, #e5e8ef);
   border-radius: var(--p-border-radius-lg, 12px);
   overflow: hidden;
 }
@@ -26,7 +26,7 @@
 }
 
 .cell-muted {
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--p-text-muted-color, #5b6474);
 }
 
 .stage-probability {
@@ -37,7 +37,7 @@
 
   span {
     font-size: 0.8125rem;
-    color: var(--p-text-muted-color, #6b7280);
+    color: var(--p-text-muted-color, #5b6474);
     min-width: 2.5rem;
   }
 }
@@ -50,7 +50,7 @@
 
 .color-field__value {
   font-size: 0.8125rem;
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--p-text-muted-color, #5b6474);
   text-transform: uppercase;
 }
 
@@ -61,8 +61,8 @@
   }
 
   .p-datatable-thead > tr > th {
-    background: color-mix(in srgb, var(--p-text-color, #1f2937) 4%, var(--p-content-background, #ffffff));
-    color: var(--p-text-muted-color, #6b7280);
+    background: color-mix(in srgb, var(--p-text-color, #1a1f27) 4%, var(--p-content-background, #ffffff));
+    color: var(--p-text-muted-color, #5b6474);
     font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.04em;
@@ -77,21 +77,21 @@
     > td {
       padding: 0.6rem 0.85rem;
       vertical-align: middle;
-      border-color: color-mix(in srgb, var(--p-content-border-color, #dde2ea) 60%, transparent);
+      border-color: color-mix(in srgb, var(--p-content-border-color, #e5e8ef) 60%, transparent);
     }
 
     &:not(.p-datatable-emptymessage):hover {
-      background: var(--p-highlight-background, rgba(30, 94, 255, 0.08));
+      background: var(--p-highlight-background, rgb(79 70 229 / 7%));
 
       [pReorderableRowHandle] {
-        color: var(--p-primary-color, #1e5eff);
+        color: var(--p-primary-color, #4f46e5);
       }
     }
   }
 
   [pReorderableRowHandle] {
     cursor: grab;
-    color: var(--p-text-muted-color, #6b7280);
+    color: var(--p-text-muted-color, #5b6474);
     transition: color var(--pc-duration) var(--pc-ease);
 
     &:active {

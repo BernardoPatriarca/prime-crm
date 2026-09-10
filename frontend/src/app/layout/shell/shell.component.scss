@@ -4,19 +4,20 @@
 }
 
 .app-shell {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  overflow-x: hidden;
-  background: var(--p-content-background, #f5f7fa);
-}
-
-.app-shell__body {
   position: relative;
   display: flex;
-  flex: 1 1 auto;
+  height: 100vh;
   min-height: 0;
+  overflow: hidden;
+  background: var(--pc-canvas);
+}
+
+.app-shell__main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
   min-width: 0;
+  min-height: 0;
 }
 
 .app-shell__content {
@@ -24,20 +25,20 @@
   min-width: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 1.75rem 2rem 2.5rem;
-  background: var(--p-content-background, #f5f7fa);
+  padding: var(--pc-space-6) var(--pc-space-6) var(--pc-space-7);
+  background: var(--pc-canvas);
   scroll-behavior: smooth;
 }
 
 .app-shell__route {
-  max-width: 1600px;
+  max-width: 1520px;
   margin: 0 auto;
 }
 
 @keyframes app-shell-route-a {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -48,7 +49,7 @@
 @keyframes app-shell-route-b {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -66,12 +67,12 @@
 
 @media (max-width: 1023.98px) {
   .app-shell__content {
-    padding: 1.5rem 1.25rem 2rem;
+    padding: var(--pc-space-5) var(--pc-space-4) var(--pc-space-6);
   }
 }
 
 @media (max-width: 767.98px) {
   .app-shell__content {
-    padding: 1rem 0.85rem 1.75rem;
+    padding: var(--pc-space-4) var(--pc-space-3) var(--pc-space-6);
   }
 }

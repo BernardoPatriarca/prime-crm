@@ -16,10 +16,10 @@ import { DonutChartComponent, DonutSegment } from '../../shared/components/chart
 import { formatCompactCurrencyBRL, formatCurrencyBRL } from '../../shared/utils/format.util';
 
 const PERIOD_OPTIONS = [7, 30, 90] as const;
-const WON_COLOR = '#22C55E';
-const LOST_COLOR = '#EF4444';
-const OPEN_COLOR = '#1E5EFF';
-const FALLBACK_STAGE_COLOR = '#8FB4FA';
+const WON_COLOR = '#0F9D6B';
+const LOST_COLOR = '#DC2626';
+const OPEN_COLOR = '#4F46E5';
+const FALLBACK_STAGE_COLOR = '#A5B4FC';
 const MONTH_LABELS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 
 interface PeriodOption {

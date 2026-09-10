@@ -8,14 +8,14 @@
 }
 
 .permissions-matrix__group {
-  border: 1px solid var(--p-content-border-color, #dde2ea);
+  border: 1px solid var(--p-content-border-color, #e5e8ef);
   border-radius: var(--p-border-radius-lg, 12px);
   padding: 0.85rem 1rem 1rem;
-  background: color-mix(in srgb, var(--p-text-color, #1f2937) 2%, var(--p-content-background, #ffffff));
+  background: color-mix(in srgb, var(--p-text-color, #1a1f27) 2%, var(--p-content-background, #ffffff));
   transition: border-color var(--pc-duration) var(--pc-ease), box-shadow var(--pc-duration) var(--pc-ease);
 
   &:hover {
-    border-color: color-mix(in srgb, var(--p-primary-color, #1e5eff) 35%, var(--p-content-border-color, #dde2ea));
+    border-color: color-mix(in srgb, var(--p-primary-color, #4f46e5) 35%, var(--p-content-border-color, #e5e8ef));
   }
 }
 
@@ -25,7 +25,7 @@
   gap: 0.6rem;
   margin-bottom: 0.75rem;
   padding-bottom: 0.6rem;
-  border-bottom: 1px solid var(--p-content-border-color, #dde2ea);
+  border-bottom: 1px solid var(--p-content-border-color, #e5e8ef);
 
   label {
     font-weight: 700;
@@ -63,11 +63,11 @@
   }
 
   &:hover {
-    background: var(--p-highlight-background, rgba(30, 94, 255, 0.08));
+    background: var(--p-highlight-background, rgb(79 70 229 / 7%));
   }
 
   &--on {
-    border-color: color-mix(in srgb, var(--p-primary-color, #1e5eff) 30%, transparent);
-    background: color-mix(in srgb, var(--p-primary-color, #1e5eff) 8%, transparent);
+    border-color: color-mix(in srgb, var(--p-primary-color, #4f46e5) 30%, transparent);
+    background: color-mix(in srgb, var(--p-primary-color, #4f46e5) 8%, transparent);
   }
 }

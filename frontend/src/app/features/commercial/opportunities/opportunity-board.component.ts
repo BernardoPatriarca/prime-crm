@@ -63,7 +63,7 @@ export class OpportunityBoardComponent {
   }
 
   protected stageDotStyle(color: string | null): Record<string, string> {
-    return { background: color ?? 'var(--p-primary-color, #1e5eff)' };
+    return { background: color ?? 'var(--p-primary-color, #4f46e5)' };
   }
 
   protected chipStyle(color: string | null): Record<string, string> | null {

@@ -24,12 +24,12 @@
   gap: 0.35rem;
   font-size: 0.8125rem;
   font-variant-numeric: tabular-nums;
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--p-text-muted-color, #5b6474);
 }
 
 .board-toolbar__metric--strong {
   font-weight: 700;
-  color: var(--p-primary-color, #1e5eff);
+  color: var(--p-primary-color, #4f46e5);
 }
 
 .view-panel--hidden {
@@ -45,7 +45,7 @@
 
 .reason-intro {
   margin: 0;
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--p-text-muted-color, #5b6474);
   font-size: 0.925rem;
 }
 

@@ -7,8 +7,8 @@
   font-size: 0.75rem;
   padding: 0.15rem 0.45rem;
   border-radius: var(--p-border-radius-sm, 6px);
-  background: color-mix(in srgb, var(--p-text-color, #1f2937) 6%, transparent);
-  color: var(--p-text-muted-color, #6b7280);
+  background: color-mix(in srgb, var(--p-text-color, #1a1f27) 6%, transparent);
+  color: var(--p-text-muted-color, #5b6474);
 }
 
 .icon-preview {
@@ -18,8 +18,8 @@
   width: 1.9rem;
   height: 1.9rem;
   border-radius: var(--p-border-radius-md, 8px);
-  background: color-mix(in srgb, var(--p-primary-color, #1e5eff) 10%, transparent);
-  color: var(--p-primary-color, #1e5eff);
+  background: color-mix(in srgb, var(--p-primary-color, #4f46e5) 10%, transparent);
+  color: var(--p-primary-color, #4f46e5);
   transition: transform var(--pc-duration) var(--pc-ease);
 
   &--lg {
@@ -48,7 +48,7 @@ tr:hover .icon-preview {
 
 .color-field__value {
   font-size: 0.8125rem;
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--p-text-muted-color, #5b6474);
   text-transform: uppercase;
 }
 

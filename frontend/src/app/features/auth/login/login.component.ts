@@ -34,6 +34,12 @@ export class LoginComponent {
   private readonly messageService = inject(MessageService);
   private readonly translate = inject(TranslateService);
 
+  protected readonly highlights = [
+    { icon: 'pi pi-users', labelKey: 'auth.login.highlights.customers' },
+    { icon: 'pi pi-sitemap', labelKey: 'auth.login.highlights.pipeline' },
+    { icon: 'pi pi-chart-line', labelKey: 'auth.login.highlights.insights' }
+  ];
+
   protected readonly submitting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
 
