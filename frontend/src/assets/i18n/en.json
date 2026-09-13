@@ -138,7 +138,8 @@
         "TASK_OVERDUE": "Overdue task",
         "TASK_DUE_TODAY": "Task due today",
         "OPPORTUNITY_CLOSE_DATE_PASSED": "Expected close date passed",
-        "LEAD_WITHOUT_OWNER": "Lead without owner"
+        "LEAD_WITHOUT_OWNER": "Lead without owner",
+        "CALENDAR_EVENT_OVERDUE": "Overdue appointment"
       }
     },
     "newButton": {
@@ -146,7 +147,8 @@
       "lead": "New Lead",
       "customer": "New Customer",
       "opportunity": "New Opportunity",
-      "task": "New Task"
+      "task": "New Task",
+      "agenda": "Agenda"
     },
     "userMenu": {
       "changePassword": "Change Password",
@@ -213,7 +215,8 @@
       "finance": "Finance",
       "companies": "Companies",
       "contacts": "Contacts",
-      "tasks": "Tasks"
+      "tasks": "Tasks",
+      "agenda": "Agenda"
     },
     "comingSoon": "Coming soon",
     "reports": {
@@ -955,6 +958,75 @@
       "updated": "Task updated successfully",
       "deleted": "Task deleted successfully",
       "completed": "Task completed"
+    }
+  },
+  "agendaPage": {
+    "title": "Agenda",
+    "description": "Organize meetings, calls and appointments for the sales operation.",
+    "newButton": "New Appointment",
+    "searchPlaceholder": "Search by title, description or location...",
+    "emptyState": "No appointments found.",
+    "views": {
+      "calendar": "Calendar",
+      "list": "List"
+    },
+    "status": {
+      "SCHEDULED": "Scheduled",
+      "DONE": "Done",
+      "CANCELED": "Canceled"
+    },
+    "filters": {
+      "status": "Status",
+      "assignee": "Assignee",
+      "due": "Due",
+      "overdue": "Overdue",
+      "onTime": "On time"
+    },
+    "badges": {
+      "overdue": "Overdue"
+    },
+    "calendar": {
+      "previous": "Previous month",
+      "next": "Next month",
+      "today": "Today",
+      "weekdays": {
+        "0": "Sun",
+        "1": "Mon",
+        "2": "Tue",
+        "3": "Wed",
+        "4": "Thu",
+        "5": "Fri",
+        "6": "Sat"
+      }
+    },
+    "columns": {
+      "title": "Title",
+      "customer": "Customer",
+      "assignee": "Assignee",
+      "startAt": "Start",
+      "location": "Location",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "dialog": {
+      "newTitle": "New Appointment",
+      "editTitle": "Edit Appointment",
+      "titleLabel": "Title",
+      "typeLabel": "Type",
+      "statusLabel": "Status",
+      "startAtLabel": "Start",
+      "endAtLabel": "End",
+      "allDayLabel": "All day",
+      "reminderAtLabel": "Reminder",
+      "locationLabel": "Location",
+      "assigneeLabel": "Assignee",
+      "customerLabel": "Customer",
+      "descriptionLabel": "Description"
+    },
+    "messages": {
+      "created": "Appointment created successfully",
+      "updated": "Appointment updated successfully",
+      "deleted": "Appointment deleted successfully"
     }
   },
   "reportsPage": {

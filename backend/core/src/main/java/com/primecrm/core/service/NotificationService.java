@@ -4,11 +4,14 @@ import com.primecrm.core.dto.notification.NotificationListResponse;
 import com.primecrm.core.dto.notification.NotificationResponse;
 import com.primecrm.core.dto.notification.NotificationSeverity;
 import com.primecrm.core.dto.notification.NotificationType;
+import com.primecrm.infra.entity.agenda.CalendarEvent;
+import com.primecrm.infra.entity.agenda.CalendarEventStatus;
 import com.primecrm.infra.entity.commercial.Lead;
 import com.primecrm.infra.entity.commercial.Opportunity;
 import com.primecrm.infra.entity.commercial.OpportunityOutcome;
 import com.primecrm.infra.entity.task.Task;
 import com.primecrm.infra.entity.task.TaskStatus;
+import com.primecrm.infra.repository.CalendarEventRepository;
 import com.primecrm.infra.repository.LeadRepository;
 import com.primecrm.infra.repository.OpportunityRepository;
 import com.primecrm.infra.repository.TaskRepository;
@@ -34,10 +37,13 @@ public class NotificationService {
     private static final String TASKS_LINK = "/tarefas";
     private static final String OPPORTUNITIES_LINK = "/oportunidades";
     private static final String LEADS_LINK = "/leads";
+    private static final String AGENDA_LINK = "/agenda";
+    private static final int MAX_ITEMS_PER_SOURCE = 10;
 
     private final TaskRepository taskRepository;
     private final OpportunityRepository opportunityRepository;
     private final LeadRepository leadRepository;
+    private final CalendarEventRepository calendarEventRepository;
 
     @Transactional(readOnly = true)
     public NotificationListResponse list(UUID currentUserId) {
@@ -46,6 +52,7 @@ public class NotificationService {
         items.addAll(tasksDueToday(currentUserId));
         items.addAll(lateOpportunities(currentUserId));
         items.addAll(leadsWithoutOwner());
+        items.addAll(overdueCalendarEvents(currentUserId));
 
         List<NotificationResponse> sorted = items.stream()
                 .sorted(Comparator.comparing(NotificationResponse::severity)
@@ -98,6 +105,24 @@ public class NotificationService {
                 .stream()
                 .map(this::toNotification)
                 .toList();
+    }
+
+    private List<NotificationResponse> overdueCalendarEvents(UUID currentUserId) {
+        if (currentUserId == null) {
+            return List.of();
+        }
+        return calendarEventRepository
+                .findOverdueByAssignee(currentUserId, CalendarEventStatus.SCHEDULED, Instant.now())
+                .stream()
+                .limit(MAX_ITEMS_PER_SOURCE)
+                .map(this::toNotification)
+                .toList();
+    }
+
+    private NotificationResponse toNotification(CalendarEvent event) {
+        return new NotificationResponse(NotificationType.CALENDAR_EVENT_OVERDUE, NotificationSeverity.DANGER,
+                event.getId(), event.getTitle(),
+                event.getCustomer() == null ? null : event.getCustomer().getName(), AGENDA_LINK, event.getStartAt());
     }
 
     private NotificationResponse toNotification(Task task, NotificationType type, NotificationSeverity severity) {
