@@ -79,6 +79,14 @@ export class SidebarComponent {
       });
     }
 
+    if (hasPermission('AGENDA_VIEW')) {
+      items.push({
+        label: t('sidebar.modules.agenda'),
+        icon: 'pi pi-calendar',
+        routerLink: '/agenda'
+      });
+    }
+
     const commercialChildren: MenuItem[] = [];
 
     if (hasPermission('LEADS_VIEW')) {

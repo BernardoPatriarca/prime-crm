@@ -37,7 +37,8 @@ const NOTIFICATION_ICONS: Record<string, string> = {
   TASK_OVERDUE: 'pi pi-exclamation-circle',
   TASK_DUE_TODAY: 'pi pi-clock',
   OPPORTUNITY_CLOSE_DATE_PASSED: 'pi pi-chart-line',
-  LEAD_WITHOUT_OWNER: 'pi pi-user-plus'
+  LEAD_WITHOUT_OWNER: 'pi pi-user-plus',
+  CALENDAR_EVENT_OVERDUE: 'pi pi-calendar-times'
 };
 
 const SEARCH_ICONS: Record<string, string> = {
@@ -162,6 +163,12 @@ export class TopbarComponent {
         icon: 'pi pi-check-square',
         disabled: !hasPermission('TAREFAS_CREATE'),
         command: () => this.openCreation('/tarefas')
+      },
+      {
+        label: t('topbar.newButton.agenda'),
+        icon: 'pi pi-calendar',
+        disabled: !hasPermission('AGENDA_CREATE'),
+        command: () => this.openCreation('/agenda')
       }
     ];
   });

@@ -138,7 +138,8 @@
         "TASK_OVERDUE": "Tarea atrasada",
         "TASK_DUE_TODAY": "Tarea vence hoy",
         "OPPORTUNITY_CLOSE_DATE_PASSED": "Previsión de cierre vencida",
-        "LEAD_WITHOUT_OWNER": "Lead sin responsable"
+        "LEAD_WITHOUT_OWNER": "Lead sin responsable",
+        "CALENDAR_EVENT_OVERDUE": "Cita atrasada"
       }
     },
     "newButton": {
@@ -146,7 +147,8 @@
       "lead": "Nuevo Lead",
       "customer": "Nuevo Cliente",
       "opportunity": "Nueva Oportunidad",
-      "task": "Nueva Tarea"
+      "task": "Nueva Tarea",
+      "agenda": "Agenda"
     },
     "userMenu": {
       "changePassword": "Cambiar Contraseña",
@@ -213,7 +215,8 @@
       "finance": "Finanzas",
       "companies": "Empresas",
       "contacts": "Contactos",
-      "tasks": "Tareas"
+      "tasks": "Tareas",
+      "agenda": "Agenda"
     },
     "comingSoon": "Próximamente",
     "reports": {
@@ -955,6 +958,75 @@
       "updated": "Tarea actualizada con éxito",
       "deleted": "Tarea eliminada con éxito",
       "completed": "Tarea concluida"
+    }
+  },
+  "agendaPage": {
+    "title": "Agenda",
+    "description": "Organice reuniones, llamadas y citas de la operación comercial.",
+    "newButton": "Nueva Cita",
+    "searchPlaceholder": "Buscar por título, descripción o lugar...",
+    "emptyState": "No se encontraron citas.",
+    "views": {
+      "calendar": "Calendario",
+      "list": "Lista"
+    },
+    "status": {
+      "SCHEDULED": "Programada",
+      "DONE": "Concluida",
+      "CANCELED": "Cancelada"
+    },
+    "filters": {
+      "status": "Estado",
+      "assignee": "Responsable",
+      "due": "Vencimiento",
+      "overdue": "Atrasada",
+      "onTime": "A tiempo"
+    },
+    "badges": {
+      "overdue": "Atrasada"
+    },
+    "calendar": {
+      "previous": "Mes anterior",
+      "next": "Mes siguiente",
+      "today": "Hoy",
+      "weekdays": {
+        "0": "Dom",
+        "1": "Lun",
+        "2": "Mar",
+        "3": "Mié",
+        "4": "Jue",
+        "5": "Vie",
+        "6": "Sáb"
+      }
+    },
+    "columns": {
+      "title": "Título",
+      "customer": "Cliente",
+      "assignee": "Responsable",
+      "startAt": "Inicio",
+      "location": "Lugar",
+      "status": "Estado",
+      "actions": "Acciones"
+    },
+    "dialog": {
+      "newTitle": "Nueva Cita",
+      "editTitle": "Editar Cita",
+      "titleLabel": "Título",
+      "typeLabel": "Tipo",
+      "statusLabel": "Estado",
+      "startAtLabel": "Inicio",
+      "endAtLabel": "Fin",
+      "allDayLabel": "Todo el día",
+      "reminderAtLabel": "Recordatorio",
+      "locationLabel": "Lugar",
+      "assigneeLabel": "Responsable",
+      "customerLabel": "Cliente",
+      "descriptionLabel": "Descripción"
+    },
+    "messages": {
+      "created": "Cita creada con éxito",
+      "updated": "Cita actualizada con éxito",
+      "deleted": "Cita eliminada con éxito"
     }
   },
   "reportsPage": {

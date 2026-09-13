@@ -210,7 +210,7 @@ Histórico de entregas por fase em [CHANGELOG.md](CHANGELOG.md).
 | 0 | Fundação: monorepo, JWT, layout base, CI | ✅ |
 | 1 | Parametrização e RBAC | ✅ |
 | 2 | Núcleo comercial: clientes, contatos, leads, funil de oportunidades | ✅ |
-| 3 | Produtividade: tarefas e relatórios entregues; agenda e notificações em tempo real pendentes | 🚧 |
+| 3 | Produtividade: tarefas, relatórios e agenda entregues; notificações em tempo real (WebSocket) pendentes | 🚧 |
 | 4 | Comercial avançado: produtos, propostas, pedidos, contratos | ⏳ |
 | 5 | Financeiro e documentos | ⏳ |
 | 6 | Dashboards por módulo e metas comerciais | 🚧 |

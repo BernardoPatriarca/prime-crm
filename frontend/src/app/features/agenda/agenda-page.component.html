@@ -1,0 +1,350 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'agendaPage.title' | translate }}</h1>
+      <p>{{ 'agendaPage.description' | translate }}</p>
+    </div>
+    <div class="header-actions">
+      <p-selectButton
+        [options]="viewOptions()"
+        [ngModel]="viewMode()"
+        (ngModelChange)="onViewModeChange($event)"
+        optionLabel="label"
+        optionValue="value"
+        data-testid="agenda-view-toggle"
+      />
+      @if (canCreate()) {
+        <p-button
+          icon="pi pi-plus"
+          [label]="'agendaPage.newButton' | translate"
+          (onClick)="openCreateDialog()"
+          data-testid="agenda-new-button"
+        />
+      }
+    </div>
+  </div>
+
+  @if (viewMode() === 'calendar') {
+    <div class="calendar-toolbar">
+      <div class="calendar-nav">
+        <p-button icon="pi pi-chevron-left" [text]="true" (onClick)="previousMonth()" [ariaLabel]="'agendaPage.calendar.previous' | translate" />
+        <span class="calendar-month-label">{{ monthLabel() }}</span>
+        <p-button icon="pi pi-chevron-right" [text]="true" (onClick)="nextMonth()" [ariaLabel]="'agendaPage.calendar.next' | translate" />
+      </div>
+      <p-button [label]="'agendaPage.calendar.today' | translate" severity="secondary" [outlined]="true" (onClick)="goToToday()" />
+    </div>
+
+    <div class="calendar-grid" [class.calendar-grid--loading]="monthLoading()">
+      @for (weekday of [0, 1, 2, 3, 4, 5, 6]; track weekday) {
+        <div class="calendar-weekday">{{ 'agendaPage.calendar.weekdays.' + weekday | translate }}</div>
+      }
+      @for (day of calendarDays(); track day.date.getTime()) {
+        <div
+          class="calendar-day"
+          [class.calendar-day--outside]="!day.inCurrentMonth"
+          [class.calendar-day--today]="day.isToday"
+          (click)="canCreate() && openCreateDialog(day.date)"
+        >
+          <span class="calendar-day-number">{{ day.date.getDate() }}</span>
+          <div class="calendar-day-events">
+            @for (event of day.events; track event.id) {
+              <button
+                type="button"
+                class="calendar-event-chip"
+                [class.calendar-event-chip--overdue]="event.overdue"
+                [class.calendar-event-chip--canceled]="event.status === 'CANCELED'"
+                [pTooltip]="event.title"
+                tooltipPosition="top"
+                (click)="$event.stopPropagation(); openEditDialog(event)"
+              >
+                {{ event.allDay ? '' : (event.startAt | date: 'HH:mm') + ' ' }}{{ event.title }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <app-generic-table
+      [items]="events()"
+      [totalRecords]="total()"
+      [loading]="loading()"
+      [columnsCount]="7"
+      emptyIcon="pi-calendar"
+      emptyMessageKey="agendaPage.emptyState"
+      searchPlaceholderKey="agendaPage.searchPlaceholder"
+      (queryChange)="onQueryChange($event)"
+    >
+      <div tableActions class="filter-bar">
+        <p-select
+          appendTo="body"
+          [ngModel]="statusFilter()"
+          (ngModelChange)="statusFilter.set($event); onFilterChange()"
+          [options]="statusOptions()"
+          optionLabel="label"
+          optionValue="value"
+          [showClear]="true"
+          [placeholder]="'agendaPage.filters.status' | translate"
+          data-testid="agenda-status-filter"
+        />
+        <p-select
+          appendTo="body"
+          [ngModel]="assigneeFilter()"
+          (ngModelChange)="assigneeFilter.set($event); onFilterChange()"
+          [options]="userOptions()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [filter]="true"
+          filterBy="name"
+          [placeholder]="'agendaPage.filters.assignee' | translate"
+          data-testid="agenda-assignee-filter"
+        />
+        <p-select
+          appendTo="body"
+          [ngModel]="overdueFilter()"
+          (ngModelChange)="overdueFilter.set($event); onFilterChange()"
+          [options]="overdueOptions()"
+          optionLabel="label"
+          optionValue="value"
+          [showClear]="true"
+          [placeholder]="'agendaPage.filters.due' | translate"
+          data-testid="agenda-overdue-filter"
+        />
+      </div>
+
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="title">
+            {{ 'agendaPage.columns.title' | translate }}
+            <p-sortIcon field="title" />
+          </th>
+          <th>{{ 'agendaPage.columns.customer' | translate }}</th>
+          <th>{{ 'agendaPage.columns.assignee' | translate }}</th>
+          <th pSortableColumn="startAt">
+            {{ 'agendaPage.columns.startAt' | translate }}
+            <p-sortIcon field="startAt" />
+          </th>
+          <th>{{ 'agendaPage.columns.location' | translate }}</th>
+          <th>{{ 'agendaPage.columns.status' | translate }}</th>
+          <th class="col-actions">{{ 'agendaPage.columns.actions' | translate }}</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-item>
+        <tr>
+          <td class="cell-strong">{{ item.title }}</td>
+          <td class="cell-muted">{{ item.customer?.name ?? '-' }}</td>
+          <td class="cell-muted">{{ item.assignee?.name ?? '-' }}</td>
+          <td class="cell-muted">
+            <span [class.task-due--late]="item.overdue">{{ formatDateTime(item.startAt) }}</span>
+          </td>
+          <td class="cell-muted">{{ item.location ?? '-' }}</td>
+          <td>
+            <div class="chip-list">
+              <p-tag [severity]="statusSeverity(item.status)" [value]="'agendaPage.status.' + item.status | translate" />
+              @if (item.overdue) {
+                <p-tag severity="danger" icon="pi pi-clock" [value]="'agendaPage.badges.overdue' | translate" />
+              }
+            </div>
+          </td>
+          <td>
+            <div class="row-actions">
+              @if (canEdit()) {
+                <p-button
+                  icon="pi pi-pencil"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="secondary"
+                  [pTooltip]="'common.actions.edit' | translate"
+                  tooltipPosition="top"
+                  [ariaLabel]="'common.actions.edit' | translate"
+                  (onClick)="openEditDialog(item)"
+                  [attr.data-testid]="'agenda-edit-' + item.id"
+                />
+              }
+              @if (canDelete()) {
+                <p-button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  [text]="true"
+                  [rounded]="true"
+                  [pTooltip]="'common.actions.delete' | translate"
+                  tooltipPosition="top"
+                  [ariaLabel]="'common.actions.delete' | translate"
+                  (onClick)="confirmDelete(item)"
+                  [attr.data-testid]="'agenda-delete-' + item.id"
+                />
+              }
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </app-generic-table>
+  }
+</div>
+
+<p-dialog
+  appendTo="body"
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '42rem' }"
+  [breakpoints]="{ '1024px': '92vw', '767px': '96vw' }"
+  [header]="(editingEvent() ? 'agendaPage.dialog.editTitle' : 'agendaPage.dialog.newTitle') | translate"
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+    <div class="form-grid">
+      <div class="field field-span-2">
+        <label for="event-title">{{ 'agendaPage.dialog.titleLabel' | translate }}</label>
+        <input id="event-title" pInputText type="text" formControlName="title" fluid data-testid="agenda-title-input" />
+        @if (form.controls.title.invalid && form.controls.title.touched) {
+          <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="event-type">{{ 'agendaPage.dialog.typeLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="event-type"
+          formControlName="typeId"
+          [options]="types()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="event-status">{{ 'agendaPage.dialog.statusLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="event-status"
+          formControlName="status"
+          [options]="statusOptions()"
+          optionLabel="label"
+          optionValue="value"
+          fluid
+          data-testid="agenda-status-select"
+        />
+      </div>
+
+      <div class="field">
+        <label for="event-start-at">{{ 'agendaPage.dialog.startAtLabel' | translate }}</label>
+        <p-datepicker
+          appendTo="body"
+          inputId="event-start-at"
+          formControlName="startAt"
+          dateFormat="dd/mm/yy"
+          [showTime]="true"
+          [showIcon]="true"
+          fluid
+          data-testid="agenda-start-at-input"
+        />
+        @if (form.controls.startAt.invalid && form.controls.startAt.touched) {
+          <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="event-end-at">{{ 'agendaPage.dialog.endAtLabel' | translate }}</label>
+        <p-datepicker
+          appendTo="body"
+          inputId="event-end-at"
+          formControlName="endAt"
+          dateFormat="dd/mm/yy"
+          [showTime]="true"
+          [showIcon]="true"
+          [showClear]="true"
+          fluid
+        />
+      </div>
+
+      <div class="field field-checkbox">
+        <p-checkbox inputId="event-all-day" formControlName="allDay" [binary]="true" />
+        <label for="event-all-day">{{ 'agendaPage.dialog.allDayLabel' | translate }}</label>
+      </div>
+
+      <div class="field">
+        <label for="event-reminder-at">{{ 'agendaPage.dialog.reminderAtLabel' | translate }}</label>
+        <p-datepicker
+          appendTo="body"
+          inputId="event-reminder-at"
+          formControlName="reminderAt"
+          dateFormat="dd/mm/yy"
+          [showTime]="true"
+          [showIcon]="true"
+          [showClear]="true"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="event-location">{{ 'agendaPage.dialog.locationLabel' | translate }}</label>
+        <input id="event-location" pInputText type="text" formControlName="location" fluid />
+      </div>
+
+      <div class="field">
+        <label for="event-assignee">{{ 'agendaPage.dialog.assigneeLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="event-assignee"
+          formControlName="assignedUserId"
+          [options]="userOptions()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [filter]="true"
+          filterBy="name"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field field-span-2">
+        <label for="event-customer">{{ 'agendaPage.dialog.customerLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="event-customer"
+          formControlName="customerId"
+          [options]="customerOptions()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [filter]="true"
+          filterBy="name"
+          (onFilter)="onCustomerFilter($event.filter)"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field field-span-2">
+        <label for="event-description">{{ 'agendaPage.dialog.descriptionLabel' | translate }}</label>
+        <textarea id="event-description" pTextarea formControlName="description" rows="3" [autoResize]="true" fluid></textarea>
+      </div>
+    </div>
+
+    <div class="dialog-footer">
+      <p-button
+        [label]="'common.actions.cancel' | translate"
+        severity="secondary"
+        [text]="true"
+        type="button"
+        (onClick)="closeDialog()"
+      />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="saving()"
+        data-testid="agenda-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>
