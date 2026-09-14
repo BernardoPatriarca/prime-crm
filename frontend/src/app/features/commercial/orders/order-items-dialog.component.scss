@@ -1,0 +1,48 @@
+.items-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.85rem;
+}
+
+.items-toolbar__total {
+  font-size: 0.875rem;
+  color: var(--p-text-muted-color, #5b6474);
+}
+
+.items-surface {
+  border: 1px solid var(--p-content-border-color, #e5e8ef);
+  border-radius: var(--p-border-radius-lg, 12px);
+  overflow: hidden;
+}
+
+:host ::ng-deep {
+  .cell-muted {
+    color: var(--p-text-muted-color, #5b6474);
+  }
+
+  .col-actions {
+    width: 1%;
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  .p-datatable-thead > tr > th {
+    background: color-mix(in srgb, var(--p-text-color, #1a1f27) 4%, var(--p-content-background, #ffffff));
+    color: var(--p-text-muted-color, #5b6474);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.7rem 0.85rem;
+    white-space: nowrap;
+  }
+
+  .p-datatable-tbody > tr > td {
+    padding: 0.6rem 0.85rem;
+    vertical-align: middle;
+    border-color: color-mix(in srgb, var(--p-content-border-color, #e5e8ef) 60%, transparent);
+  }
+}

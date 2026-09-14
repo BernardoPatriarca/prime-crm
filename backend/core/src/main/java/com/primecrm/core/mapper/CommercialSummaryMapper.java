@@ -8,6 +8,7 @@ import com.primecrm.core.dto.common.OpportunitySummaryResponse;
 import com.primecrm.core.dto.common.PipelineStageSummaryResponse;
 import com.primecrm.core.dto.common.PipelineSummaryResponse;
 import com.primecrm.core.dto.common.ProductSummaryResponse;
+import com.primecrm.core.dto.common.ProposalSummaryResponse;
 import com.primecrm.core.dto.common.UserSummaryResponse;
 import com.primecrm.infra.entity.auth.User;
 import com.primecrm.infra.entity.commercial.Contact;
@@ -18,6 +19,7 @@ import com.primecrm.infra.entity.config.Pipeline;
 import com.primecrm.infra.entity.config.PipelineStage;
 import com.primecrm.infra.entity.domain.DomainValue;
 import com.primecrm.infra.entity.product.Product;
+import com.primecrm.infra.entity.proposal.Proposal;
 import java.util.List;
 import org.mapstruct.Mapper;
 
@@ -43,4 +45,6 @@ public interface CommercialSummaryMapper {
     PipelineStageSummaryResponse toPipelineStageSummary(PipelineStage stage);
 
     ProductSummaryResponse toProductSummary(Product product);
+
+    ProposalSummaryResponse toProposalSummary(Proposal proposal);
 }

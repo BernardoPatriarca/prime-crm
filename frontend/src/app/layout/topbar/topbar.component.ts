@@ -183,6 +183,12 @@ export class TopbarComponent {
         icon: 'pi pi-file',
         disabled: !hasPermission('PROPOSTAS_CREATE'),
         command: () => this.openCreation('/propostas')
+      },
+      {
+        label: t('topbar.newButton.order'),
+        icon: 'pi pi-truck',
+        disabled: !hasPermission('PEDIDOS_CREATE'),
+        command: () => this.openCreation('/pedidos')
       }
     ];
   });

@@ -150,7 +150,8 @@
       "task": "Nova Tarefa",
       "agenda": "Agenda",
       "product": "Produto",
-      "proposal": "Proposta"
+      "proposal": "Proposta",
+      "order": "Pedido"
     },
     "userMenu": {
       "changePassword": "Alterar Senha",
@@ -221,7 +222,8 @@
       "tasks": "Tarefas",
       "agenda": "Agenda",
       "products": "Produtos",
-      "proposals": "Propostas"
+      "proposals": "Propostas",
+      "orders": "Pedidos"
     },
     "comingSoon": "Em breve",
     "reports": {
@@ -1115,7 +1117,8 @@
       "items": "Gerenciar itens",
       "send": "Enviar",
       "accept": "Aceitar",
-      "reject": "Rejeitar"
+      "reject": "Rejeitar",
+      "convertToOrder": "Converter em Pedido"
     },
     "dialog": {
       "newTitle": "Nova Proposta",
@@ -1131,10 +1134,87 @@
       "created": "Proposta criada com sucesso",
       "updated": "Proposta atualizada com sucesso",
       "deleted": "Proposta excluida com sucesso",
-      "statusChanged": "Status da proposta atualizado"
+      "statusChanged": "Status da proposta atualizado",
+      "convertedToOrder": "Pedido {{code}} criado a partir da proposta"
     },
     "items": {
       "title": "Itens da proposta",
+      "total": "Total",
+      "newButton": "Novo Item",
+      "emptyState": "Nenhum item adicionado ainda.",
+      "columns": {
+        "product": "Produto",
+        "quantity": "Qtde",
+        "unitPrice": "Preco unitario",
+        "discount": "Desconto",
+        "total": "Total",
+        "actions": "Acoes"
+      },
+      "dialog": {
+        "newTitle": "Novo Item",
+        "editTitle": "Editar Item",
+        "productLabel": "Produto",
+        "descriptionLabel": "Descricao (opcional, substitui o nome do produto)",
+        "quantityLabel": "Quantidade",
+        "unitPriceLabel": "Preco unitario",
+        "unitPricePlaceholder": "Preco atual do produto",
+        "discountLabel": "Desconto"
+      },
+      "messages": {
+        "created": "Item adicionado com sucesso",
+        "updated": "Item atualizado com sucesso",
+        "deleted": "Item removido com sucesso"
+      }
+    }
+  },
+  "ordersPage": {
+    "title": "Pedidos",
+    "description": "Confirmacao formal de vendas, com itens de produtos e servicos.",
+    "newButton": "Novo Pedido",
+    "searchPlaceholder": "Buscar por codigo ou observacoes...",
+    "emptyState": "Nenhum pedido encontrado.",
+    "status": {
+      "PENDING": "Pendente",
+      "CONFIRMED": "Confirmado",
+      "DELIVERED": "Entregue",
+      "CANCELED": "Cancelado"
+    },
+    "filters": {
+      "status": "Status"
+    },
+    "columns": {
+      "code": "Codigo",
+      "customer": "Cliente",
+      "owner": "Responsavel",
+      "orderDate": "Data do pedido",
+      "totalAmount": "Valor total",
+      "status": "Status",
+      "actions": "Acoes"
+    },
+    "actions": {
+      "items": "Gerenciar itens",
+      "confirm": "Confirmar",
+      "deliver": "Marcar como entregue",
+      "cancel": "Cancelar"
+    },
+    "dialog": {
+      "newTitle": "Novo Pedido",
+      "editTitle": "Editar Pedido",
+      "customerLabel": "Cliente",
+      "opportunityLabel": "Oportunidade",
+      "ownerLabel": "Responsavel",
+      "orderDateLabel": "Data do pedido",
+      "deliveryDateLabel": "Previsao de entrega",
+      "notesLabel": "Observacoes"
+    },
+    "messages": {
+      "created": "Pedido criado com sucesso",
+      "updated": "Pedido atualizado com sucesso",
+      "deleted": "Pedido excluido com sucesso",
+      "statusChanged": "Status do pedido atualizado"
+    },
+    "items": {
+      "title": "Itens do pedido",
       "total": "Total",
       "newButton": "Novo Item",
       "emptyState": "Nenhum item adicionado ainda.",

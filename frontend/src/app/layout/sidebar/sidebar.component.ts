@@ -130,6 +130,14 @@ export class SidebarComponent {
       });
     }
 
+    if (hasPermission('PEDIDOS_VIEW')) {
+      commercialChildren.push({
+        label: t('sidebar.modules.orders'),
+        icon: 'pi pi-truck',
+        routerLink: '/pedidos'
+      });
+    }
+
     commercialChildren.push({
       label: t('sidebar.modules.finance'),
       icon: 'pi pi-wallet',

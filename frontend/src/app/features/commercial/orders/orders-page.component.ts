@@ -14,27 +14,26 @@ import { TooltipModule } from 'primeng/tooltip';
 import { Subject, debounceTime, switchMap } from 'rxjs';
 import { AdminUser } from '../../../core/models/admin-user.model';
 import { Customer } from '../../../core/models/customer.model';
+import { ORDER_STATUSES, Order, OrderRequest, OrderStatus } from '../../../core/models/order.model';
 import { Opportunity } from '../../../core/models/opportunity.model';
-import { PROPOSAL_STATUSES, Proposal, ProposalRequest, ProposalStatus } from '../../../core/models/proposal.model';
 import { AdminUserService } from '../../../core/services/admin-user.service';
 import { CustomerService } from '../../../core/services/customer.service';
 import { OpportunityService } from '../../../core/services/opportunity.service';
 import { OrderService } from '../../../core/services/order.service';
-import { ProposalService } from '../../../core/services/proposal.service';
 import { SessionStore } from '../../../core/store/session.store';
 import { GenericTableComponent, TableQuery } from '../../../shared/components/generic-table/generic-table.component';
 import { openCreateDialogFromRoute } from '../../../shared/utils/creation-route.util';
 import { formatCurrencyBRL, formatIsoDate } from '../../../shared/utils/format.util';
-import { ProposalItemsDialogComponent } from './proposal-items-dialog.component';
+import { OrderItemsDialogComponent } from './order-items-dialog.component';
 
 const CUSTOMER_SEARCH_DEBOUNCE_MS = 300;
 const OPTIONS_PAGE_SIZE = 50;
 
-const STATUS_SEVERITY: Record<ProposalStatus, 'secondary' | 'info' | 'success' | 'danger'> = {
-  DRAFT: 'secondary',
-  SENT: 'info',
-  ACCEPTED: 'success',
-  REJECTED: 'danger'
+const STATUS_SEVERITY: Record<OrderStatus, 'secondary' | 'info' | 'success' | 'danger'> = {
+  PENDING: 'secondary',
+  CONFIRMED: 'info',
+  DELIVERED: 'success',
+  CANCELED: 'danger'
 };
 
 interface SelectOption<T> {
@@ -65,7 +64,7 @@ function toIsoDate(value: Date | null): string | null {
 }
 
 @Component({
-  selector: 'app-proposals-page',
+  selector: 'app-orders-page',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -81,13 +80,12 @@ function toIsoDate(value: Date | null): string | null {
     TextareaModule,
     TooltipModule,
     SharedModule,
-    ProposalItemsDialogComponent
+    OrderItemsDialogComponent
   ],
-  templateUrl: './proposals-page.component.html',
-  styleUrl: './proposals-page.component.scss'
+  templateUrl: './orders-page.component.html',
+  styleUrl: './orders-page.component.scss'
 })
-export class ProposalsPageComponent {
-  private readonly proposalService = inject(ProposalService);
+export class OrdersPageComponent {
   private readonly orderService = inject(OrderService);
   private readonly customerService = inject(CustomerService);
   private readonly opportunityService = inject(OpportunityService);
@@ -98,43 +96,33 @@ export class ProposalsPageComponent {
   private readonly translate = inject(TranslateService);
   private readonly formBuilder = inject(FormBuilder);
 
-  protected readonly proposals = signal<Proposal[]>([]);
+  protected readonly orders = signal<Order[]>([]);
   protected readonly total = signal(0);
   protected readonly loading = signal(false);
 
-  protected readonly statusFilter = signal<ProposalStatus | null>(null);
-  protected readonly expiredFilter = signal<boolean | null>(null);
+  protected readonly statusFilter = signal<OrderStatus | null>(null);
 
   protected readonly customerOptions = signal<Customer[]>([]);
   protected readonly opportunityOptions = signal<Opportunity[]>([]);
   protected readonly userOptions = signal<AdminUser[]>([]);
 
   protected readonly dialogVisible = signal(false);
-  protected readonly editingProposal = signal<Proposal | null>(null);
+  protected readonly editingOrder = signal<Order | null>(null);
   protected readonly saving = signal(false);
 
   protected readonly itemsDialogVisible = signal(false);
-  protected readonly proposalForItems = signal<Proposal | null>(null);
+  protected readonly orderForItems = signal<Order | null>(null);
 
-  protected readonly canCreate = computed(() => this.sessionStore.hasPermission('PROPOSTAS_CREATE'));
-  protected readonly canEdit = computed(() => this.sessionStore.hasPermission('PROPOSTAS_EDIT'));
-  protected readonly canDelete = computed(() => this.sessionStore.hasPermission('PROPOSTAS_DELETE'));
-  protected readonly canCreateOrder = computed(() => this.sessionStore.hasPermission('PEDIDOS_CREATE'));
+  protected readonly canCreate = computed(() => this.sessionStore.hasPermission('PEDIDOS_CREATE'));
+  protected readonly canEdit = computed(() => this.sessionStore.hasPermission('PEDIDOS_EDIT'));
+  protected readonly canDelete = computed(() => this.sessionStore.hasPermission('PEDIDOS_DELETE'));
 
-  protected readonly statusOptions = computed<SelectOption<ProposalStatus>[]>(() => {
+  protected readonly statusOptions = computed<SelectOption<OrderStatus>[]>(() => {
     this.translate.currentLang();
-    return PROPOSAL_STATUSES.map((status) => ({
-      label: this.translate.instant(`proposalsPage.status.${status}`),
+    return ORDER_STATUSES.map((status) => ({
+      label: this.translate.instant(`ordersPage.status.${status}`),
       value: status
     }));
-  });
-
-  protected readonly expiredOptions = computed<SelectOption<boolean>[]>(() => {
-    this.translate.currentLang();
-    return [
-      { label: this.translate.instant('proposalsPage.filters.expired'), value: true },
-      { label: this.translate.instant('proposalsPage.filters.valid'), value: false }
-    ];
   });
 
   private lastQuery: TableQuery = { page: 0, size: 10 };
@@ -142,11 +130,10 @@ export class ProposalsPageComponent {
 
   protected readonly form = this.formBuilder.nonNullable.group({
     customerId: [null as string | null, [Validators.required]],
-    contactId: [null as string | null],
     opportunityId: [null as string | null],
     ownerUserId: [null as string | null],
-    issueDate: [new Date(), [Validators.required]],
-    validUntil: [null as Date | null],
+    orderDate: [new Date(), [Validators.required]],
+    deliveryDate: [null as Date | null],
     notes: ['']
   });
 
@@ -193,7 +180,7 @@ export class ProposalsPageComponent {
     this.load();
   }
 
-  protected statusSeverity(status: ProposalStatus): string {
+  protected statusSeverity(status: OrderStatus): string {
     return STATUS_SEVERITY[status];
   }
 
@@ -207,19 +194,17 @@ export class ProposalsPageComponent {
 
   private load(): void {
     this.loading.set(true);
-    const expired = this.expiredFilter();
-    this.proposalService
+    this.orderService
       .list({
         search: this.lastQuery.search,
         status: this.statusFilter() ?? undefined,
-        expired: expired === null ? undefined : expired,
         page: this.lastQuery.page,
         size: this.lastQuery.size,
         sort: toSort(this.lastQuery)
       })
       .subscribe({
         next: (response) => {
-          this.proposals.set(response.content);
+          this.orders.set(response.content);
           this.total.set(response.totalElements);
           this.loading.set(false);
         },
@@ -228,36 +213,34 @@ export class ProposalsPageComponent {
   }
 
   protected openCreateDialog(): void {
-    this.editingProposal.set(null);
+    this.editingOrder.set(null);
     this.form.reset({
       customerId: null,
-      contactId: null,
       opportunityId: null,
       ownerUserId: null,
-      issueDate: new Date(),
-      validUntil: null,
+      orderDate: new Date(),
+      deliveryDate: null,
       notes: ''
     });
     this.dialogVisible.set(true);
   }
 
-  protected openEditDialog(proposal: Proposal): void {
-    this.editingProposal.set(proposal);
-    this.ensureCustomerOption(proposal);
+  protected openEditDialog(order: Order): void {
+    this.editingOrder.set(order);
+    this.ensureCustomerOption(order);
     this.form.reset({
-      customerId: proposal.customer?.id ?? null,
-      contactId: proposal.contact?.id ?? null,
-      opportunityId: proposal.opportunity?.id ?? null,
-      ownerUserId: proposal.owner?.id ?? null,
-      issueDate: new Date(proposal.issueDate),
-      validUntil: proposal.validUntil ? new Date(proposal.validUntil) : null,
-      notes: proposal.notes ?? ''
+      customerId: order.customer?.id ?? null,
+      opportunityId: order.opportunity?.id ?? null,
+      ownerUserId: order.owner?.id ?? null,
+      orderDate: new Date(order.orderDate),
+      deliveryDate: order.deliveryDate ? new Date(order.deliveryDate) : null,
+      notes: order.notes ?? ''
     });
     this.dialogVisible.set(true);
   }
 
-  private ensureCustomerOption(proposal: Proposal): void {
-    const customer = proposal.customer;
+  private ensureCustomerOption(order: Order): void {
+    const customer = order.customer;
     if (!customer || this.customerOptions().some((option) => option.id === customer.id)) {
       return;
     }
@@ -277,19 +260,18 @@ export class ProposalsPageComponent {
     }
 
     const raw = this.form.getRawValue();
-    const request: ProposalRequest = {
+    const request: OrderRequest = {
       customerId: raw.customerId!,
-      contactId: raw.contactId,
       opportunityId: raw.opportunityId,
       ownerUserId: raw.ownerUserId,
-      issueDate: toIsoDate(raw.issueDate),
-      validUntil: toIsoDate(raw.validUntil),
+      orderDate: toIsoDate(raw.orderDate),
+      deliveryDate: toIsoDate(raw.deliveryDate),
       notes: trimmedOrNull(raw.notes)
     };
 
     this.saving.set(true);
-    const editing = this.editingProposal();
-    const request$ = editing ? this.proposalService.update(editing.id, request) : this.proposalService.create(request);
+    const editing = this.editingOrder();
+    const request$ = editing ? this.orderService.update(editing.id, request) : this.orderService.create(request);
 
     request$.subscribe({
       next: () => {
@@ -297,7 +279,7 @@ export class ProposalsPageComponent {
         this.dialogVisible.set(false);
         this.messageService.add({
           severity: 'success',
-          summary: this.translate.instant(editing ? 'proposalsPage.messages.updated' : 'proposalsPage.messages.created')
+          summary: this.translate.instant(editing ? 'ordersPage.messages.updated' : 'ordersPage.messages.created')
         });
         this.load();
       },
@@ -305,27 +287,18 @@ export class ProposalsPageComponent {
     });
   }
 
-  protected changeStatus(proposal: Proposal, status: ProposalStatus): void {
-    this.proposalService.changeStatus(proposal.id, { status }).subscribe(() => {
+  protected changeStatus(order: Order, status: OrderStatus): void {
+    this.orderService.changeStatus(order.id, { status }).subscribe(() => {
       this.messageService.add({
         severity: 'success',
-        summary: this.translate.instant('proposalsPage.messages.statusChanged')
+        summary: this.translate.instant('ordersPage.messages.statusChanged')
       });
       this.load();
     });
   }
 
-  protected convertToOrder(proposal: Proposal): void {
-    this.orderService.createFromProposal(proposal.id).subscribe((order) => {
-      this.messageService.add({
-        severity: 'success',
-        summary: this.translate.instant('proposalsPage.messages.convertedToOrder', { code: order.code })
-      });
-    });
-  }
-
-  protected openItemsDialog(proposal: Proposal): void {
-    this.proposalForItems.set(proposal);
+  protected openItemsDialog(order: Order): void {
+    this.orderForItems.set(order);
     this.itemsDialogVisible.set(true);
   }
 
@@ -333,18 +306,18 @@ export class ProposalsPageComponent {
     this.load();
   }
 
-  protected confirmDelete(proposal: Proposal): void {
+  protected confirmDelete(order: Order): void {
     this.confirmationService.confirm({
       header: this.translate.instant('common.confirmDelete.title'),
-      message: this.translate.instant('common.confirmDelete.message', { name: proposal.code }),
+      message: this.translate.instant('common.confirmDelete.message', { name: order.code }),
       acceptLabel: this.translate.instant('common.confirmDelete.accept'),
       rejectLabel: this.translate.instant('common.confirmDelete.reject'),
       acceptButtonProps: { severity: 'danger' },
       accept: () => {
-        this.proposalService.delete(proposal.id).subscribe(() => {
+        this.orderService.delete(order.id).subscribe(() => {
           this.messageService.add({
             severity: 'success',
-            summary: this.translate.instant('proposalsPage.messages.deleted')
+            summary: this.translate.instant('ordersPage.messages.deleted')
           });
           this.load();
         });

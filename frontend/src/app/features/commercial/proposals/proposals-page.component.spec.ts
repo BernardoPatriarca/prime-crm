@@ -10,6 +10,7 @@ import { Proposal } from '../../../core/models/proposal.model';
 import { AdminUserService } from '../../../core/services/admin-user.service';
 import { CustomerService } from '../../../core/services/customer.service';
 import { OpportunityService } from '../../../core/services/opportunity.service';
+import { OrderService } from '../../../core/services/order.service';
 import { ProposalService } from '../../../core/services/proposal.service';
 import { ProposalsPageComponent } from './proposals-page.component';
 
@@ -40,6 +41,7 @@ describe('ProposalsPageComponent', () => {
   let fixture: ComponentFixture<ProposalsPageComponent>;
   let component: ProposalsPageComponent;
   let proposalServiceStub: jasmine.SpyObj<ProposalService>;
+  let orderServiceStub: jasmine.SpyObj<OrderService>;
 
   beforeEach(async () => {
     localStorage.clear();
@@ -58,6 +60,8 @@ describe('ProposalsPageComponent', () => {
     proposalServiceStub.list.and.returnValue(of(emptyPage));
     proposalServiceStub.changeStatus.and.returnValue(of(proposalFixture({ status: 'SENT' })));
 
+    orderServiceStub = jasmine.createSpyObj<OrderService>('OrderService', ['createFromProposal']);
+
     await TestBed.configureTestingModule({
       imports: [ProposalsPageComponent],
       providers: [
@@ -69,6 +73,7 @@ describe('ProposalsPageComponent', () => {
         MessageService,
         ConfirmationService,
         { provide: ProposalService, useValue: proposalServiceStub },
+        { provide: OrderService, useValue: orderServiceStub },
         { provide: CustomerService, useValue: { list: () => of(emptyPage), getById: () => of(null) } },
         { provide: OpportunityService, useValue: { list: () => of(emptyPage) } },
         { provide: AdminUserService, useValue: { list: () => of(emptyPage) } }
@@ -120,5 +125,30 @@ describe('ProposalsPageComponent', () => {
 
     expect(component['form'].controls.notes.value).toBe('Cliente pediu desconto');
     expect(component['form'].controls.issueDate.value).toBeInstanceOf(Date);
+  });
+
+  it('converts an accepted proposal into an order', () => {
+    orderServiceStub.createFromProposal.and.returnValue(
+      of({
+        id: 'order-1',
+        code: 'PED-001000',
+        customer: null,
+        proposal: null,
+        opportunity: null,
+        owner: null,
+        status: 'PENDING',
+        orderDate: '2026-02-01',
+        deliveryDate: null,
+        notes: null,
+        totalAmount: 0,
+        closedAt: null,
+        createdAt: '2026-01-01T00:00:00Z',
+        updatedAt: '2026-01-01T00:00:00Z'
+      })
+    );
+
+    component['convertToOrder'](proposalFixture({ status: 'ACCEPTED' }));
+
+    expect(orderServiceStub.createFromProposal).toHaveBeenCalledWith('proposal-1');
   });
 });

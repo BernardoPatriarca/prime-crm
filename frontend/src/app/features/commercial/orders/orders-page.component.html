@@ -1,27 +1,27 @@
 <div class="settings-page">
   <div class="settings-page-header">
     <div>
-      <h1>{{ 'proposalsPage.title' | translate }}</h1>
-      <p>{{ 'proposalsPage.description' | translate }}</p>
+      <h1>{{ 'ordersPage.title' | translate }}</h1>
+      <p>{{ 'ordersPage.description' | translate }}</p>
     </div>
     @if (canCreate()) {
       <p-button
         icon="pi pi-plus"
-        [label]="'proposalsPage.newButton' | translate"
+        [label]="'ordersPage.newButton' | translate"
         (onClick)="openCreateDialog()"
-        data-testid="proposals-new-button"
+        data-testid="orders-new-button"
       />
     }
   </div>
 
   <app-generic-table
-    [items]="proposals()"
+    [items]="orders()"
     [totalRecords]="total()"
     [loading]="loading()"
     [columnsCount]="7"
-    emptyIcon="pi-file"
-    emptyMessageKey="proposalsPage.emptyState"
-    searchPlaceholderKey="proposalsPage.searchPlaceholder"
+    emptyIcon="pi-truck"
+    emptyMessageKey="ordersPage.emptyState"
+    searchPlaceholderKey="ordersPage.searchPlaceholder"
     (queryChange)="onQueryChange($event)"
   >
     <div tableActions class="filter-bar">
@@ -33,40 +33,29 @@
         optionLabel="label"
         optionValue="value"
         [showClear]="true"
-        [placeholder]="'proposalsPage.filters.status' | translate"
-        data-testid="proposals-status-filter"
-      />
-      <p-select
-        appendTo="body"
-        [ngModel]="expiredFilter()"
-        (ngModelChange)="expiredFilter.set($event); onFilterChange()"
-        [options]="expiredOptions()"
-        optionLabel="label"
-        optionValue="value"
-        [showClear]="true"
-        [placeholder]="'proposalsPage.filters.validity' | translate"
-        data-testid="proposals-expired-filter"
+        [placeholder]="'ordersPage.filters.status' | translate"
+        data-testid="orders-status-filter"
       />
     </div>
 
     <ng-template #header>
       <tr>
         <th pSortableColumn="code">
-          {{ 'proposalsPage.columns.code' | translate }}
+          {{ 'ordersPage.columns.code' | translate }}
           <p-sortIcon field="code" />
         </th>
-        <th>{{ 'proposalsPage.columns.customer' | translate }}</th>
-        <th>{{ 'proposalsPage.columns.owner' | translate }}</th>
-        <th pSortableColumn="issueDate">
-          {{ 'proposalsPage.columns.issueDate' | translate }}
-          <p-sortIcon field="issueDate" />
+        <th>{{ 'ordersPage.columns.customer' | translate }}</th>
+        <th>{{ 'ordersPage.columns.owner' | translate }}</th>
+        <th pSortableColumn="orderDate">
+          {{ 'ordersPage.columns.orderDate' | translate }}
+          <p-sortIcon field="orderDate" />
         </th>
         <th pSortableColumn="totalAmount">
-          {{ 'proposalsPage.columns.totalAmount' | translate }}
+          {{ 'ordersPage.columns.totalAmount' | translate }}
           <p-sortIcon field="totalAmount" />
         </th>
-        <th>{{ 'proposalsPage.columns.status' | translate }}</th>
-        <th class="col-actions">{{ 'proposalsPage.columns.actions' | translate }}</th>
+        <th>{{ 'ordersPage.columns.status' | translate }}</th>
+        <th class="col-actions">{{ 'ordersPage.columns.actions' | translate }}</th>
       </tr>
     </ng-template>
 
@@ -75,13 +64,13 @@
         <td class="cell-muted cell-numeric">{{ item.code }}</td>
         <td class="cell-strong">{{ item.customer?.name ?? '-' }}</td>
         <td class="cell-muted">{{ item.owner?.name ?? '-' }}</td>
-        <td class="cell-muted">{{ formatDate(item.issueDate) }}</td>
+        <td class="cell-muted">{{ formatDate(item.orderDate) }}</td>
         <td class="cell-strong">{{ formatTotal(item.totalAmount) }}</td>
         <td>
           <div class="chip-list">
-            <p-tag [severity]="statusSeverity(item.status)" [value]="'proposalsPage.status.' + item.status | translate" />
-            @if (item.expired) {
-              <p-tag severity="danger" icon="pi pi-clock" [value]="'proposalsPage.badges.expired' | translate" />
+            <p-tag [severity]="statusSeverity(item.status)" [value]="'ordersPage.status.' + item.status | translate" />
+            @if (item.proposal) {
+              <p-tag severity="secondary" icon="pi pi-file" [value]="item.proposal.code" />
             }
           </div>
         </td>
@@ -93,61 +82,50 @@
                 [text]="true"
                 [rounded]="true"
                 severity="secondary"
-                [pTooltip]="'proposalsPage.actions.items' | translate"
+                [pTooltip]="'ordersPage.actions.items' | translate"
                 tooltipPosition="top"
-                [ariaLabel]="'proposalsPage.actions.items' | translate"
+                [ariaLabel]="'ordersPage.actions.items' | translate"
                 (onClick)="openItemsDialog(item)"
-                [attr.data-testid]="'proposal-items-' + item.id"
+                [attr.data-testid]="'order-items-' + item.id"
               />
             }
-            @if (canEdit() && item.status === 'DRAFT') {
-              <p-button
-                icon="pi pi-send"
-                [text]="true"
-                [rounded]="true"
-                severity="info"
-                [pTooltip]="'proposalsPage.actions.send' | translate"
-                tooltipPosition="top"
-                [ariaLabel]="'proposalsPage.actions.send' | translate"
-                (onClick)="changeStatus(item, 'SENT')"
-                [attr.data-testid]="'proposal-send-' + item.id"
-              />
-            }
-            @if (canEdit() && item.status === 'SENT') {
+            @if (canEdit() && item.status === 'PENDING') {
               <p-button
                 icon="pi pi-check"
                 [text]="true"
                 [rounded]="true"
-                severity="success"
-                [pTooltip]="'proposalsPage.actions.accept' | translate"
+                severity="info"
+                [pTooltip]="'ordersPage.actions.confirm' | translate"
                 tooltipPosition="top"
-                [ariaLabel]="'proposalsPage.actions.accept' | translate"
-                (onClick)="changeStatus(item, 'ACCEPTED')"
-                [attr.data-testid]="'proposal-accept-' + item.id"
-              />
-              <p-button
-                icon="pi pi-times"
-                [text]="true"
-                [rounded]="true"
-                severity="danger"
-                [pTooltip]="'proposalsPage.actions.reject' | translate"
-                tooltipPosition="top"
-                [ariaLabel]="'proposalsPage.actions.reject' | translate"
-                (onClick)="changeStatus(item, 'REJECTED')"
-                [attr.data-testid]="'proposal-reject-' + item.id"
+                [ariaLabel]="'ordersPage.actions.confirm' | translate"
+                (onClick)="changeStatus(item, 'CONFIRMED')"
+                [attr.data-testid]="'order-confirm-' + item.id"
               />
             }
-            @if (canCreateOrder() && item.status === 'ACCEPTED') {
+            @if (canEdit() && item.status === 'CONFIRMED') {
               <p-button
                 icon="pi pi-truck"
                 [text]="true"
                 [rounded]="true"
                 severity="success"
-                [pTooltip]="'proposalsPage.actions.convertToOrder' | translate"
+                [pTooltip]="'ordersPage.actions.deliver' | translate"
                 tooltipPosition="top"
-                [ariaLabel]="'proposalsPage.actions.convertToOrder' | translate"
-                (onClick)="convertToOrder(item)"
-                [attr.data-testid]="'proposal-convert-' + item.id"
+                [ariaLabel]="'ordersPage.actions.deliver' | translate"
+                (onClick)="changeStatus(item, 'DELIVERED')"
+                [attr.data-testid]="'order-deliver-' + item.id"
+              />
+            }
+            @if (canEdit() && (item.status === 'PENDING' || item.status === 'CONFIRMED')) {
+              <p-button
+                icon="pi pi-times"
+                [text]="true"
+                [rounded]="true"
+                severity="danger"
+                [pTooltip]="'ordersPage.actions.cancel' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'ordersPage.actions.cancel' | translate"
+                (onClick)="changeStatus(item, 'CANCELED')"
+                [attr.data-testid]="'order-cancel-' + item.id"
               />
             }
             @if (canEdit()) {
@@ -160,7 +138,7 @@
                 tooltipPosition="top"
                 [ariaLabel]="'common.actions.edit' | translate"
                 (onClick)="openEditDialog(item)"
-                [attr.data-testid]="'proposal-edit-' + item.id"
+                [attr.data-testid]="'order-edit-' + item.id"
               />
             }
             @if (canDelete()) {
@@ -173,7 +151,7 @@
                 tooltipPosition="top"
                 [ariaLabel]="'common.actions.delete' | translate"
                 (onClick)="confirmDelete(item)"
-                [attr.data-testid]="'proposal-delete-' + item.id"
+                [attr.data-testid]="'order-delete-' + item.id"
               />
             }
           </div>
@@ -192,15 +170,15 @@
   [dismissableMask]="true"
   [style]="{ width: '42rem' }"
   [breakpoints]="{ '1024px': '92vw', '767px': '96vw' }"
-  [header]="(editingProposal() ? 'proposalsPage.dialog.editTitle' : 'proposalsPage.dialog.newTitle') | translate"
+  [header]="(editingOrder() ? 'ordersPage.dialog.editTitle' : 'ordersPage.dialog.newTitle') | translate"
 >
   <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
     <div class="form-grid">
       <div class="field field-span-2">
-        <label for="proposal-customer">{{ 'proposalsPage.dialog.customerLabel' | translate }}</label>
+        <label for="order-customer">{{ 'ordersPage.dialog.customerLabel' | translate }}</label>
         <p-select
           appendTo="body"
-          inputId="proposal-customer"
+          inputId="order-customer"
           formControlName="customerId"
           [options]="customerOptions()"
           optionLabel="name"
@@ -210,7 +188,7 @@
           (onFilter)="onCustomerFilter($event.filter)"
           [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
           fluid
-          data-testid="proposal-customer-select"
+          data-testid="order-customer-select"
         />
         @if (form.controls.customerId.invalid && form.controls.customerId.touched) {
           <small class="field-error">{{ 'common.validation.required' | translate }}</small>
@@ -218,10 +196,10 @@
       </div>
 
       <div class="field">
-        <label for="proposal-opportunity">{{ 'proposalsPage.dialog.opportunityLabel' | translate }}</label>
+        <label for="order-opportunity">{{ 'ordersPage.dialog.opportunityLabel' | translate }}</label>
         <p-select
           appendTo="body"
-          inputId="proposal-opportunity"
+          inputId="order-opportunity"
           formControlName="opportunityId"
           [options]="opportunityOptions()"
           optionLabel="title"
@@ -235,10 +213,10 @@
       </div>
 
       <div class="field">
-        <label for="proposal-owner">{{ 'proposalsPage.dialog.ownerLabel' | translate }}</label>
+        <label for="order-owner">{{ 'ordersPage.dialog.ownerLabel' | translate }}</label>
         <p-select
           appendTo="body"
-          inputId="proposal-owner"
+          inputId="order-owner"
           formControlName="ownerUserId"
           [options]="userOptions()"
           optionLabel="name"
@@ -252,11 +230,11 @@
       </div>
 
       <div class="field">
-        <label for="proposal-issue-date">{{ 'proposalsPage.dialog.issueDateLabel' | translate }}</label>
+        <label for="order-date">{{ 'ordersPage.dialog.orderDateLabel' | translate }}</label>
         <p-datepicker
           appendTo="body"
-          inputId="proposal-issue-date"
-          formControlName="issueDate"
+          inputId="order-date"
+          formControlName="orderDate"
           dateFormat="dd/mm/yy"
           [showIcon]="true"
           fluid
@@ -264,11 +242,11 @@
       </div>
 
       <div class="field">
-        <label for="proposal-valid-until">{{ 'proposalsPage.dialog.validUntilLabel' | translate }}</label>
+        <label for="order-delivery-date">{{ 'ordersPage.dialog.deliveryDateLabel' | translate }}</label>
         <p-datepicker
           appendTo="body"
-          inputId="proposal-valid-until"
-          formControlName="validUntil"
+          inputId="order-delivery-date"
+          formControlName="deliveryDate"
           dateFormat="dd/mm/yy"
           [showIcon]="true"
           [showClear]="true"
@@ -277,8 +255,8 @@
       </div>
 
       <div class="field field-span-2">
-        <label for="proposal-notes">{{ 'proposalsPage.dialog.notesLabel' | translate }}</label>
-        <textarea id="proposal-notes" pTextarea formControlName="notes" rows="3" [autoResize]="true" fluid></textarea>
+        <label for="order-notes">{{ 'ordersPage.dialog.notesLabel' | translate }}</label>
+        <textarea id="order-notes" pTextarea formControlName="notes" rows="3" [autoResize]="true" fluid></textarea>
       </div>
     </div>
 
@@ -295,16 +273,16 @@
         [label]="'common.actions.save' | translate"
         type="submit"
         [loading]="saving()"
-        data-testid="proposal-save-button"
+        data-testid="order-save-button"
       />
     </div>
   </form>
 </p-dialog>
 
-<app-proposal-items-dialog
+<app-order-items-dialog
   [visible]="itemsDialogVisible()"
-  [proposalId]="proposalForItems()?.id ?? null"
-  [proposalCode]="proposalForItems()?.code ?? ''"
+  [orderId]="orderForItems()?.id ?? null"
+  [orderCode]="orderForItems()?.code ?? ''"
   (visibleChange)="itemsDialogVisible.set($event)"
   (itemsChanged)="onItemsChanged()"
 />

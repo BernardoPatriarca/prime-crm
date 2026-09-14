@@ -2,6 +2,42 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fase 4] — Pedidos
+
+Terceira entrega da Fase 4: Pedidos, a confirmação formal de uma venda — estrutura praticamente irmã de
+Propostas (cabeçalho + itens, mesmo padrão de snapshot de preço), com um caminho de conversão direto a
+partir de uma proposta aceita.
+
+### Banco de dados
+
+Migrations `V31` a `V33`: tabelas `orders` e `order_items` (idênticas em estrutura a `proposals`/
+`proposal_items`, com `proposal_id` como referência opcional de origem) e as 4 permissões novas
+(`PEDIDOS_*`) concedidas ao perfil Administrador. Código legível `PED-######`.
+
+### Backend
+
+- CRUD completo do cabeçalho (`/api/v1/orders`) e dos itens (`/api/v1/orders/{orderId}/items`), no mesmo
+  padrão de Propostas — total recalculado no servidor, preço como snapshot, sem regra de transição de
+  status forçada (`CONFIRMED`/`PENDING` livres; `DELIVERED`/`CANCELED` preenchem `closedAt`).
+- `POST /api/v1/orders/from-proposal/{proposalId}`: cria um pedido copiando cliente, oportunidade,
+  responsável e **todos os itens** da proposta (mesma quantidade, preço e desconto praticados) — sem essa
+  rota, transformar uma proposta aceita em pedido significaria redigitar cada item na mão.
+
+### Frontend
+
+Tela `/pedidos`, mesmo padrão visual de Propostas (listagem + diálogo de cabeçalho + diálogo de itens),
+com ações rápidas por status (confirmar, marcar como entregue, cancelar) e um chip mostrando o código da
+proposta de origem quando o pedido nasceu de uma. A tela de Propostas ganhou o botão "Converter em Pedido"
+nas linhas com status Aceita, fechando visualmente o fluxo Proposta → Pedido.
+
+### Qualidade
+
+- Backend: `OrderServiceTest` (status padrão, criação a partir de proposta copiando itens, `closedAt`,
+  recálculo de total, exclusão) e `OrderItemServiceTest` (snapshot de preço, exclusão recalculando o
+  total). Suíte completa do `core` seguiu verde (174 testes).
+- Frontend: `orders-page.component.spec.ts` e o teste de conversão em `proposals-page.component.spec.ts`.
+  Suíte completa (257 testes) e `npm run build` verdes.
+
 ## [Fase 4] — Propostas
 
 Segunda entrega da Fase 4: Propostas, o documento comercial enviado ao cliente com itens de

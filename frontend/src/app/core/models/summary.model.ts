@@ -41,6 +41,11 @@ export interface ProductSummary {
   name: string;
 }
 
+export interface ProposalSummary {
+  id: string;
+  code: string;
+}
+
 export interface PipelineSummary {
   id: string;
   name: string;
