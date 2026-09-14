@@ -148,7 +148,8 @@
       "customer": "New Customer",
       "opportunity": "New Opportunity",
       "task": "New Task",
-      "agenda": "Agenda"
+      "agenda": "Agenda",
+      "product": "Product"
     },
     "userMenu": {
       "changePassword": "Change Password",
@@ -195,7 +196,8 @@
         "tag": "Tags",
         "team": "Teams",
         "position": "Job Titles",
-        "department": "Departments"
+        "department": "Departments",
+        "unitOfMeasure": "Units of Measure"
       },
       "pipelines": "Pipelines",
       "customFields": "Custom Fields",
@@ -216,7 +218,8 @@
       "companies": "Companies",
       "contacts": "Contacts",
       "tasks": "Tasks",
-      "agenda": "Agenda"
+      "agenda": "Agenda",
+      "products": "Products"
     },
     "comingSoon": "Coming soon",
     "reports": {
@@ -1027,6 +1030,53 @@
       "created": "Appointment created successfully",
       "updated": "Appointment updated successfully",
       "deleted": "Appointment deleted successfully"
+    }
+  },
+  "productsPage": {
+    "title": "Products",
+    "description": "Catalog of products and services offered by the sales operation.",
+    "newButton": "New Product",
+    "searchPlaceholder": "Search by name, code, SKU or description...",
+    "emptyState": "No products found.",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "filters": {
+      "category": "Category",
+      "type": "Type",
+      "status": "Status",
+      "product": "Product",
+      "service": "Service",
+      "activeOnly": "Active only",
+      "inactiveOnly": "Inactive only"
+    },
+    "columns": {
+      "code": "Code",
+      "name": "Name",
+      "category": "Category",
+      "type": "Type",
+      "unitPrice": "Sale price",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "dialog": {
+      "newTitle": "New Product",
+      "editTitle": "Edit Product",
+      "nameLabel": "Name",
+      "skuLabel": "SKU",
+      "categoryLabel": "Category",
+      "unitLabel": "Unit of measure",
+      "serviceLabel": "Is a service (no physical unit control)",
+      "unitPriceLabel": "Sale price",
+      "costPriceLabel": "Cost price",
+      "activeLabel": "Active",
+      "descriptionLabel": "Description"
+    },
+    "messages": {
+      "created": "Product created successfully",
+      "updated": "Product updated successfully",
+      "deleted": "Product deleted successfully"
     }
   },
   "reportsPage": {

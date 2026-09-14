@@ -171,6 +171,12 @@ export class TopbarComponent {
         icon: 'pi pi-calendar',
         disabled: !hasPermission('AGENDA_CREATE'),
         command: () => this.openCreation('/agenda')
+      },
+      {
+        label: t('topbar.newButton.product'),
+        icon: 'pi pi-box',
+        disabled: !hasPermission('PRODUTOS_CREATE'),
+        command: () => this.openCreation('/produtos')
       }
     ];
   });

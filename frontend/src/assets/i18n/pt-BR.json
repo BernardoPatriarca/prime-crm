@@ -148,7 +148,8 @@
       "customer": "Novo Cliente",
       "opportunity": "Nova Oportunidade",
       "task": "Nova Tarefa",
-      "agenda": "Agenda"
+      "agenda": "Agenda",
+      "product": "Produto"
     },
     "userMenu": {
       "changePassword": "Alterar Senha",
@@ -195,7 +196,8 @@
         "tag": "Tags",
         "team": "Equipes",
         "position": "Cargos",
-        "department": "Departamentos"
+        "department": "Departamentos",
+        "unitOfMeasure": "Unidades de Medida"
       },
       "pipelines": "Pipelines",
       "customFields": "Campos Personalizados",
@@ -216,7 +218,8 @@
       "companies": "Empresas",
       "contacts": "Contatos",
       "tasks": "Tarefas",
-      "agenda": "Agenda"
+      "agenda": "Agenda",
+      "products": "Produtos"
     },
     "comingSoon": "Em breve",
     "reports": {
@@ -1027,6 +1030,53 @@
       "created": "Compromisso criado com sucesso",
       "updated": "Compromisso atualizado com sucesso",
       "deleted": "Compromisso excluído com sucesso"
+    }
+  },
+  "productsPage": {
+    "title": "Produtos",
+    "description": "Catalogo de produtos e servicos oferecidos pela operacao comercial.",
+    "newButton": "Novo Produto",
+    "searchPlaceholder": "Buscar por nome, codigo, SKU ou descricao...",
+    "emptyState": "Nenhum produto encontrado.",
+    "status": {
+      "active": "Ativo",
+      "inactive": "Inativo"
+    },
+    "filters": {
+      "category": "Categoria",
+      "type": "Tipo",
+      "status": "Situacao",
+      "product": "Produto",
+      "service": "Servico",
+      "activeOnly": "Somente ativos",
+      "inactiveOnly": "Somente inativos"
+    },
+    "columns": {
+      "code": "Codigo",
+      "name": "Nome",
+      "category": "Categoria",
+      "type": "Tipo",
+      "unitPrice": "Preco de venda",
+      "status": "Situacao",
+      "actions": "Acoes"
+    },
+    "dialog": {
+      "newTitle": "Novo Produto",
+      "editTitle": "Editar Produto",
+      "nameLabel": "Nome",
+      "skuLabel": "SKU",
+      "categoryLabel": "Categoria",
+      "unitLabel": "Unidade de medida",
+      "serviceLabel": "E um servico (sem controle de unidade fisica)",
+      "unitPriceLabel": "Preco de venda",
+      "costPriceLabel": "Preco de custo",
+      "activeLabel": "Ativo",
+      "descriptionLabel": "Descricao"
+    },
+    "messages": {
+      "created": "Produto criado com sucesso",
+      "updated": "Produto atualizado com sucesso",
+      "deleted": "Produto excluido com sucesso"
     }
   },
   "reportsPage": {

@@ -21,6 +21,7 @@ const GENERAL_REGISTRY_DOMAINS: { code: string; labelKey: string }[] = [
   { code: 'PRIORITY', labelKey: 'sidebar.settings.generalRegistries.priority' },
   { code: 'TASK_TYPE', labelKey: 'sidebar.settings.generalRegistries.taskType' },
   { code: 'CATEGORY', labelKey: 'sidebar.settings.generalRegistries.category' },
+  { code: 'UNIT_OF_MEASURE', labelKey: 'sidebar.settings.generalRegistries.unitOfMeasure' },
   { code: 'TAG', labelKey: 'sidebar.settings.generalRegistries.tag' },
   { code: 'TEAM', labelKey: 'sidebar.settings.generalRegistries.team' },
   { code: 'POSITION', labelKey: 'sidebar.settings.generalRegistries.position' },
@@ -110,6 +111,14 @@ export class SidebarComponent {
         label: t('sidebar.modules.companies'),
         icon: 'pi pi-briefcase',
         routerLink: '/empresas'
+      });
+    }
+
+    if (hasPermission('PRODUTOS_VIEW')) {
+      commercialChildren.push({
+        label: t('sidebar.modules.products'),
+        icon: 'pi pi-box',
+        routerLink: '/produtos'
       });
     }
 

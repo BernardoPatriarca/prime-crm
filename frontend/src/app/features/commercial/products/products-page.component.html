@@ -1,0 +1,254 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'productsPage.title' | translate }}</h1>
+      <p>{{ 'productsPage.description' | translate }}</p>
+    </div>
+    @if (canCreate()) {
+      <p-button
+        icon="pi pi-plus"
+        [label]="'productsPage.newButton' | translate"
+        (onClick)="openCreateDialog()"
+        data-testid="products-new-button"
+      />
+    }
+  </div>
+
+  <app-generic-table
+    [items]="products()"
+    [totalRecords]="total()"
+    [loading]="loading()"
+    [columnsCount]="7"
+    emptyIcon="pi-box"
+    emptyMessageKey="productsPage.emptyState"
+    searchPlaceholderKey="productsPage.searchPlaceholder"
+    (queryChange)="onQueryChange($event)"
+  >
+    <div tableActions class="filter-bar">
+      <p-select
+        appendTo="body"
+        [ngModel]="categoryFilter()"
+        (ngModelChange)="categoryFilter.set($event); onFilterChange()"
+        [options]="categories()"
+        optionLabel="name"
+        optionValue="id"
+        [showClear]="true"
+        [placeholder]="'productsPage.filters.category' | translate"
+        data-testid="products-category-filter"
+      />
+      <p-select
+        appendTo="body"
+        [ngModel]="serviceFilter()"
+        (ngModelChange)="serviceFilter.set($event); onFilterChange()"
+        [options]="typeOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"
+        [placeholder]="'productsPage.filters.type' | translate"
+        data-testid="products-type-filter"
+      />
+      <p-select
+        appendTo="body"
+        [ngModel]="activeFilter()"
+        (ngModelChange)="activeFilter.set($event); onFilterChange()"
+        [options]="activeOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"
+        [placeholder]="'productsPage.filters.status' | translate"
+        data-testid="products-active-filter"
+      />
+    </div>
+
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="code">
+          {{ 'productsPage.columns.code' | translate }}
+          <p-sortIcon field="code" />
+        </th>
+        <th pSortableColumn="name">
+          {{ 'productsPage.columns.name' | translate }}
+          <p-sortIcon field="name" />
+        </th>
+        <th>{{ 'productsPage.columns.category' | translate }}</th>
+        <th>{{ 'productsPage.columns.type' | translate }}</th>
+        <th pSortableColumn="unitPrice">
+          {{ 'productsPage.columns.unitPrice' | translate }}
+          <p-sortIcon field="unitPrice" />
+        </th>
+        <th>{{ 'productsPage.columns.status' | translate }}</th>
+        <th class="col-actions">{{ 'productsPage.columns.actions' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-item>
+      <tr>
+        <td class="cell-muted cell-numeric">{{ item.code }}</td>
+        <td class="cell-strong">{{ item.name }}</td>
+        <td class="cell-muted">{{ item.category?.name ?? '-' }}</td>
+        <td>
+          <p-tag
+            [severity]="item.service ? 'info' : 'secondary'"
+            [value]="(item.service ? 'productsPage.filters.service' : 'productsPage.filters.product') | translate"
+          />
+        </td>
+        <td class="cell-muted">{{ formatPrice(item.unitPrice) }}</td>
+        <td>
+          <p-tag
+            [severity]="item.active ? 'success' : 'secondary'"
+            [value]="(item.active ? 'productsPage.status.active' : 'productsPage.status.inactive') | translate"
+          />
+        </td>
+        <td>
+          <div class="row-actions">
+            @if (canEdit()) {
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'common.actions.edit' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.edit' | translate"
+                (onClick)="openEditDialog(item)"
+                [attr.data-testid]="'product-edit-' + item.id"
+              />
+            }
+            @if (canDelete()) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                [pTooltip]="'common.actions.delete' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.delete' | translate"
+                (onClick)="confirmDelete(item)"
+                [attr.data-testid]="'product-delete-' + item.id"
+              />
+            }
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </app-generic-table>
+</div>
+
+<p-dialog
+  appendTo="body"
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '42rem' }"
+  [breakpoints]="{ '1024px': '92vw', '767px': '96vw' }"
+  [header]="(editingProduct() ? 'productsPage.dialog.editTitle' : 'productsPage.dialog.newTitle') | translate"
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+    <div class="form-grid">
+      <div class="field field-span-2">
+        <label for="product-name">{{ 'productsPage.dialog.nameLabel' | translate }}</label>
+        <input id="product-name" pInputText type="text" formControlName="name" fluid data-testid="product-name-input" />
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+          <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="product-sku">{{ 'productsPage.dialog.skuLabel' | translate }}</label>
+        <input id="product-sku" pInputText type="text" formControlName="sku" fluid />
+      </div>
+
+      <div class="field">
+        <label for="product-category">{{ 'productsPage.dialog.categoryLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="product-category"
+          formControlName="categoryId"
+          [options]="categories()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="product-unit">{{ 'productsPage.dialog.unitLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="product-unit"
+          formControlName="unitId"
+          [options]="units()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field field-checkbox">
+        <p-checkbox inputId="product-service" formControlName="service" [binary]="true" data-testid="product-service-checkbox" />
+        <label for="product-service">{{ 'productsPage.dialog.serviceLabel' | translate }}</label>
+      </div>
+
+      <div class="field">
+        <label for="product-unit-price">{{ 'productsPage.dialog.unitPriceLabel' | translate }}</label>
+        <p-inputnumber
+          inputId="product-unit-price"
+          formControlName="unitPrice"
+          mode="currency"
+          currency="BRL"
+          locale="pt-BR"
+          fluid
+          data-testid="product-unit-price-input"
+        />
+        @if (form.controls.unitPrice.invalid && form.controls.unitPrice.touched) {
+          <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="product-cost-price">{{ 'productsPage.dialog.costPriceLabel' | translate }}</label>
+        <p-inputnumber
+          inputId="product-cost-price"
+          formControlName="costPrice"
+          mode="currency"
+          currency="BRL"
+          locale="pt-BR"
+          fluid
+        />
+      </div>
+
+      <div class="field field-checkbox">
+        <p-checkbox inputId="product-active" formControlName="active" [binary]="true" />
+        <label for="product-active">{{ 'productsPage.dialog.activeLabel' | translate }}</label>
+      </div>
+
+      <div class="field field-span-2">
+        <label for="product-description">{{ 'productsPage.dialog.descriptionLabel' | translate }}</label>
+        <textarea id="product-description" pTextarea formControlName="description" rows="3" [autoResize]="true" fluid></textarea>
+      </div>
+    </div>
+
+    <div class="dialog-footer">
+      <p-button
+        [label]="'common.actions.cancel' | translate"
+        severity="secondary"
+        [text]="true"
+        type="button"
+        (onClick)="closeDialog()"
+      />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="saving()"
+        data-testid="product-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>

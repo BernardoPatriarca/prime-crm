@@ -2,6 +2,46 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fase 4] — Produtos
+
+Primeira entrega da Fase 4 (Comercial avançado): catálogo de Produtos, base para Propostas, Pedidos e
+Contratos, que ainda não foram construídos.
+
+### Banco de dados
+
+Migrations `V25` a `V27`: novo `domain_type` `UNIT_OF_MEASURE` (com 9 valores de exemplo — a unidade de
+medida varia demais entre comércio/indústria/serviços para ser um enum fixo, então reaproveita o mesmo
+engine `domain_types`/`domain_values` que já existe, em vez de uma tabela nova), tabela `products` e as
+4 permissões novas (`PRODUTOS_*`), concedidas ao perfil Administrador.
+
+**Decisões de modelagem**: categoria reaproveita o `domain_type` `CATEGORY` que já existia (compartilhado
+com outros cadastros). A distinção produto físico × serviço é um booleano (`is_service`) e não um
+`domain_value` nem um enum — é um eixo binário e fixo que não faz sentido o usuário configurar, diferente
+de categoria/unidade que variam por tenant. `active` é um campo à parte do soft delete (`deleted_at`):
+um produto pode ser descontinuado (inativo, mas com histórico preservado para quando Propostas/Pedidos
+existirem) sem precisar ser excluído.
+
+### Backend
+
+CRUD completo (`/api/v1/products`) com busca textual (nome/código/SKU/descrição), filtros (categoria,
+unidade, produto×serviço, ativo), paginação, RBAC e auditoria — no mesmo padrão dos demais módulos.
+Código legível (`PRD-######`) gerado pelo banco via sequence, como em Tarefas/Clientes/Leads/Oportunidades.
+SKU é único por tenant quando informado (índice parcial, mesmo padrão do documento de Cliente).
+
+### Frontend
+
+Tela `/produtos` (dentro do grupo "Módulos" da sidebar, junto de Leads/Contatos/Empresas), listagem com
+`generic-table` e diálogo de CRUD com preço de venda/custo em `p-inputnumber` no formato moeda. Cadastro
+de "Unidades de Medida" também passou a aparecer em Configurações → Cadastros Gerais, do mesmo jeito que
+qualquer outro `domain_type`.
+
+### Qualidade
+
+- Backend: `ProductServiceTest` cobrindo criação, atualização, exclusão e busca por id inexistente.
+  Suíte completa do `core` seguiu verde (155 testes).
+- Frontend: `products-page.component.spec.ts` cobrindo validação do formulário, valores padrão, edição e
+  filtro por categoria. Suíte completa (244 testes) e `npm run build` verdes.
+
 ## [Fase 3] — Notificações em tempo real
 
 Fecha a Fase 3: o sino de notificações deixa de depender só do polling a cada 2 minutos e passa a
