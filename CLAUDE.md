@@ -62,7 +62,7 @@ prime-crm/
 - **Parametrização genérica**: preferir o engine `domain_types`/`domain_values` a criar uma tabela nova para cada cadastro simples de domínio (tipos, origens, motivos, tags, etc.). Só crie tabela dedicada quando a estrutura de dados realmente for diferente (ex.: `pipeline_stages` tem FK, ordem, probabilidade — não cabe no engine genérico).
 - **Frontend**: componentes standalone, lazy loading por rota de feature, Signal Store (`@ngrx/signals`) para estado compartilhado entre componentes (sessão, tema, layout). Usar classes e props nativas do PrimeNG (`severity`, `size`, `variant` etc.) em vez de CSS avulso — SCSS customizado deve se limitar a tokens de tema e ao esqueleto de layout.
 - **Sem comentários no código** (nem Javadoc, nem `//`, nem `/* */`), em backend e frontend — instrução explícita do dono do produto. Nomes de classe/método/variável devem se explicar sozinhos; se uma decisão não for óbvia, explique no relatório final da tarefa ou no `CHANGELOG.md`, nunca dentro do código.
-- **Commits**: Conventional Commits (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:`). Branches: `main`, `develop`, `feature/*`, `fix/*`.
+- **Commits**: `Tipo - Descrição - DD/MM/AAAA` (ex.: `Feat - Modulo de Agenda com integracao a notificacoes - 13/09/2026`). Tipos usados: `Feat`, `Fix`, `Refactor`, `Docs`, `Style`, `Test`, `Chore`. Branches: `main`, `develop`, `feature/*`, `fix/*`.
 
 ## Comandos
 
