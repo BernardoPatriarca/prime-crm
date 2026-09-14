@@ -1,4 +1,4 @@
-import { Component, DestroyRef, computed, inject, input, signal } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -23,6 +23,7 @@ import { SearchResult } from '../../core/models/search.model';
 import { AuthService } from '../../core/services/auth.service';
 import { GlobalSearchService } from '../../core/services/global-search.service';
 import { AppLanguage, LanguageService, SUPPORTED_LANGUAGES } from '../../core/services/language.service';
+import { NotificationSocketService } from '../../core/services/notification-socket.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { LayoutStore } from '../../core/store/layout.store';
 import { SessionStore } from '../../core/store/session.store';
@@ -83,6 +84,7 @@ export class TopbarComponent {
   private readonly languageService = inject(LanguageService);
   private readonly router = inject(Router);
   private readonly notificationService = inject(NotificationService);
+  private readonly notificationSocketService = inject(NotificationSocketService);
   private readonly globalSearchService = inject(GlobalSearchService);
   private readonly authService = inject(AuthService);
   private readonly messageService = inject(MessageService);
@@ -230,6 +232,20 @@ export class TopbarComponent {
     this.loadNotifications();
     const timer = setInterval(() => this.loadNotifications(), NOTIFICATION_REFRESH_MS);
     this.destroyRef.onDestroy(() => clearInterval(timer));
+
+    this.notificationSocketService.notifications.pipe(takeUntilDestroyed()).subscribe((response) => {
+      this.notifications.set(response.items);
+      this.notificationTotal.set(response.total);
+    });
+
+    effect(() => {
+      if (this.sessionStore.isAuthenticated()) {
+        this.notificationSocketService.connect();
+      } else {
+        this.notificationSocketService.disconnect();
+      }
+    });
+    this.destroyRef.onDestroy(() => this.notificationSocketService.disconnect());
   }
 
   protected loadNotifications(): void {

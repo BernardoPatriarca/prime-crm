@@ -2,6 +2,60 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fase 3] — Notificações em tempo real
+
+Fecha a Fase 3: o sino de notificações deixa de depender só do polling a cada 2 minutos e passa a
+receber atualizações via WebSocket (STOMP), com o polling mantido como rede de segurança em caso de
+queda de conexão.
+
+### Decisão de arquitetura: push periódico no servidor, não push por evento de escrita
+
+A alternativa óbvia seria publicar um evento a cada `save()`/`delete()` de Tarefa, Oportunidade, Lead e
+Compromisso e recalcular a notificação do usuário afetado. Descartada porque parte das notificações
+(`TASK_OVERDUE`, `OPPORTUNITY_CLOSE_DATE_PASSED`, `CALENDAR_EVENT_OVERDUE`) fica desatualizada só pela
+passagem do tempo — uma tarefa vence à meia-noite sem que ninguém tenha salvo nada — então instrumentar
+os `Service`s de escrita não seria suficiente sozinho, e ainda exigiria alterar cinco services diferentes
+e memorizar quem é o "usuário afetado" de cada evento (nem sempre é só o `assignee`/`owner` atual: uma
+reatribuição muda o afetado de dois usuários ao mesmo tempo).
+
+Em vez disso, o backend mantém um registro dos usuários com sessão WebSocket ativa
+(`NotificationSocketRegistry`, uma conexão pode ter múltiplas abas) e, a cada 20 segundos
+(`NotificationPushScheduler`), reexecuta a mesma consulta que já existia (`NotificationService.list`) para
+cada usuário conectado e envia o resultado via `SimpMessagingTemplate.convertAndSendToUser`. Mais simples,
+cobre corretamente as notificações que dependem só do relógio, e nenhum service de negócio precisou ser
+tocado — o preço é uma latência de até 20s em vez de instantânea, aceitável para um sino de notificações.
+
+### Backend
+
+- `spring-boot-starter-websocket` adicionado ao módulo `api`. Endpoint STOMP em `/ws` (`/ws/**` liberado
+  no `SecurityConfig`, sem exigir o filtro de JWT via header — a autenticação acontece no próprio
+  handshake).
+- Autenticação do handshake via `access_token` na query string (WebSocket do navegador não permite header
+  `Authorization` customizado): `JwtHandshakeInterceptor` valida o token com o `JwtTokenProvider` já
+  existente e `NotificationHandshakeHandler` resolve o `Principal` da sessão STOMP como o id do usuário —
+  é essa string que `convertAndSendToUser` usa para rotear a mensagem certa para a sessão certa.
+- Cliente se conecta direto em `/ws/websocket` (o sufixo que o SockJS do Spring expõe para WebSocket puro),
+  então não foi preciso trazer `sockjs-client` para o frontend — só `@stomp/stompjs`, que já fala
+  WebSocket nativo.
+
+### Frontend
+
+- `NotificationSocketService` (`core/services/notification-socket.service.ts`): conecta ao abrir sessão
+  autenticada (`effect()` observando `SessionStore.isAuthenticated`), reconecta sozinho em caso de queda
+  (`reconnectDelay`) e desconecta no logout.
+- `TopbarComponent` passou a atualizar `notifications`/`notificationTotal` tanto pela chamada REST
+  original (primeira pintura da tela, e novamente a cada 2 minutos como rede de segurança) quanto pelas
+  mensagens recebidas em `/user/queue/notifications` — o que chegar primeiro atualiza a tela.
+
+### Qualidade
+
+- Backend: `./mvnw compile` limpo nos três módulos e suíte completa de `core`/`api` verde (151 + 24 testes,
+  os de integração via Testcontainers seguem pulados neste sandbox por falta de Docker, como já registrado
+  neste arquivo). Não foi possível abrir uma conexão WebSocket real neste ambiente — a limitação de
+  `Selector`/loopback já documentada no `CLAUDE.md` também impede subir o servidor Tomcat necessário para
+  isso — então a verificação end-to-end do handshake fica pendente de execução local pelo usuário.
+- Frontend: `npm run build` e `npm test` (238 testes) verdes.
+
 ## [Fase 3] — Agenda
 
 Complementa a Fase 3: com Tarefas, Relatórios, Auditoria e Dashboard já entregues, faltava a Agenda.
