@@ -2,6 +2,58 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fase 3] — Agenda
+
+Complementa a Fase 3: com Tarefas, Relatórios, Auditoria e Dashboard já entregues, faltava a Agenda.
+Notificações em tempo real (WebSocket) continuam pendentes e ficam para uma próxima entrega — o sino
+de notificações segue por polling, só que agora também enxerga compromissos atrasados.
+
+### Banco de dados
+
+Migrations `V23` e `V24`: tabela `calendar_events` e as 4 permissões novas (`AGENDA_*`), concedidas ao
+perfil Administrador.
+
+**Decisão de modelagem**: o compromisso reaproveita o mesmo `domain_type` `TASK_TYPE` que Tarefas já usa
+para classificar tipo (reunião, ligação, visita...) em vez de criar um catálogo próprio — a distinção
+entre "tarefa" e "compromisso" já está na tabela (uma tem prazo, a outra tem início/fim), não precisa
+duplicar o tipo. Por não ser um registro referenciado externamente como cliente/lead/oportunidade, o
+compromisso não tem código legível (`AGE-######`) — só id.
+
+### Backend
+
+- CRUD completo (`/api/v1/agenda`) com filtros (status, tipo, responsável, cliente, lead, oportunidade,
+  período de início e atraso), busca textual, paginação, RBAC e auditoria — no mesmo padrão de Tarefas.
+- `GET /api/v1/agenda/range?from=&to=` devolve, sem paginação, todos os compromissos que se sobrepõem ao
+  período informado — é o endpoint que a visão de calendário (mês) usa para carregar a grade inteira em
+  uma chamada só, em vez de uma requisição por dia visível.
+- Compromisso "atrasado" considera o fim (`end_at`, ou o próprio início quando não há fim) contra o
+  instante atual, não só o início — um compromisso de duas horas que já começou não é atraso enquanto
+  ainda está dentro da janela.
+- O sino de notificações passou a incluir compromissos atrasados do próprio usuário (`CALENDAR_EVENT_OVERDUE`),
+  no mesmo mecanismo derivado (sem tabela de lida/não lida) que já valia para tarefas, oportunidades e leads.
+
+### Frontend
+
+Tela única (`/agenda`) com duas visões alternáveis por um `p-selectButton`:
+
+- **Calendário** (padrão): grade mensal construída em CSS Grid puro — sem biblioteca de calendário nova,
+  no mesmo espírito das visualizações do dashboard — com navegação mês anterior/próximo, atalho "Hoje",
+  destaque do dia atual e um chip por compromisso (atrasado em vermelho, cancelado riscado). Clicar num
+  dia vazio já abre o diálogo de criação com a data preenchida; clicar num chip abre a edição.
+- **Lista**: mesmo padrão de `generic-table` já usado em Tarefas/Clientes/etc., com filtros de status,
+  responsável e atraso.
+- Compromisso ganhou atalho no botão "+ Novo" da topbar e item próprio na sidebar, ambos condicionados à
+  permissão (`AGENDA_CREATE`/`AGENDA_VIEW`).
+
+### Qualidade
+
+- Backend: `CalendarEventServiceTest` cobrindo status padrão, validação de intervalo (fim antes do início),
+  troca de status, exclusão e o guard de `range` sem período informado. Suíte completa do módulo `core`
+  seguiu verde (`./mvnw -pl core test`).
+- Frontend: `agenda-page.component.spec.ts` cobrindo carregamento inicial do mês, troca para lista,
+  validação do formulário, valor padrão de status, edição e navegação entre meses. Suíte completa
+  (238 testes) e `npm run build` verdes.
+
 ## [Fase 3] — Tarefas, Relatórios e Auditoria consultável
 
 ### Banco de dados

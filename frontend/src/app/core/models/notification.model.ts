@@ -2,7 +2,8 @@ export type NotificationType =
   | 'TASK_OVERDUE'
   | 'TASK_DUE_TODAY'
   | 'OPPORTUNITY_CLOSE_DATE_PASSED'
-  | 'LEAD_WITHOUT_OWNER';
+  | 'LEAD_WITHOUT_OWNER'
+  | 'CALENDAR_EVENT_OVERDUE';
 
 export type NotificationSeverity = 'DANGER' | 'WARN' | 'INFO';
 

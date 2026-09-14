@@ -138,7 +138,8 @@
         "TASK_OVERDUE": "Tarefa atrasada",
         "TASK_DUE_TODAY": "Tarefa vence hoje",
         "OPPORTUNITY_CLOSE_DATE_PASSED": "Previsão de fechamento vencida",
-        "LEAD_WITHOUT_OWNER": "Lead sem responsável"
+        "LEAD_WITHOUT_OWNER": "Lead sem responsável",
+        "CALENDAR_EVENT_OVERDUE": "Compromisso atrasado"
       }
     },
     "newButton": {
@@ -146,7 +147,8 @@
       "lead": "Novo Lead",
       "customer": "Novo Cliente",
       "opportunity": "Nova Oportunidade",
-      "task": "Nova Tarefa"
+      "task": "Nova Tarefa",
+      "agenda": "Agenda"
     },
     "userMenu": {
       "changePassword": "Alterar Senha",
@@ -213,7 +215,8 @@
       "finance": "Financeiro",
       "companies": "Empresas",
       "contacts": "Contatos",
-      "tasks": "Tarefas"
+      "tasks": "Tarefas",
+      "agenda": "Agenda"
     },
     "comingSoon": "Em breve",
     "reports": {
@@ -955,6 +958,75 @@
       "updated": "Tarefa atualizada com sucesso",
       "deleted": "Tarefa excluída com sucesso",
       "completed": "Tarefa concluída"
+    }
+  },
+  "agendaPage": {
+    "title": "Agenda",
+    "description": "Organize compromissos, reuniões e ligações da operação comercial.",
+    "newButton": "Novo Compromisso",
+    "searchPlaceholder": "Buscar por título, descrição ou local...",
+    "emptyState": "Nenhum compromisso encontrado.",
+    "views": {
+      "calendar": "Calendário",
+      "list": "Lista"
+    },
+    "status": {
+      "SCHEDULED": "Agendado",
+      "DONE": "Concluído",
+      "CANCELED": "Cancelado"
+    },
+    "filters": {
+      "status": "Status",
+      "assignee": "Responsável",
+      "due": "Vencimento",
+      "overdue": "Em atraso",
+      "onTime": "No prazo"
+    },
+    "badges": {
+      "overdue": "Atrasado"
+    },
+    "calendar": {
+      "previous": "Mês anterior",
+      "next": "Próximo mês",
+      "today": "Hoje",
+      "weekdays": {
+        "0": "Dom",
+        "1": "Seg",
+        "2": "Ter",
+        "3": "Qua",
+        "4": "Qui",
+        "5": "Sex",
+        "6": "Sáb"
+      }
+    },
+    "columns": {
+      "title": "Título",
+      "customer": "Cliente",
+      "assignee": "Responsável",
+      "startAt": "Início",
+      "location": "Local",
+      "status": "Status",
+      "actions": "Ações"
+    },
+    "dialog": {
+      "newTitle": "Novo Compromisso",
+      "editTitle": "Editar Compromisso",
+      "titleLabel": "Título",
+      "typeLabel": "Tipo",
+      "statusLabel": "Status",
+      "startAtLabel": "Início",
+      "endAtLabel": "Término",
+      "allDayLabel": "Dia inteiro",
+      "reminderAtLabel": "Lembrete",
+      "locationLabel": "Local",
+      "assigneeLabel": "Responsável",
+      "customerLabel": "Cliente",
+      "descriptionLabel": "Descrição"
+    },
+    "messages": {
+      "created": "Compromisso criado com sucesso",
+      "updated": "Compromisso atualizado com sucesso",
+      "deleted": "Compromisso excluído com sucesso"
     }
   },
   "reportsPage": {
