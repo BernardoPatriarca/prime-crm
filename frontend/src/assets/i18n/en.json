@@ -149,7 +149,8 @@
       "opportunity": "New Opportunity",
       "task": "New Task",
       "agenda": "Agenda",
-      "product": "Product"
+      "product": "Product",
+      "proposal": "Proposal"
     },
     "userMenu": {
       "changePassword": "Change Password",
@@ -219,7 +220,8 @@
       "contacts": "Contacts",
       "tasks": "Tasks",
       "agenda": "Agenda",
-      "products": "Products"
+      "products": "Products",
+      "proposals": "Proposals"
     },
     "comingSoon": "Coming soon",
     "reports": {
@@ -1077,6 +1079,88 @@
       "created": "Product created successfully",
       "updated": "Product updated successfully",
       "deleted": "Product deleted successfully"
+    }
+  },
+  "proposalsPage": {
+    "title": "Proposals",
+    "description": "Commercial documents sent to customers, with product and service line items.",
+    "newButton": "New Proposal",
+    "searchPlaceholder": "Search by code or notes...",
+    "emptyState": "No proposals found.",
+    "status": {
+      "DRAFT": "Draft",
+      "SENT": "Sent",
+      "ACCEPTED": "Accepted",
+      "REJECTED": "Rejected"
+    },
+    "filters": {
+      "status": "Status",
+      "validity": "Validity",
+      "expired": "Expired",
+      "valid": "Within validity"
+    },
+    "badges": {
+      "expired": "Expired"
+    },
+    "columns": {
+      "code": "Code",
+      "customer": "Customer",
+      "owner": "Owner",
+      "issueDate": "Issue date",
+      "totalAmount": "Total amount",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "actions": {
+      "items": "Manage items",
+      "send": "Send",
+      "accept": "Accept",
+      "reject": "Reject"
+    },
+    "dialog": {
+      "newTitle": "New Proposal",
+      "editTitle": "Edit Proposal",
+      "customerLabel": "Customer",
+      "opportunityLabel": "Opportunity",
+      "ownerLabel": "Owner",
+      "issueDateLabel": "Issue date",
+      "validUntilLabel": "Valid until",
+      "notesLabel": "Notes"
+    },
+    "messages": {
+      "created": "Proposal created successfully",
+      "updated": "Proposal updated successfully",
+      "deleted": "Proposal deleted successfully",
+      "statusChanged": "Proposal status updated"
+    },
+    "items": {
+      "title": "Proposal items",
+      "total": "Total",
+      "newButton": "New Item",
+      "emptyState": "No items added yet.",
+      "columns": {
+        "product": "Product",
+        "quantity": "Qty",
+        "unitPrice": "Unit price",
+        "discount": "Discount",
+        "total": "Total",
+        "actions": "Actions"
+      },
+      "dialog": {
+        "newTitle": "New Item",
+        "editTitle": "Edit Item",
+        "productLabel": "Product",
+        "descriptionLabel": "Description (optional, overrides the product name)",
+        "quantityLabel": "Quantity",
+        "unitPriceLabel": "Unit price",
+        "unitPricePlaceholder": "Current product price",
+        "discountLabel": "Discount"
+      },
+      "messages": {
+        "created": "Item added successfully",
+        "updated": "Item updated successfully",
+        "deleted": "Item removed successfully"
+      }
     }
   },
   "reportsPage": {

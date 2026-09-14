@@ -149,7 +149,8 @@
       "opportunity": "Nova Oportunidade",
       "task": "Nova Tarefa",
       "agenda": "Agenda",
-      "product": "Produto"
+      "product": "Produto",
+      "proposal": "Proposta"
     },
     "userMenu": {
       "changePassword": "Alterar Senha",
@@ -219,7 +220,8 @@
       "contacts": "Contatos",
       "tasks": "Tarefas",
       "agenda": "Agenda",
-      "products": "Produtos"
+      "products": "Produtos",
+      "proposals": "Propostas"
     },
     "comingSoon": "Em breve",
     "reports": {
@@ -1077,6 +1079,88 @@
       "created": "Produto criado com sucesso",
       "updated": "Produto atualizado com sucesso",
       "deleted": "Produto excluido com sucesso"
+    }
+  },
+  "proposalsPage": {
+    "title": "Propostas",
+    "description": "Documentos comerciais enviados aos clientes, com itens de produtos e servicos.",
+    "newButton": "Nova Proposta",
+    "searchPlaceholder": "Buscar por codigo ou observacoes...",
+    "emptyState": "Nenhuma proposta encontrada.",
+    "status": {
+      "DRAFT": "Rascunho",
+      "SENT": "Enviada",
+      "ACCEPTED": "Aceita",
+      "REJECTED": "Rejeitada"
+    },
+    "filters": {
+      "status": "Status",
+      "validity": "Validade",
+      "expired": "Vencida",
+      "valid": "Dentro do prazo"
+    },
+    "badges": {
+      "expired": "Vencida"
+    },
+    "columns": {
+      "code": "Codigo",
+      "customer": "Cliente",
+      "owner": "Responsavel",
+      "issueDate": "Emissao",
+      "totalAmount": "Valor total",
+      "status": "Status",
+      "actions": "Acoes"
+    },
+    "actions": {
+      "items": "Gerenciar itens",
+      "send": "Enviar",
+      "accept": "Aceitar",
+      "reject": "Rejeitar"
+    },
+    "dialog": {
+      "newTitle": "Nova Proposta",
+      "editTitle": "Editar Proposta",
+      "customerLabel": "Cliente",
+      "opportunityLabel": "Oportunidade",
+      "ownerLabel": "Responsavel",
+      "issueDateLabel": "Data de emissao",
+      "validUntilLabel": "Valida ate",
+      "notesLabel": "Observacoes"
+    },
+    "messages": {
+      "created": "Proposta criada com sucesso",
+      "updated": "Proposta atualizada com sucesso",
+      "deleted": "Proposta excluida com sucesso",
+      "statusChanged": "Status da proposta atualizado"
+    },
+    "items": {
+      "title": "Itens da proposta",
+      "total": "Total",
+      "newButton": "Novo Item",
+      "emptyState": "Nenhum item adicionado ainda.",
+      "columns": {
+        "product": "Produto",
+        "quantity": "Qtde",
+        "unitPrice": "Preco unitario",
+        "discount": "Desconto",
+        "total": "Total",
+        "actions": "Acoes"
+      },
+      "dialog": {
+        "newTitle": "Novo Item",
+        "editTitle": "Editar Item",
+        "productLabel": "Produto",
+        "descriptionLabel": "Descricao (opcional, substitui o nome do produto)",
+        "quantityLabel": "Quantidade",
+        "unitPriceLabel": "Preco unitario",
+        "unitPricePlaceholder": "Preco atual do produto",
+        "discountLabel": "Desconto"
+      },
+      "messages": {
+        "created": "Item adicionado com sucesso",
+        "updated": "Item atualizado com sucesso",
+        "deleted": "Item removido com sucesso"
+      }
     }
   },
   "reportsPage": {

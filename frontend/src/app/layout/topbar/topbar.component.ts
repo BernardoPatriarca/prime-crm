@@ -177,6 +177,12 @@ export class TopbarComponent {
         icon: 'pi pi-box',
         disabled: !hasPermission('PRODUTOS_CREATE'),
         command: () => this.openCreation('/produtos')
+      },
+      {
+        label: t('topbar.newButton.proposal'),
+        icon: 'pi pi-file',
+        disabled: !hasPermission('PROPOSTAS_CREATE'),
+        command: () => this.openCreation('/propostas')
       }
     ];
   });

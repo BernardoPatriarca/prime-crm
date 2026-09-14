@@ -73,6 +73,13 @@ export const routes: Routes = [
           import('./features/commercial/products/products-page.component').then((m) => m.ProductsPageComponent)
       },
       {
+        path: 'propostas',
+        canActivate: [permissionGuard],
+        data: { permission: 'PROPOSTAS_VIEW' },
+        loadComponent: () =>
+          import('./features/commercial/proposals/proposals-page.component').then((m) => m.ProposalsPageComponent)
+      },
+      {
         path: 'relatorios/:report',
         canActivate: [permissionGuard],
         data: { permission: 'RELATORIOS_VIEW' },

@@ -1,0 +1,163 @@
+<p-dialog
+  appendTo="body"
+  [visible]="visible()"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: '54rem' }"
+  [breakpoints]="{ '1024px': '90vw', '767px': '95vw' }"
+  [header]="('proposalsPage.items.title' | translate) + ' - ' + proposalCode()"
+>
+  <div class="items-toolbar">
+    <span class="items-toolbar__total">
+      {{ 'proposalsPage.items.total' | translate }}: <strong>{{ formatPrice(itemsTotal()) }}</strong>
+    </span>
+    @if (canCreate()) {
+      <p-button
+        icon="pi pi-plus"
+        [label]="'proposalsPage.items.newButton' | translate"
+        size="small"
+        (onClick)="openCreateForm()"
+        data-testid="proposal-item-new-button"
+      />
+    }
+  </div>
+
+  <div class="items-surface">
+    <p-table [value]="items()" [loading]="loading()" dataKey="id" responsiveLayout="scroll">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'proposalsPage.items.columns.product' | translate }}</th>
+          <th>{{ 'proposalsPage.items.columns.quantity' | translate }}</th>
+          <th>{{ 'proposalsPage.items.columns.unitPrice' | translate }}</th>
+          <th>{{ 'proposalsPage.items.columns.discount' | translate }}</th>
+          <th>{{ 'proposalsPage.items.columns.total' | translate }}</th>
+          <th class="col-actions">{{ 'proposalsPage.items.columns.actions' | translate }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td class="cell-strong">{{ item.description || item.product?.name }}</td>
+          <td class="cell-muted">{{ item.quantity }}</td>
+          <td class="cell-muted">{{ formatPrice(item.unitPrice) }}</td>
+          <td class="cell-muted">{{ item.discountPercent }}%</td>
+          <td class="cell-strong">{{ formatPrice(item.total) }}</td>
+          <td>
+            <div class="row-actions">
+              @if (canEdit()) {
+                <p-button
+                  icon="pi pi-pencil"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="secondary"
+                  [pTooltip]="'common.actions.edit' | translate"
+                  tooltipPosition="top"
+                  [ariaLabel]="'common.actions.edit' | translate"
+                  (onClick)="openEditForm(item)"
+                />
+                <p-button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  [text]="true"
+                  [rounded]="true"
+                  [pTooltip]="'common.actions.delete' | translate"
+                  tooltipPosition="top"
+                  [ariaLabel]="'common.actions.delete' | translate"
+                  (onClick)="confirmDelete(item)"
+                />
+              }
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6">
+            <div class="table-empty-state">
+              <i class="pi pi-shopping-cart"></i>
+              <p>{{ 'proposalsPage.items.emptyState' | translate }}</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <div class="dialog-footer">
+    <p-button [label]="'common.actions.close' | translate" severity="secondary" [outlined]="true" (onClick)="close()" />
+  </div>
+</p-dialog>
+
+<p-dialog
+  appendTo="body"
+  [visible]="formVisible()"
+  (visibleChange)="formVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '28rem' }"
+  [breakpoints]="{ '1024px': '90vw', '767px': '95vw' }"
+  [header]="(editingItem() ? 'proposalsPage.items.dialog.editTitle' : 'proposalsPage.items.dialog.newTitle') | translate"
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+    <div class="field">
+      <label for="item-product">{{ 'proposalsPage.items.dialog.productLabel' | translate }}</label>
+      <p-select
+        appendTo="body"
+        inputId="item-product"
+        formControlName="productId"
+        [options]="products()"
+        optionLabel="name"
+        optionValue="id"
+        [filter]="true"
+        filterBy="name"
+        [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+        fluid
+        data-testid="proposal-item-product-select"
+      />
+      @if (form.controls.productId.invalid && form.controls.productId.touched) {
+        <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="item-description">{{ 'proposalsPage.items.dialog.descriptionLabel' | translate }}</label>
+      <input id="item-description" pInputText type="text" formControlName="description" fluid />
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="item-quantity">{{ 'proposalsPage.items.dialog.quantityLabel' | translate }}</label>
+        <p-inputnumber inputId="item-quantity" formControlName="quantity" [min]="0.001" [minFractionDigits]="0" [maxFractionDigits]="3" fluid />
+      </div>
+      <div class="field">
+        <label for="item-unit-price">{{ 'proposalsPage.items.dialog.unitPriceLabel' | translate }}</label>
+        <p-inputnumber
+          inputId="item-unit-price"
+          formControlName="unitPrice"
+          mode="currency"
+          currency="BRL"
+          locale="pt-BR"
+          [placeholder]="'proposalsPage.items.dialog.unitPricePlaceholder' | translate"
+          fluid
+        />
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="item-discount">{{ 'proposalsPage.items.dialog.discountLabel' | translate }}</label>
+      <p-inputnumber inputId="item-discount" formControlName="discountPercent" suffix="%" [min]="0" [max]="100" fluid />
+    </div>
+
+    <div class="dialog-footer">
+      <p-button [label]="'common.actions.cancel' | translate" severity="secondary" [text]="true" type="button" (onClick)="closeForm()" />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="saving()"
+        data-testid="proposal-item-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>

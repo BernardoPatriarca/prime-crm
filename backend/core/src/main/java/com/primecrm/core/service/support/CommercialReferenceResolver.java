@@ -8,6 +8,7 @@ import com.primecrm.infra.entity.commercial.Opportunity;
 import com.primecrm.infra.entity.config.Pipeline;
 import com.primecrm.infra.entity.config.PipelineStage;
 import com.primecrm.infra.entity.domain.DomainValue;
+import com.primecrm.infra.entity.product.Product;
 import com.primecrm.infra.repository.ContactRepository;
 import com.primecrm.infra.repository.CustomerRepository;
 import com.primecrm.infra.repository.DomainValueRepository;
@@ -15,6 +16,7 @@ import com.primecrm.infra.repository.LeadRepository;
 import com.primecrm.infra.repository.OpportunityRepository;
 import com.primecrm.infra.repository.PipelineRepository;
 import com.primecrm.infra.repository.PipelineStageRepository;
+import com.primecrm.infra.repository.ProductRepository;
 import com.primecrm.infra.repository.UserRepository;
 import com.primecrm.shared.exception.ResourceNotFoundException;
 import java.util.Collection;
@@ -35,6 +37,7 @@ public class CommercialReferenceResolver {
     private final ContactRepository contactRepository;
     private final LeadRepository leadRepository;
     private final OpportunityRepository opportunityRepository;
+    private final ProductRepository productRepository;
 
     public DomainValue domainValue(UUID id, String label) {
         if (id == null) {
@@ -125,5 +128,13 @@ public class CommercialReferenceResolver {
         }
         return opportunityRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Oportunidade", id));
+    }
+
+    public Product product(UUID id) {
+        if (id == null) {
+            return null;
+        }
+        return productRepository.findByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Produto", id));
     }
 }

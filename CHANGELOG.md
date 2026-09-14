@@ -2,6 +2,64 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fase 4] — Propostas
+
+Segunda entrega da Fase 4: Propostas, o documento comercial enviado ao cliente com itens de
+produto/serviço, construído sobre o catálogo de Produtos da entrega anterior.
+
+### Banco de dados
+
+Migrations `V28` a `V30`: tabelas `proposals` (cabeçalho) e `proposal_items` (itens), mais as 4
+permissões novas (`PROPOSTAS_*`) concedidas ao perfil Administrador. Código legível `PRO-######` gerado
+pelo banco, no mesmo padrão de Tarefas/Clientes/Leads/Oportunidades/Produtos.
+
+**Decisão de modelagem — item como recurso aninhado, não array dentro do request**: seguindo o mesmo
+padrão já usado em Pipeline + PipelineStage, o item da proposta tem endpoints próprios
+(`/proposals/{id}/items`) em vez de viajar como um array dentro do `POST`/`PUT` da proposta. Descartei um
+"salvar tudo de uma vez" porque criaria dois jeitos diferentes de fazer a mesma coisa no projeto — cada
+edição de item vira sua própria chamada, auditada individualmente, exatamente como já acontece com etapas
+de funil.
+
+**Preço é um snapshot, não uma referência viva**: ao adicionar um item, o preço unitário do produto é
+copiado para a linha da proposta no momento da inclusão (a menos que o usuário informe um preço
+diferente). Se o preço do produto mudar depois, propostas já montadas não mudam de valor sozinhas — do
+contrário, uma proposta enviada ontem por R$ 1.000 apareceria hoje por R$ 1.200 só porque o produto
+reajustou.
+
+**Total recalculado no servidor, nunca confiado ao cliente**: `proposals.total_amount` é a soma dos itens,
+recalculada e persistida pelo backend (`ProposalService.recalculateTotal`) toda vez que um item é
+criado/editado/removido — nunca um valor que o frontend envia. Isso também é o que permite listar e
+ordenar propostas por valor total sem juntar (`join`) e somar itens a cada linha da listagem.
+
+**Status sem regra de transição forçada**: diferente da movimentação de etapa de Oportunidade (que exige
+motivo de perda), a proposta aceita qualquer transição de status livremente — `ACCEPTED`/`REJECTED`
+preenchem `decidedAt` automaticamente (e o perdem se a proposta voltar a um status aberto), no mesmo
+padrão já usado por `Task.completedAt`. Não há um status `EXPIRED` gravado no banco: expirado é computado
+(`status = SENT` e `validUntil` no passado), igual ao `overdue` de Tarefas e Agenda — sem depender de um
+job agendado para "expirar" propostas sozinho.
+
+### Backend
+
+CRUD completo do cabeçalho (`/api/v1/proposals`) com busca textual, filtros (status, cliente, oportunidade,
+responsável, vencidas), paginação, RBAC e auditoria; `PATCH /{id}/status` para mudar o status; CRUD dos
+itens (`/api/v1/proposals/{proposalId}/items`) sob a mesma permissão de edição da proposta
+(`PROPOSTAS_EDIT`).
+
+### Frontend
+
+Tela `/propostas` (grupo "Módulos") com listagem, diálogo de cabeçalho e ações rápidas por linha (enviar,
+aceitar, rejeitar, conforme o status atual). Os itens são geridos num diálogo próprio
+(`ProposalItemsDialogComponent`), replicando o mesmo padrão visual do "Gerenciar Etapas" de Pipeline —
+tabela com CRUD inline e mini-formulário, mostrando o total calculado em tempo real no rodapé.
+
+### Qualidade
+
+- Backend: `ProposalServiceTest` (status, `decidedAt`, recálculo de total, exclusão) e
+  `ProposalItemServiceTest` (snapshot de preço do produto, override explícito, exclusão recalculando o
+  total). Suíte completa do `core` seguiu verde (165 testes).
+- Frontend: `proposals-page.component.spec.ts` cobrindo validação, troca de status e abertura do diálogo
+  de itens. Suíte completa (250 testes) e `npm run build` verdes.
+
 ## [Fase 4] — Produtos
 
 Primeira entrega da Fase 4 (Comercial avançado): catálogo de Produtos, base para Propostas, Pedidos e

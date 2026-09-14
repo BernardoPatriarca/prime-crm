@@ -149,7 +149,8 @@
       "opportunity": "Nueva Oportunidad",
       "task": "Nueva Tarea",
       "agenda": "Agenda",
-      "product": "Producto"
+      "product": "Producto",
+      "proposal": "Propuesta"
     },
     "userMenu": {
       "changePassword": "Cambiar Contraseña",
@@ -219,7 +220,8 @@
       "contacts": "Contactos",
       "tasks": "Tareas",
       "agenda": "Agenda",
-      "products": "Productos"
+      "products": "Productos",
+      "proposals": "Propuestas"
     },
     "comingSoon": "Próximamente",
     "reports": {
@@ -1077,6 +1079,88 @@
       "created": "Producto creado con exito",
       "updated": "Producto actualizado con exito",
       "deleted": "Producto eliminado con exito"
+    }
+  },
+  "proposalsPage": {
+    "title": "Propuestas",
+    "description": "Documentos comerciales enviados a los clientes, con items de productos y servicios.",
+    "newButton": "Nueva Propuesta",
+    "searchPlaceholder": "Buscar por codigo o notas...",
+    "emptyState": "No se encontraron propuestas.",
+    "status": {
+      "DRAFT": "Borrador",
+      "SENT": "Enviada",
+      "ACCEPTED": "Aceptada",
+      "REJECTED": "Rechazada"
+    },
+    "filters": {
+      "status": "Estado",
+      "validity": "Vigencia",
+      "expired": "Vencida",
+      "valid": "Dentro del plazo"
+    },
+    "badges": {
+      "expired": "Vencida"
+    },
+    "columns": {
+      "code": "Codigo",
+      "customer": "Cliente",
+      "owner": "Responsable",
+      "issueDate": "Emision",
+      "totalAmount": "Valor total",
+      "status": "Estado",
+      "actions": "Acciones"
+    },
+    "actions": {
+      "items": "Gestionar items",
+      "send": "Enviar",
+      "accept": "Aceptar",
+      "reject": "Rechazar"
+    },
+    "dialog": {
+      "newTitle": "Nueva Propuesta",
+      "editTitle": "Editar Propuesta",
+      "customerLabel": "Cliente",
+      "opportunityLabel": "Oportunidad",
+      "ownerLabel": "Responsable",
+      "issueDateLabel": "Fecha de emision",
+      "validUntilLabel": "Valida hasta",
+      "notesLabel": "Notas"
+    },
+    "messages": {
+      "created": "Propuesta creada con exito",
+      "updated": "Propuesta actualizada con exito",
+      "deleted": "Propuesta eliminada con exito",
+      "statusChanged": "Estado de la propuesta actualizado"
+    },
+    "items": {
+      "title": "Items de la propuesta",
+      "total": "Total",
+      "newButton": "Nuevo Item",
+      "emptyState": "Aun no se agregaron items.",
+      "columns": {
+        "product": "Producto",
+        "quantity": "Cant.",
+        "unitPrice": "Precio unitario",
+        "discount": "Descuento",
+        "total": "Total",
+        "actions": "Acciones"
+      },
+      "dialog": {
+        "newTitle": "Nuevo Item",
+        "editTitle": "Editar Item",
+        "productLabel": "Producto",
+        "descriptionLabel": "Descripcion (opcional, reemplaza el nombre del producto)",
+        "quantityLabel": "Cantidad",
+        "unitPriceLabel": "Precio unitario",
+        "unitPricePlaceholder": "Precio actual del producto",
+        "discountLabel": "Descuento"
+      },
+      "messages": {
+        "created": "Item agregado con exito",
+        "updated": "Item actualizado con exito",
+        "deleted": "Item eliminado con exito"
+      }
     }
   },
   "reportsPage": {

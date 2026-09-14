@@ -1,0 +1,297 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'proposalsPage.title' | translate }}</h1>
+      <p>{{ 'proposalsPage.description' | translate }}</p>
+    </div>
+    @if (canCreate()) {
+      <p-button
+        icon="pi pi-plus"
+        [label]="'proposalsPage.newButton' | translate"
+        (onClick)="openCreateDialog()"
+        data-testid="proposals-new-button"
+      />
+    }
+  </div>
+
+  <app-generic-table
+    [items]="proposals()"
+    [totalRecords]="total()"
+    [loading]="loading()"
+    [columnsCount]="7"
+    emptyIcon="pi-file"
+    emptyMessageKey="proposalsPage.emptyState"
+    searchPlaceholderKey="proposalsPage.searchPlaceholder"
+    (queryChange)="onQueryChange($event)"
+  >
+    <div tableActions class="filter-bar">
+      <p-select
+        appendTo="body"
+        [ngModel]="statusFilter()"
+        (ngModelChange)="statusFilter.set($event); onFilterChange()"
+        [options]="statusOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"
+        [placeholder]="'proposalsPage.filters.status' | translate"
+        data-testid="proposals-status-filter"
+      />
+      <p-select
+        appendTo="body"
+        [ngModel]="expiredFilter()"
+        (ngModelChange)="expiredFilter.set($event); onFilterChange()"
+        [options]="expiredOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"
+        [placeholder]="'proposalsPage.filters.validity' | translate"
+        data-testid="proposals-expired-filter"
+      />
+    </div>
+
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="code">
+          {{ 'proposalsPage.columns.code' | translate }}
+          <p-sortIcon field="code" />
+        </th>
+        <th>{{ 'proposalsPage.columns.customer' | translate }}</th>
+        <th>{{ 'proposalsPage.columns.owner' | translate }}</th>
+        <th pSortableColumn="issueDate">
+          {{ 'proposalsPage.columns.issueDate' | translate }}
+          <p-sortIcon field="issueDate" />
+        </th>
+        <th pSortableColumn="totalAmount">
+          {{ 'proposalsPage.columns.totalAmount' | translate }}
+          <p-sortIcon field="totalAmount" />
+        </th>
+        <th>{{ 'proposalsPage.columns.status' | translate }}</th>
+        <th class="col-actions">{{ 'proposalsPage.columns.actions' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-item>
+      <tr>
+        <td class="cell-muted cell-numeric">{{ item.code }}</td>
+        <td class="cell-strong">{{ item.customer?.name ?? '-' }}</td>
+        <td class="cell-muted">{{ item.owner?.name ?? '-' }}</td>
+        <td class="cell-muted">{{ formatDate(item.issueDate) }}</td>
+        <td class="cell-strong">{{ formatTotal(item.totalAmount) }}</td>
+        <td>
+          <div class="chip-list">
+            <p-tag [severity]="statusSeverity(item.status)" [value]="'proposalsPage.status.' + item.status | translate" />
+            @if (item.expired) {
+              <p-tag severity="danger" icon="pi pi-clock" [value]="'proposalsPage.badges.expired' | translate" />
+            }
+          </div>
+        </td>
+        <td>
+          <div class="row-actions">
+            @if (canEdit()) {
+              <p-button
+                icon="pi pi-list"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'proposalsPage.actions.items' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'proposalsPage.actions.items' | translate"
+                (onClick)="openItemsDialog(item)"
+                [attr.data-testid]="'proposal-items-' + item.id"
+              />
+            }
+            @if (canEdit() && item.status === 'DRAFT') {
+              <p-button
+                icon="pi pi-send"
+                [text]="true"
+                [rounded]="true"
+                severity="info"
+                [pTooltip]="'proposalsPage.actions.send' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'proposalsPage.actions.send' | translate"
+                (onClick)="changeStatus(item, 'SENT')"
+                [attr.data-testid]="'proposal-send-' + item.id"
+              />
+            }
+            @if (canEdit() && item.status === 'SENT') {
+              <p-button
+                icon="pi pi-check"
+                [text]="true"
+                [rounded]="true"
+                severity="success"
+                [pTooltip]="'proposalsPage.actions.accept' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'proposalsPage.actions.accept' | translate"
+                (onClick)="changeStatus(item, 'ACCEPTED')"
+                [attr.data-testid]="'proposal-accept-' + item.id"
+              />
+              <p-button
+                icon="pi pi-times"
+                [text]="true"
+                [rounded]="true"
+                severity="danger"
+                [pTooltip]="'proposalsPage.actions.reject' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'proposalsPage.actions.reject' | translate"
+                (onClick)="changeStatus(item, 'REJECTED')"
+                [attr.data-testid]="'proposal-reject-' + item.id"
+              />
+            }
+            @if (canEdit()) {
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'common.actions.edit' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.edit' | translate"
+                (onClick)="openEditDialog(item)"
+                [attr.data-testid]="'proposal-edit-' + item.id"
+              />
+            }
+            @if (canDelete()) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                [pTooltip]="'common.actions.delete' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.delete' | translate"
+                (onClick)="confirmDelete(item)"
+                [attr.data-testid]="'proposal-delete-' + item.id"
+              />
+            }
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </app-generic-table>
+</div>
+
+<p-dialog
+  appendTo="body"
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '42rem' }"
+  [breakpoints]="{ '1024px': '92vw', '767px': '96vw' }"
+  [header]="(editingProposal() ? 'proposalsPage.dialog.editTitle' : 'proposalsPage.dialog.newTitle') | translate"
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+    <div class="form-grid">
+      <div class="field field-span-2">
+        <label for="proposal-customer">{{ 'proposalsPage.dialog.customerLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="proposal-customer"
+          formControlName="customerId"
+          [options]="customerOptions()"
+          optionLabel="name"
+          optionValue="id"
+          [filter]="true"
+          filterBy="name"
+          (onFilter)="onCustomerFilter($event.filter)"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+          data-testid="proposal-customer-select"
+        />
+        @if (form.controls.customerId.invalid && form.controls.customerId.touched) {
+          <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="proposal-opportunity">{{ 'proposalsPage.dialog.opportunityLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="proposal-opportunity"
+          formControlName="opportunityId"
+          [options]="opportunityOptions()"
+          optionLabel="title"
+          optionValue="id"
+          [showClear]="true"
+          [filter]="true"
+          filterBy="title"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="proposal-owner">{{ 'proposalsPage.dialog.ownerLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="proposal-owner"
+          formControlName="ownerUserId"
+          [options]="userOptions()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [filter]="true"
+          filterBy="name"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="proposal-issue-date">{{ 'proposalsPage.dialog.issueDateLabel' | translate }}</label>
+        <p-datepicker
+          appendTo="body"
+          inputId="proposal-issue-date"
+          formControlName="issueDate"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="proposal-valid-until">{{ 'proposalsPage.dialog.validUntilLabel' | translate }}</label>
+        <p-datepicker
+          appendTo="body"
+          inputId="proposal-valid-until"
+          formControlName="validUntil"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          [showClear]="true"
+          fluid
+        />
+      </div>
+
+      <div class="field field-span-2">
+        <label for="proposal-notes">{{ 'proposalsPage.dialog.notesLabel' | translate }}</label>
+        <textarea id="proposal-notes" pTextarea formControlName="notes" rows="3" [autoResize]="true" fluid></textarea>
+      </div>
+    </div>
+
+    <div class="dialog-footer">
+      <p-button
+        [label]="'common.actions.cancel' | translate"
+        severity="secondary"
+        [text]="true"
+        type="button"
+        (onClick)="closeDialog()"
+      />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="saving()"
+        data-testid="proposal-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>
+
+<app-proposal-items-dialog
+  [visible]="itemsDialogVisible()"
+  [proposalId]="proposalForItems()?.id ?? null"
+  [proposalCode]="proposalForItems()?.code ?? ''"
+  (visibleChange)="itemsDialogVisible.set($event)"
+  (itemsChanged)="onItemsChanged()"
+/>

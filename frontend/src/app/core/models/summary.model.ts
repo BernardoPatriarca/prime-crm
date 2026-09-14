@@ -35,6 +35,12 @@ export interface OpportunitySummary {
   title: string;
 }
 
+export interface ProductSummary {
+  id: string;
+  code: string;
+  name: string;
+}
+
 export interface PipelineSummary {
   id: string;
   name: string;

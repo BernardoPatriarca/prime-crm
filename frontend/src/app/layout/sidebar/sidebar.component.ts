@@ -122,6 +122,14 @@ export class SidebarComponent {
       });
     }
 
+    if (hasPermission('PROPOSTAS_VIEW')) {
+      commercialChildren.push({
+        label: t('sidebar.modules.proposals'),
+        icon: 'pi pi-file',
+        routerLink: '/propostas'
+      });
+    }
+
     commercialChildren.push({
       label: t('sidebar.modules.finance'),
       icon: 'pi pi-wallet',
