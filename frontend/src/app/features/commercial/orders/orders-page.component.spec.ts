@@ -8,6 +8,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { of } from 'rxjs';
 import { Order } from '../../../core/models/order.model';
 import { AdminUserService } from '../../../core/services/admin-user.service';
+import { ContractService } from '../../../core/services/contract.service';
 import { CustomerService } from '../../../core/services/customer.service';
 import { OpportunityService } from '../../../core/services/opportunity.service';
 import { OrderService } from '../../../core/services/order.service';
@@ -39,6 +40,7 @@ describe('OrdersPageComponent', () => {
   let fixture: ComponentFixture<OrdersPageComponent>;
   let component: OrdersPageComponent;
   let orderServiceStub: jasmine.SpyObj<OrderService>;
+  let contractServiceStub: jasmine.SpyObj<ContractService>;
 
   beforeEach(async () => {
     localStorage.clear();
@@ -58,6 +60,8 @@ describe('OrdersPageComponent', () => {
     orderServiceStub.list.and.returnValue(of(emptyPage));
     orderServiceStub.changeStatus.and.returnValue(of(orderFixture({ status: 'CONFIRMED' })));
 
+    contractServiceStub = jasmine.createSpyObj<ContractService>('ContractService', ['createFromOrder']);
+
     await TestBed.configureTestingModule({
       imports: [OrdersPageComponent],
       providers: [
@@ -69,6 +73,7 @@ describe('OrdersPageComponent', () => {
         MessageService,
         ConfirmationService,
         { provide: OrderService, useValue: orderServiceStub },
+        { provide: ContractService, useValue: contractServiceStub },
         { provide: CustomerService, useValue: { list: () => of(emptyPage), getById: () => of(null) } },
         { provide: OpportunityService, useValue: { list: () => of(emptyPage) } },
         { provide: AdminUserService, useValue: { list: () => of(emptyPage) } }
@@ -120,5 +125,33 @@ describe('OrdersPageComponent', () => {
 
     expect(component['form'].controls.notes.value).toBe('Entregar na filial');
     expect(component['form'].controls.orderDate.value).toBeInstanceOf(Date);
+  });
+
+  it('converts a delivered order into a contract', () => {
+    contractServiceStub.createFromOrder.and.returnValue(
+      of({
+        id: 'contract-1',
+        code: 'CTR-001000',
+        customer: null,
+        order: null,
+        opportunity: null,
+        owner: null,
+        billingCycle: null,
+        status: 'DRAFT',
+        startDate: '2026-02-01',
+        endDate: null,
+        autoRenew: false,
+        recurringAmount: 0,
+        notes: null,
+        expired: false,
+        terminatedAt: null,
+        createdAt: '2026-01-01T00:00:00Z',
+        updatedAt: '2026-01-01T00:00:00Z'
+      })
+    );
+
+    component['convertToContract'](orderFixture({ status: 'DELIVERED' }));
+
+    expect(contractServiceStub.createFromOrder).toHaveBeenCalledWith('order-1');
   });
 });

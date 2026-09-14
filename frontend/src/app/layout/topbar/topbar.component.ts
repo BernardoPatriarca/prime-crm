@@ -189,6 +189,12 @@ export class TopbarComponent {
         icon: 'pi pi-truck',
         disabled: !hasPermission('PEDIDOS_CREATE'),
         command: () => this.openCreation('/pedidos')
+      },
+      {
+        label: t('topbar.newButton.contract'),
+        icon: 'pi pi-verified',
+        disabled: !hasPermission('CONTRATOS_CREATE'),
+        command: () => this.openCreation('/contratos')
       }
     ];
   });

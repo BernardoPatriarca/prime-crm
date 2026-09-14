@@ -128,6 +128,19 @@
                 [attr.data-testid]="'order-cancel-' + item.id"
               />
             }
+            @if (canCreateContract() && item.status === 'DELIVERED') {
+              <p-button
+                icon="pi pi-verified"
+                [text]="true"
+                [rounded]="true"
+                severity="success"
+                [pTooltip]="'ordersPage.actions.convertToContract' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'ordersPage.actions.convertToContract' | translate"
+                (onClick)="convertToContract(item)"
+                [attr.data-testid]="'order-convert-' + item.id"
+              />
+            }
             @if (canEdit()) {
               <p-button
                 icon="pi pi-pencil"

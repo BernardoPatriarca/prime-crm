@@ -151,7 +151,8 @@
       "agenda": "Agenda",
       "product": "Product",
       "proposal": "Proposal",
-      "order": "Order"
+      "order": "Order",
+      "contract": "Contract"
     },
     "userMenu": {
       "changePassword": "Change Password",
@@ -199,7 +200,8 @@
         "team": "Teams",
         "position": "Job Titles",
         "department": "Departments",
-        "unitOfMeasure": "Units of Measure"
+        "unitOfMeasure": "Units of Measure",
+        "billingCycle": "Billing Cycles"
       },
       "pipelines": "Pipelines",
       "customFields": "Custom Fields",
@@ -223,7 +225,8 @@
       "agenda": "Agenda",
       "products": "Products",
       "proposals": "Proposals",
-      "orders": "Orders"
+      "orders": "Orders",
+      "contracts": "Contracts"
     },
     "comingSoon": "Coming soon",
     "reports": {
@@ -1195,7 +1198,8 @@
       "items": "Manage items",
       "confirm": "Confirm",
       "deliver": "Mark as delivered",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "convertToContract": "Convert to Contract"
     },
     "dialog": {
       "newTitle": "New Order",
@@ -1211,7 +1215,8 @@
       "created": "Order created successfully",
       "updated": "Order updated successfully",
       "deleted": "Order deleted successfully",
-      "statusChanged": "Order status updated"
+      "statusChanged": "Order status updated",
+      "convertedToContract": "Contract {{code}} created from the order"
     },
     "items": {
       "title": "Order items",
@@ -1241,6 +1246,63 @@
         "updated": "Item updated successfully",
         "deleted": "Item removed successfully"
       }
+    }
+  },
+  "contractsPage": {
+    "title": "Contracts",
+    "description": "Formal term for recurring or ongoing sales.",
+    "newButton": "New Contract",
+    "searchPlaceholder": "Search by code or notes...",
+    "emptyState": "No contracts found.",
+    "status": {
+      "DRAFT": "Draft",
+      "ACTIVE": "Active",
+      "SUSPENDED": "Suspended",
+      "TERMINATED": "Terminated"
+    },
+    "filters": {
+      "status": "Status",
+      "validity": "Validity",
+      "expired": "Expired",
+      "valid": "Within validity"
+    },
+    "badges": {
+      "expired": "Expired",
+      "autoRenew": "Auto-renew"
+    },
+    "columns": {
+      "code": "Code",
+      "customer": "Customer",
+      "owner": "Owner",
+      "startDate": "Start",
+      "recurringAmount": "Recurring amount",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "actions": {
+      "activate": "Activate",
+      "suspend": "Suspend",
+      "reactivate": "Reactivate",
+      "terminate": "Terminate"
+    },
+    "dialog": {
+      "newTitle": "New Contract",
+      "editTitle": "Edit Contract",
+      "customerLabel": "Customer",
+      "opportunityLabel": "Opportunity",
+      "ownerLabel": "Owner",
+      "startDateLabel": "Start date",
+      "endDateLabel": "End date",
+      "billingCycleLabel": "Billing cycle",
+      "recurringAmountLabel": "Recurring amount",
+      "autoRenewLabel": "Auto-renew",
+      "notesLabel": "Notes"
+    },
+    "messages": {
+      "created": "Contract created successfully",
+      "updated": "Contract updated successfully",
+      "deleted": "Contract deleted successfully",
+      "statusChanged": "Contract status updated"
     }
   },
   "reportsPage": {

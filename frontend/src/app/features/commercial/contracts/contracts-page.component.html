@@ -1,0 +1,332 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'contractsPage.title' | translate }}</h1>
+      <p>{{ 'contractsPage.description' | translate }}</p>
+    </div>
+    @if (canCreate()) {
+      <p-button
+        icon="pi pi-plus"
+        [label]="'contractsPage.newButton' | translate"
+        (onClick)="openCreateDialog()"
+        data-testid="contracts-new-button"
+      />
+    }
+  </div>
+
+  <app-generic-table
+    [items]="contracts()"
+    [totalRecords]="total()"
+    [loading]="loading()"
+    [columnsCount]="7"
+    emptyIcon="pi-verified"
+    emptyMessageKey="contractsPage.emptyState"
+    searchPlaceholderKey="contractsPage.searchPlaceholder"
+    (queryChange)="onQueryChange($event)"
+  >
+    <div tableActions class="filter-bar">
+      <p-select
+        appendTo="body"
+        [ngModel]="statusFilter()"
+        (ngModelChange)="statusFilter.set($event); onFilterChange()"
+        [options]="statusOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"
+        [placeholder]="'contractsPage.filters.status' | translate"
+        data-testid="contracts-status-filter"
+      />
+      <p-select
+        appendTo="body"
+        [ngModel]="expiredFilter()"
+        (ngModelChange)="expiredFilter.set($event); onFilterChange()"
+        [options]="expiredOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"
+        [placeholder]="'contractsPage.filters.validity' | translate"
+        data-testid="contracts-expired-filter"
+      />
+    </div>
+
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="code">
+          {{ 'contractsPage.columns.code' | translate }}
+          <p-sortIcon field="code" />
+        </th>
+        <th>{{ 'contractsPage.columns.customer' | translate }}</th>
+        <th>{{ 'contractsPage.columns.owner' | translate }}</th>
+        <th pSortableColumn="startDate">
+          {{ 'contractsPage.columns.startDate' | translate }}
+          <p-sortIcon field="startDate" />
+        </th>
+        <th pSortableColumn="recurringAmount">
+          {{ 'contractsPage.columns.recurringAmount' | translate }}
+          <p-sortIcon field="recurringAmount" />
+        </th>
+        <th>{{ 'contractsPage.columns.status' | translate }}</th>
+        <th class="col-actions">{{ 'contractsPage.columns.actions' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-item>
+      <tr>
+        <td class="cell-muted cell-numeric">{{ item.code }}</td>
+        <td class="cell-strong">{{ item.customer?.name ?? '-' }}</td>
+        <td class="cell-muted">{{ item.owner?.name ?? '-' }}</td>
+        <td class="cell-muted">{{ formatDate(item.startDate) }}</td>
+        <td class="cell-strong">
+          {{ formatAmount(item.recurringAmount) }}
+          @if (item.billingCycle) {
+            <span class="cell-muted">/ {{ item.billingCycle.name }}</span>
+          }
+        </td>
+        <td>
+          <div class="chip-list">
+            <p-tag [severity]="statusSeverity(item.status)" [value]="'contractsPage.status.' + item.status | translate" />
+            @if (item.expired) {
+              <p-tag severity="danger" icon="pi pi-clock" [value]="'contractsPage.badges.expired' | translate" />
+            }
+            @if (item.autoRenew) {
+              <p-tag severity="info" icon="pi pi-refresh" [value]="'contractsPage.badges.autoRenew' | translate" />
+            }
+          </div>
+        </td>
+        <td>
+          <div class="row-actions">
+            @if (canEdit() && item.status === 'DRAFT') {
+              <p-button
+                icon="pi pi-play"
+                [text]="true"
+                [rounded]="true"
+                severity="success"
+                [pTooltip]="'contractsPage.actions.activate' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'contractsPage.actions.activate' | translate"
+                (onClick)="changeStatus(item, 'ACTIVE')"
+                [attr.data-testid]="'contract-activate-' + item.id"
+              />
+            }
+            @if (canEdit() && item.status === 'ACTIVE') {
+              <p-button
+                icon="pi pi-pause"
+                [text]="true"
+                [rounded]="true"
+                severity="warn"
+                [pTooltip]="'contractsPage.actions.suspend' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'contractsPage.actions.suspend' | translate"
+                (onClick)="changeStatus(item, 'SUSPENDED')"
+                [attr.data-testid]="'contract-suspend-' + item.id"
+              />
+            }
+            @if (canEdit() && item.status === 'SUSPENDED') {
+              <p-button
+                icon="pi pi-play"
+                [text]="true"
+                [rounded]="true"
+                severity="success"
+                [pTooltip]="'contractsPage.actions.reactivate' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'contractsPage.actions.reactivate' | translate"
+                (onClick)="changeStatus(item, 'ACTIVE')"
+                [attr.data-testid]="'contract-reactivate-' + item.id"
+              />
+            }
+            @if (canEdit() && (item.status === 'ACTIVE' || item.status === 'SUSPENDED')) {
+              <p-button
+                icon="pi pi-times"
+                [text]="true"
+                [rounded]="true"
+                severity="danger"
+                [pTooltip]="'contractsPage.actions.terminate' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'contractsPage.actions.terminate' | translate"
+                (onClick)="changeStatus(item, 'TERMINATED')"
+                [attr.data-testid]="'contract-terminate-' + item.id"
+              />
+            }
+            @if (canEdit()) {
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'common.actions.edit' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.edit' | translate"
+                (onClick)="openEditDialog(item)"
+                [attr.data-testid]="'contract-edit-' + item.id"
+              />
+            }
+            @if (canDelete()) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                [pTooltip]="'common.actions.delete' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.delete' | translate"
+                (onClick)="confirmDelete(item)"
+                [attr.data-testid]="'contract-delete-' + item.id"
+              />
+            }
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </app-generic-table>
+</div>
+
+<p-dialog
+  appendTo="body"
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '42rem' }"
+  [breakpoints]="{ '1024px': '92vw', '767px': '96vw' }"
+  [header]="(editingContract() ? 'contractsPage.dialog.editTitle' : 'contractsPage.dialog.newTitle') | translate"
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+    <div class="form-grid">
+      <div class="field field-span-2">
+        <label for="contract-customer">{{ 'contractsPage.dialog.customerLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="contract-customer"
+          formControlName="customerId"
+          [options]="customerOptions()"
+          optionLabel="name"
+          optionValue="id"
+          [filter]="true"
+          filterBy="name"
+          (onFilter)="onCustomerFilter($event.filter)"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+          data-testid="contract-customer-select"
+        />
+        @if (form.controls.customerId.invalid && form.controls.customerId.touched) {
+          <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="contract-opportunity">{{ 'contractsPage.dialog.opportunityLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="contract-opportunity"
+          formControlName="opportunityId"
+          [options]="opportunityOptions()"
+          optionLabel="title"
+          optionValue="id"
+          [showClear]="true"
+          [filter]="true"
+          filterBy="title"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="contract-owner">{{ 'contractsPage.dialog.ownerLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="contract-owner"
+          formControlName="ownerUserId"
+          [options]="userOptions()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [filter]="true"
+          filterBy="name"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="contract-start-date">{{ 'contractsPage.dialog.startDateLabel' | translate }}</label>
+        <p-datepicker
+          appendTo="body"
+          inputId="contract-start-date"
+          formControlName="startDate"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="contract-end-date">{{ 'contractsPage.dialog.endDateLabel' | translate }}</label>
+        <p-datepicker
+          appendTo="body"
+          inputId="contract-end-date"
+          formControlName="endDate"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          [showClear]="true"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="contract-billing-cycle">{{ 'contractsPage.dialog.billingCycleLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="contract-billing-cycle"
+          formControlName="billingCycleId"
+          [options]="billingCycles()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="contract-recurring-amount">{{ 'contractsPage.dialog.recurringAmountLabel' | translate }}</label>
+        <p-inputnumber
+          inputId="contract-recurring-amount"
+          formControlName="recurringAmount"
+          mode="currency"
+          currency="BRL"
+          locale="pt-BR"
+          fluid
+          data-testid="contract-recurring-amount-input"
+        />
+      </div>
+
+      <div class="field field-checkbox">
+        <p-checkbox inputId="contract-auto-renew" formControlName="autoRenew" [binary]="true" />
+        <label for="contract-auto-renew">{{ 'contractsPage.dialog.autoRenewLabel' | translate }}</label>
+      </div>
+
+      <div class="field field-span-2">
+        <label for="contract-notes">{{ 'contractsPage.dialog.notesLabel' | translate }}</label>
+        <textarea id="contract-notes" pTextarea formControlName="notes" rows="3" [autoResize]="true" fluid></textarea>
+      </div>
+    </div>
+
+    <div class="dialog-footer">
+      <p-button
+        [label]="'common.actions.cancel' | translate"
+        severity="secondary"
+        [text]="true"
+        type="button"
+        (onClick)="closeDialog()"
+      />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="saving()"
+        data-testid="contract-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>

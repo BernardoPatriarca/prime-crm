@@ -211,7 +211,7 @@ Histórico de entregas por fase em [CHANGELOG.md](CHANGELOG.md).
 | 1 | Parametrização e RBAC | ✅ |
 | 2 | Núcleo comercial: clientes, contatos, leads, funil de oportunidades | ✅ |
 | 3 | Produtividade: tarefas, relatórios, agenda e notificações em tempo real (WebSocket) | ✅ |
-| 4 | Comercial avançado: produtos, propostas e pedidos entregues; contratos pendentes | 🚧 |
+| 4 | Comercial avançado: produtos, propostas, pedidos e contratos | ✅ |
 | 5 | Financeiro e documentos | ⏳ |
 | 6 | Dashboards por módulo e metas comerciais | 🚧 |
 | 7 | Qualidade e hardening | ⏳ |

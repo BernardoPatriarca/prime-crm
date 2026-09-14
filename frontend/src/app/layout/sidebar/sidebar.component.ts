@@ -22,6 +22,7 @@ const GENERAL_REGISTRY_DOMAINS: { code: string; labelKey: string }[] = [
   { code: 'TASK_TYPE', labelKey: 'sidebar.settings.generalRegistries.taskType' },
   { code: 'CATEGORY', labelKey: 'sidebar.settings.generalRegistries.category' },
   { code: 'UNIT_OF_MEASURE', labelKey: 'sidebar.settings.generalRegistries.unitOfMeasure' },
+  { code: 'BILLING_CYCLE', labelKey: 'sidebar.settings.generalRegistries.billingCycle' },
   { code: 'TAG', labelKey: 'sidebar.settings.generalRegistries.tag' },
   { code: 'TEAM', labelKey: 'sidebar.settings.generalRegistries.team' },
   { code: 'POSITION', labelKey: 'sidebar.settings.generalRegistries.position' },
@@ -135,6 +136,14 @@ export class SidebarComponent {
         label: t('sidebar.modules.orders'),
         icon: 'pi pi-truck',
         routerLink: '/pedidos'
+      });
+    }
+
+    if (hasPermission('CONTRATOS_VIEW')) {
+      commercialChildren.push({
+        label: t('sidebar.modules.contracts'),
+        icon: 'pi pi-verified',
+        routerLink: '/contratos'
       });
     }
 

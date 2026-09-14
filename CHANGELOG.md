@@ -2,6 +2,53 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fase 4] — Contratos
+
+Fecha a Fase 4 (Comercial avançado): Contratos, a vigência formal de uma venda recorrente ou continuada,
+tipicamente originada de um Pedido entregue.
+
+### Banco de dados
+
+Migrations `V34` a `V36`: novo `domain_type` `BILLING_CYCLE` (único/mensal/trimestral/semestral/anual,
+mesmo raciocínio de `UNIT_OF_MEASURE` — reaproveita o engine em vez de um enum fixo), tabela `contracts`
+e as 4 permissões novas (`CONTRATOS_*`) concedidas ao perfil Administrador. Código legível `CTR-######`.
+
+**Decisão de modelagem — sem itens próprios**: diferente de Proposta e Pedido, Contrato não tem uma
+tabela `contract_items`. O detalhamento (quais produtos, quantidades) já vive no Pedido de origem
+(`contracts.order_id`); o contrato só precisa saber **quanto** cobrar e **com que frequência**
+(`recurring_amount` + `billing_cycle_id`). Criar uma terceira cópia de CRUD de itens não agregaria nada —
+seria a mesma tela pela terceira vez sem uma razão de negócio diferente, na contramão direta da regra do
+projeto contra abstração/repetição sem necessidade real.
+
+**Vencimento sem tabela nem status próprio**: assim como Proposta e Compromisso, "vencido" é computado
+(`status = ACTIVE` e `end_date` no passado) em vez de um status `EXPIRED` gravado — sem depender de um job
+para encerrar contratos sozinho. `end_date` nulo significa vigência indeterminada (contrato sem data de
+fim, renovado ou não).
+
+### Backend
+
+- CRUD completo (`/api/v1/contracts`) com busca textual, filtros (status, cliente, oportunidade,
+  responsável, vencidos), paginação, RBAC e auditoria; `PATCH /{id}/status` (encerrar preenche
+  `terminated_at`, no mesmo padrão de `decidedAt`/`closedAt` já usado em Proposta/Pedido).
+- `POST /api/v1/contracts/from-order/{orderId}`: cria um contrato copiando cliente, oportunidade e
+  responsável do pedido, e usa o **valor total do pedido como valor recorrente inicial** (o usuário ajusta
+  depois se o ciclo de faturamento não for igual ao valor cheio do pedido).
+
+### Frontend
+
+Tela `/contratos`, mesmo padrão visual dos demais módulos comerciais (sem diálogo de itens, já que
+Contrato não tem), com ações rápidas por status (ativar, suspender, reativar, encerrar) e indicadores de
+vencido/renovação automática. A tela de Pedidos ganhou o botão "Converter em Contrato" nas linhas com
+status Entregue, fechando de ponta a ponta o fluxo **Proposta → Pedido → Contrato** que atravessa toda a
+Fase 4.
+
+### Qualidade
+
+- Backend: `ContractServiceTest` (status padrão, criação a partir de pedido copiando cliente/valor,
+  `terminatedAt`, exclusão). Suíte completa do `core` seguiu verde (180 testes).
+- Frontend: `contracts-page.component.spec.ts` e o teste de conversão em `orders-page.component.spec.ts`.
+  Suíte completa (263 testes) e `npm run build` verdes.
+
 ## [Fase 4] — Pedidos
 
 Terceira entrega da Fase 4: Pedidos, a confirmação formal de uma venda — estrutura praticamente irmã de

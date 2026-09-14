@@ -151,7 +151,8 @@
       "agenda": "Agenda",
       "product": "Produto",
       "proposal": "Proposta",
-      "order": "Pedido"
+      "order": "Pedido",
+      "contract": "Contrato"
     },
     "userMenu": {
       "changePassword": "Alterar Senha",
@@ -199,7 +200,8 @@
         "team": "Equipes",
         "position": "Cargos",
         "department": "Departamentos",
-        "unitOfMeasure": "Unidades de Medida"
+        "unitOfMeasure": "Unidades de Medida",
+        "billingCycle": "Ciclos de Faturamento"
       },
       "pipelines": "Pipelines",
       "customFields": "Campos Personalizados",
@@ -223,7 +225,8 @@
       "agenda": "Agenda",
       "products": "Produtos",
       "proposals": "Propostas",
-      "orders": "Pedidos"
+      "orders": "Pedidos",
+      "contracts": "Contratos"
     },
     "comingSoon": "Em breve",
     "reports": {
@@ -1195,7 +1198,8 @@
       "items": "Gerenciar itens",
       "confirm": "Confirmar",
       "deliver": "Marcar como entregue",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "convertToContract": "Converter em Contrato"
     },
     "dialog": {
       "newTitle": "Novo Pedido",
@@ -1211,7 +1215,8 @@
       "created": "Pedido criado com sucesso",
       "updated": "Pedido atualizado com sucesso",
       "deleted": "Pedido excluido com sucesso",
-      "statusChanged": "Status do pedido atualizado"
+      "statusChanged": "Status do pedido atualizado",
+      "convertedToContract": "Contrato {{code}} criado a partir do pedido"
     },
     "items": {
       "title": "Itens do pedido",
@@ -1241,6 +1246,63 @@
         "updated": "Item atualizado com sucesso",
         "deleted": "Item removido com sucesso"
       }
+    }
+  },
+  "contractsPage": {
+    "title": "Contratos",
+    "description": "Vigencia formal de vendas recorrentes ou continuadas.",
+    "newButton": "Novo Contrato",
+    "searchPlaceholder": "Buscar por codigo ou observacoes...",
+    "emptyState": "Nenhum contrato encontrado.",
+    "status": {
+      "DRAFT": "Rascunho",
+      "ACTIVE": "Ativo",
+      "SUSPENDED": "Suspenso",
+      "TERMINATED": "Encerrado"
+    },
+    "filters": {
+      "status": "Status",
+      "validity": "Validade",
+      "expired": "Vencido",
+      "valid": "Dentro do prazo"
+    },
+    "badges": {
+      "expired": "Vencido",
+      "autoRenew": "Renovacao automatica"
+    },
+    "columns": {
+      "code": "Codigo",
+      "customer": "Cliente",
+      "owner": "Responsavel",
+      "startDate": "Inicio",
+      "recurringAmount": "Valor recorrente",
+      "status": "Status",
+      "actions": "Acoes"
+    },
+    "actions": {
+      "activate": "Ativar",
+      "suspend": "Suspender",
+      "reactivate": "Reativar",
+      "terminate": "Encerrar"
+    },
+    "dialog": {
+      "newTitle": "Novo Contrato",
+      "editTitle": "Editar Contrato",
+      "customerLabel": "Cliente",
+      "opportunityLabel": "Oportunidade",
+      "ownerLabel": "Responsavel",
+      "startDateLabel": "Data de inicio",
+      "endDateLabel": "Data de termino",
+      "billingCycleLabel": "Ciclo de faturamento",
+      "recurringAmountLabel": "Valor recorrente",
+      "autoRenewLabel": "Renovacao automatica",
+      "notesLabel": "Observacoes"
+    },
+    "messages": {
+      "created": "Contrato criado com sucesso",
+      "updated": "Contrato atualizado com sucesso",
+      "deleted": "Contrato excluido com sucesso",
+      "statusChanged": "Status do contrato atualizado"
     }
   },
   "reportsPage": {
