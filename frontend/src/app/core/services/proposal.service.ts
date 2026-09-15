@@ -54,6 +54,10 @@ export class ProposalService {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
+  pdf(id: string): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/${id}/pdf`, { responseType: 'blob' });
+  }
+
   listItems(proposalId: string): Observable<ProposalItem[]> {
     return this.http.get<ProposalItem[]>(`${this.baseUrl}/${proposalId}/items`);
   }

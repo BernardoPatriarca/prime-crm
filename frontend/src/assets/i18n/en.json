@@ -1125,7 +1125,8 @@
       "send": "Send",
       "accept": "Accept",
       "reject": "Reject",
-      "convertToOrder": "Convert to Order"
+      "convertToOrder": "Convert to Order",
+      "downloadPdf": "Download PDF"
     },
     "dialog": {
       "newTitle": "New Proposal",
@@ -1203,7 +1204,8 @@
       "confirm": "Confirm",
       "deliver": "Mark as delivered",
       "cancel": "Cancel",
-      "convertToContract": "Convert to Contract"
+      "convertToContract": "Convert to Contract",
+      "downloadPdf": "Download PDF"
     },
     "dialog": {
       "newTitle": "New Order",
@@ -1287,7 +1289,8 @@
       "activate": "Activate",
       "suspend": "Suspend",
       "reactivate": "Reactivate",
-      "terminate": "Terminate"
+      "terminate": "Terminate",
+      "downloadPdf": "Download PDF"
     },
     "dialog": {
       "newTitle": "New Contract",

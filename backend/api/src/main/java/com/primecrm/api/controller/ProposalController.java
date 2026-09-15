@@ -5,6 +5,7 @@ import com.primecrm.core.dto.proposal.ProposalListFilter;
 import com.primecrm.core.dto.proposal.ProposalRequest;
 import com.primecrm.core.dto.proposal.ProposalResponse;
 import com.primecrm.core.dto.proposal.ProposalStatusUpdateRequest;
+import com.primecrm.core.service.DocumentPdfService;
 import com.primecrm.core.service.ProposalService;
 import com.primecrm.infra.entity.proposal.ProposalStatus;
 import com.primecrm.shared.dto.PageResponse;
@@ -15,7 +16,9 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProposalController {
 
     private final ProposalService proposalService;
+    private final DocumentPdfService documentPdfService;
 
     @GetMapping
     @PreAuthorize("hasAuthority('PROPOSTAS_VIEW')")
@@ -91,5 +95,16 @@ public class ProposalController {
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         proposalService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/pdf")
+    @PreAuthorize("hasAuthority('PROPOSTAS_VIEW')")
+    @Operation(summary = "Gera o PDF da proposta, com dados do cliente, itens e valor total")
+    public ResponseEntity<byte[]> pdf(@PathVariable UUID id) {
+        DocumentPdfService.GeneratedPdf pdf = documentPdfService.proposalPdf(id);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + pdf.fileName() + "\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf.content());
     }
 }

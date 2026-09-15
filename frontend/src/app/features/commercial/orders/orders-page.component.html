@@ -128,6 +128,17 @@
                 [attr.data-testid]="'order-cancel-' + item.id"
               />
             }
+            <p-button
+              icon="pi pi-file-pdf"
+              [text]="true"
+              [rounded]="true"
+              severity="secondary"
+              [pTooltip]="'ordersPage.actions.downloadPdf' | translate"
+              tooltipPosition="top"
+              [ariaLabel]="'ordersPage.actions.downloadPdf' | translate"
+              (onClick)="downloadPdf(item)"
+              [attr.data-testid]="'order-pdf-' + item.id"
+            />
             @if (canCreateContract() && item.status === 'DELIVERED') {
               <p-button
                 icon="pi pi-verified"

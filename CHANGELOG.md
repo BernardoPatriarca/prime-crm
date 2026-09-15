@@ -2,6 +2,44 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fase 5] — Documentos (PDF)
+
+Terceira e ultima entrega da Fase 5 (Financeiro e documentos): geracao de PDF para Propostas,
+Pedidos e Contratos, fechando a fase.
+
+### Backend
+
+- Nova dependencia `com.github.librepdf:openpdf` (modulo `core`), unica biblioteca de geracao de PDF
+  do projeto ate aqui.
+- `DocumentPdfWriter` (`com.primecrm.core.document`): monta o PDF (cabecalho, tabela de itens, total,
+  observacoes) a partir de um modelo generico (`DocumentPdfModel`) — o mesmo escritor atende Proposta,
+  Pedido e Contrato, sem duplicar layout por tipo de documento.
+- `DocumentPdfService`: busca os dados de cada documento (reaproveitando `ProposalService`,
+  `OrderService`, `ContractService` e os respectivos *ItemService* ja existentes — nenhum acesso novo a
+  repositorio), monta o modelo e registra auditoria (`AuditAction.EXPORT`), no mesmo padrao ja usado na
+  exportacao CSV de relatorios.
+- Novo endpoint `GET /{id}/pdf` em `ProposalController`, `OrderController` e `ContractController`,
+  reaproveitando a permissao `*_VIEW` de cada modulo (sem RBAC novo).
+
+**Decisao de modelagem — Contrato sem itens proprios**: como Contrato ja nao tem uma tabela de itens
+(reaproveita o Pedido de origem desde a Fase 4), o PDF do contrato busca os itens do pedido vinculado
+(`contract.order`) quando existir; contratos criados sem um pedido de origem geram PDF sem tabela de
+itens.
+
+### Frontend
+
+Botao "Baixar PDF" nas listagens de Propostas, Pedidos e Contratos, ao lado das demais acoes de linha,
+disponivel para qualquer usuario com permissao de visualizacao do modulo. Reaproveita o utilitario
+`downloadBlob` ja usado na exportacao CSV de Relatorios.
+
+### Qualidade
+
+- Backend: `DocumentPdfWriterTest` (PDF valido gerado com e sem itens/observacoes) e
+  `DocumentPdfServiceTest` (nome do arquivo a partir do codigo, itens do pedido vinculado no PDF do
+  contrato, contrato sem pedido gera PDF sem itens, auditoria de exportacao). Suite completa do `core`
+  seguiu verde (197 testes).
+- Frontend: `npm run build` e suite completa (276 testes) verdes.
+
 ## [Fase 5] — Contas a Pagar
 
 Segunda entrega da Fase 5 (Financeiro e documentos): despesas e obrigações financeiras da empresa

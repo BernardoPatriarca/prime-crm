@@ -6,6 +6,7 @@ import com.primecrm.core.dto.contract.ContractRequest;
 import com.primecrm.core.dto.contract.ContractResponse;
 import com.primecrm.core.dto.contract.ContractStatusUpdateRequest;
 import com.primecrm.core.service.ContractService;
+import com.primecrm.core.service.DocumentPdfService;
 import com.primecrm.infra.entity.contract.ContractStatus;
 import com.primecrm.shared.dto.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,7 +16,9 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ContractController {
 
     private final ContractService contractService;
+    private final DocumentPdfService documentPdfService;
 
     @GetMapping
     @PreAuthorize("hasAuthority('CONTRATOS_VIEW')")
@@ -98,5 +102,16 @@ public class ContractController {
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         contractService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/pdf")
+    @PreAuthorize("hasAuthority('CONTRATOS_VIEW')")
+    @Operation(summary = "Gera o PDF do contrato, com dados do cliente, itens do pedido de origem e valor recorrente")
+    public ResponseEntity<byte[]> pdf(@PathVariable UUID id) {
+        DocumentPdfService.GeneratedPdf pdf = documentPdfService.contractPdf(id);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + pdf.fileName() + "\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf.content());
     }
 }

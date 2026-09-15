@@ -1125,7 +1125,8 @@
       "send": "Enviar",
       "accept": "Aceptar",
       "reject": "Rechazar",
-      "convertToOrder": "Convertir en Pedido"
+      "convertToOrder": "Convertir en Pedido",
+      "downloadPdf": "Descargar PDF"
     },
     "dialog": {
       "newTitle": "Nueva Propuesta",
@@ -1203,7 +1204,8 @@
       "confirm": "Confirmar",
       "deliver": "Marcar como entregado",
       "cancel": "Cancelar",
-      "convertToContract": "Convertir en Contrato"
+      "convertToContract": "Convertir en Contrato",
+      "downloadPdf": "Descargar PDF"
     },
     "dialog": {
       "newTitle": "Nuevo Pedido",
@@ -1287,7 +1289,8 @@
       "activate": "Activar",
       "suspend": "Suspender",
       "reactivate": "Reactivar",
-      "terminate": "Finalizar"
+      "terminate": "Finalizar",
+      "downloadPdf": "Descargar PDF"
     },
     "dialog": {
       "newTitle": "Nuevo Contrato",

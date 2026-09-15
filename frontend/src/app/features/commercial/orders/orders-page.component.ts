@@ -24,6 +24,7 @@ import { OrderService } from '../../../core/services/order.service';
 import { SessionStore } from '../../../core/store/session.store';
 import { GenericTableComponent, TableQuery } from '../../../shared/components/generic-table/generic-table.component';
 import { openCreateDialogFromRoute } from '../../../shared/utils/creation-route.util';
+import { downloadBlob } from '../../../shared/utils/file-download.util';
 import { formatCurrencyBRL, formatIsoDate } from '../../../shared/utils/format.util';
 import { OrderItemsDialogComponent } from './order-items-dialog.component';
 
@@ -307,6 +308,10 @@ export class OrdersPageComponent {
         summary: this.translate.instant('ordersPage.messages.convertedToContract', { code: contract.code })
       });
     });
+  }
+
+  protected downloadPdf(order: Order): void {
+    this.orderService.pdf(order.id).subscribe((blob) => downloadBlob(blob, `${order.code}.pdf`));
   }
 
   protected openItemsDialog(order: Order): void {

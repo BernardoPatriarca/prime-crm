@@ -24,6 +24,7 @@ import { ProposalService } from '../../../core/services/proposal.service';
 import { SessionStore } from '../../../core/store/session.store';
 import { GenericTableComponent, TableQuery } from '../../../shared/components/generic-table/generic-table.component';
 import { openCreateDialogFromRoute } from '../../../shared/utils/creation-route.util';
+import { downloadBlob } from '../../../shared/utils/file-download.util';
 import { formatCurrencyBRL, formatIsoDate } from '../../../shared/utils/format.util';
 import { ProposalItemsDialogComponent } from './proposal-items-dialog.component';
 
@@ -322,6 +323,10 @@ export class ProposalsPageComponent {
         summary: this.translate.instant('proposalsPage.messages.convertedToOrder', { code: order.code })
       });
     });
+  }
+
+  protected downloadPdf(proposal: Proposal): void {
+    this.proposalService.pdf(proposal.id).subscribe((blob) => downloadBlob(blob, `${proposal.code}.pdf`));
   }
 
   protected openItemsDialog(proposal: Proposal): void {

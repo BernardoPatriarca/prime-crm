@@ -27,6 +27,7 @@ import { OpportunityService } from '../../../core/services/opportunity.service';
 import { SessionStore } from '../../../core/store/session.store';
 import { GenericTableComponent, TableQuery } from '../../../shared/components/generic-table/generic-table.component';
 import { openCreateDialogFromRoute } from '../../../shared/utils/creation-route.util';
+import { downloadBlob } from '../../../shared/utils/file-download.util';
 import { formatCurrencyBRL, formatIsoDate } from '../../../shared/utils/format.util';
 
 const CUSTOMER_SEARCH_DEBOUNCE_MS = 300;
@@ -327,6 +328,10 @@ export class ContractsPageComponent {
       });
       this.load();
     });
+  }
+
+  protected downloadPdf(contract: Contract): void {
+    this.contractService.pdf(contract.id).subscribe((blob) => downloadBlob(blob, `${contract.code}.pdf`));
   }
 
   protected confirmDelete(contract: Contract): void {

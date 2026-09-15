@@ -147,6 +147,17 @@
                 [attr.data-testid]="'contract-terminate-' + item.id"
               />
             }
+            <p-button
+              icon="pi pi-file-pdf"
+              [text]="true"
+              [rounded]="true"
+              severity="secondary"
+              [pTooltip]="'contractsPage.actions.downloadPdf' | translate"
+              tooltipPosition="top"
+              [ariaLabel]="'contractsPage.actions.downloadPdf' | translate"
+              (onClick)="downloadPdf(item)"
+              [attr.data-testid]="'contract-pdf-' + item.id"
+            />
             @if (canEdit()) {
               <p-button
                 icon="pi pi-pencil"

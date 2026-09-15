@@ -137,6 +137,17 @@
                 [attr.data-testid]="'proposal-reject-' + item.id"
               />
             }
+            <p-button
+              icon="pi pi-file-pdf"
+              [text]="true"
+              [rounded]="true"
+              severity="secondary"
+              [pTooltip]="'proposalsPage.actions.downloadPdf' | translate"
+              tooltipPosition="top"
+              [ariaLabel]="'proposalsPage.actions.downloadPdf' | translate"
+              (onClick)="downloadPdf(item)"
+              [attr.data-testid]="'proposal-pdf-' + item.id"
+            />
             @if (canCreateOrder() && item.status === 'ACCEPTED') {
               <p-button
                 icon="pi pi-truck"

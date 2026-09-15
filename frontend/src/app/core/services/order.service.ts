@@ -50,6 +50,10 @@ export class OrderService {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
+  pdf(id: string): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/${id}/pdf`, { responseType: 'blob' });
+  }
+
   listItems(orderId: string): Observable<OrderItem[]> {
     return this.http.get<OrderItem[]>(`${this.baseUrl}/${orderId}/items`);
   }

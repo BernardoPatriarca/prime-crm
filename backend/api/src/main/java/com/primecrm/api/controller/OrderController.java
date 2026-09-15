@@ -5,6 +5,7 @@ import com.primecrm.core.dto.order.OrderListFilter;
 import com.primecrm.core.dto.order.OrderRequest;
 import com.primecrm.core.dto.order.OrderResponse;
 import com.primecrm.core.dto.order.OrderStatusUpdateRequest;
+import com.primecrm.core.service.DocumentPdfService;
 import com.primecrm.core.service.OrderService;
 import com.primecrm.infra.entity.order.OrderStatus;
 import com.primecrm.shared.dto.PageResponse;
@@ -15,7 +16,9 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
     private final OrderService orderService;
+    private final DocumentPdfService documentPdfService;
 
     @GetMapping
     @PreAuthorize("hasAuthority('PEDIDOS_VIEW')")
@@ -96,5 +100,16 @@ public class OrderController {
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         orderService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/pdf")
+    @PreAuthorize("hasAuthority('PEDIDOS_VIEW')")
+    @Operation(summary = "Gera o PDF do pedido, com dados do cliente, itens e valor total")
+    public ResponseEntity<byte[]> pdf(@PathVariable UUID id) {
+        DocumentPdfService.GeneratedPdf pdf = documentPdfService.orderPdf(id);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + pdf.fileName() + "\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf.content());
     }
 }
