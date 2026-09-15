@@ -37,8 +37,6 @@ describe('LoadingStore', () => {
     'regressao: start()/stop() nao podem virar dependencia reativa de um effect ambiente ' +
       '(travava a tela de Cadastros Gerais)',
     () => {
-      // Ler o signal pela getter reativa dentro de start()/stop() os tornava dependencia de
-      // qualquer effect que dispare HTTP, gerando loop infinito. patchState com updater evita isso.
       let runs = 0;
       const unrelatedTrigger = signal(0);
 

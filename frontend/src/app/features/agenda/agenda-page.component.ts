@@ -264,7 +264,7 @@ export class AgendaPageComponent {
     this.load();
   }
 
-  protected statusSeverity(status: CalendarEventStatus): string {
+  protected statusSeverity(status: CalendarEventStatus): 'info' | 'success' | 'secondary' {
     return STATUS_SEVERITY[status];
   }
 

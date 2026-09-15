@@ -186,7 +186,7 @@ export class TasksPageComponent {
     this.load();
   }
 
-  protected statusSeverity(status: TaskStatus): string {
+  protected statusSeverity(status: TaskStatus): 'info' | 'warn' | 'success' | 'secondary' {
     return STATUS_SEVERITY[status];
   }
 

@@ -246,8 +246,10 @@ export class CustomersPageComponent {
     ]);
   }
 
-  protected onTabChange(value: string | number): void {
-    this.activeTab.set(value as CustomerTab);
+  protected onTabChange(value: string | number | undefined): void {
+    if (value !== undefined) {
+      this.activeTab.set(value as CustomerTab);
+    }
   }
 
   protected onQueryChange(query: TableQuery): void {

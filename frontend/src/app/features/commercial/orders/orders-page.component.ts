@@ -184,7 +184,7 @@ export class OrdersPageComponent {
     this.load();
   }
 
-  protected statusSeverity(status: OrderStatus): string {
+  protected statusSeverity(status: OrderStatus): 'secondary' | 'info' | 'success' | 'danger' {
     return STATUS_SEVERITY[status];
   }
 

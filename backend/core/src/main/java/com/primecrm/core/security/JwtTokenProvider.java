@@ -9,11 +9,13 @@ import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,14 +27,27 @@ public class JwtTokenProvider {
     private static final String CLAIM_NAME = "name";
     private static final String CLAIM_ROLES = "roles";
     private static final String CLAIM_PERMISSIONS = "permissions";
+    private static final String INSECURE_DEFAULT_SECRET =
+            "prime-crm-dev-secret-key-change-me-please-0123456789abcdef";
+    private static final String PRODUCTION_PROFILE = "prod";
 
     private final JwtProperties jwtProperties;
+    private final Environment environment;
 
     private SecretKey key;
 
     @PostConstruct
     void init() {
+        if (isProductionProfileActive() && INSECURE_DEFAULT_SECRET.equals(jwtProperties.getSecret())) {
+            throw new IllegalStateException(
+                    "JWT_SECRET nao pode usar o valor padrao de desenvolvimento quando o perfil 'prod' esta ativo. "
+                            + "Defina a variavel de ambiente JWT_SECRET com um valor unico e secreto.");
+        }
         this.key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
+    }
+
+    private boolean isProductionProfileActive() {
+        return Arrays.asList(environment.getActiveProfiles()).contains(PRODUCTION_PROFILE);
     }
 
     public String generateAccessToken(UUID userId, String email, String login, String name,

@@ -214,7 +214,7 @@ export class ReceivablesPageComponent {
     this.load();
   }
 
-  protected statusSeverity(status: ReceivableStatus): string {
+  protected statusSeverity(status: ReceivableStatus): 'info' | 'success' | 'secondary' {
     return STATUS_SEVERITY[status];
   }
 

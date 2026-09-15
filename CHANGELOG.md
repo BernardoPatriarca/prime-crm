@@ -2,6 +2,77 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fix] — Varredura de seguranca, correcoes e limpeza pos-Fase 6
+
+Varredura completa do projeto (backend e frontend) em busca de falhas de seguranca, bugs, problemas
+futuros e violacoes das convencoes do projeto (comentarios em codigo), apos a conclusao da Fase 6.
+
+### Seguranca
+
+- **Critico**: `JwtTokenProvider` agora falha na inicializacao (`IllegalStateException`) se o perfil
+  Spring `prod` estiver ativo e `JWT_SECRET` ainda for o valor padrao de desenvolvimento (o mesmo
+  hardcoded em `application.yml`, `.env.example` e `docker-compose.yml`). Sem essa checagem, um deploy
+  em producao que esquecesse de definir `JWT_SECRET` assinaria tokens com um segredo publico neste
+  repositorio, permitindo forjar tokens de qualquer usuario. Perfis `dev`/`test` continuam funcionando
+  sem exigir um secret customizado.
+- Tamanho maximo de pagina (`spring.data.web.pageable.max-page-size: 200`) para todas as listagens
+  paginadas da API, evitando que um cliente solicite `?size=999999999` e force uma consulta sem limite
+  pratico ao banco. 200 foi escolhido por ser exatamente o maior tamanho de pagina ja usado pelo
+  frontend (listas de dominio/usuarios para popular `<p-select>`), entao nenhuma tela existente e
+  afetada.
+- `npm audit`: dependencias do frontend atualizadas (Angular 20.3.27 → 20.3.31 e patches transitivos de
+  build) para eliminar as 13 vulnerabilidades reportadas (2 altas, 11 moderadas — incluindo um bypass de
+  sanitizacao no `@angular/compiler` e falhas de SSRF/DoS em dependencias transitivas de build). `npm
+  audit` e `npm audit --production` agora reportam zero vulnerabilidades.
+
+### Correcoes
+
+- `GlobalExceptionHandler`: excecoes inesperadas (handler generico `Exception.class`, HTTP 500) agora
+  sao registradas via `Logger.error(...)` antes de responder ao cliente. Antes, um erro 500 nao
+  mapeado era engolido silenciosamente, sem nenhum rastro no log do servidor, dificultando diagnostico
+  em producao.
+- Efeito colateral da atualizacao do Angular: a checagem de tipos de template ficou mais estrita e
+  passou a rejeitar as funcoes `statusSeverity`/`actionSeverity` de 8 telas (Contratos, Pedidos,
+  Propostas, Contas a Pagar, Contas a Receber, Auditoria, Tarefas, Agenda) que declaravam retorno
+  `string` generico em vez da uniao literal exata que o `p-tag` do PrimeNG espera. Corrigido o tipo de
+  retorno de cada funcao para bater com o `Record<Status, ...>` que ja alimentava a logica — sem
+  mudanca de comportamento, apenas tipagem mais precisa. Corrigido tambem `CustomersPageComponent`,
+  cujo `onTabChange` nao aceitava mais o `undefined` que o evento `valueChange` do `p-tabs` passou a
+  emitir na nova versao.
+
+### Limpeza (zero comentarios em codigo)
+
+Removido um comentario de duas linhas em `loading.store.spec.ts` (unico comentario explicativo
+remanescente no projeto, alem de falsos positivos como URLs e mascaras de CPF/CNPJ) que violava a
+convencao do projeto de nao ter comentarios em codigo — a decisao que ele documentava (nao ler o
+signal reativamente dentro de `start()`/`stop()` para evitar um loop de efeito) ja fica evidente pelo
+nome do proprio teste de regressao.
+
+### O que foi avaliado e mantido como esta (fora do escopo deste Fix)
+
+- **Ausencia de bloqueio por tentativas de login (brute-force lockout)**: o login ja audita tentativas
+  falhas (`AuditAction.LOGIN_FAILED`) mas nao bloqueia temporariamente a conta apos N tentativas. Um
+  bloqueio de conta e uma feature nova (migration, campos na entidade `User`, logica de janela de
+  tempo), nao uma correcao pontual — decidido deixar de fora, dado que o usuario optou por nao entrar
+  na Fase 7 (Qualidade e hardening) neste momento.
+- **Token JWT do WebSocket na query string** (`?access_token=...`): tradeoff ja documentado desde a
+  Fase 3 (a API `WebSocket` do navegador nao permite enviar headers customizados no handshake). O
+  `JwtHandshakeInterceptor` valida a assinatura do token e rejeita handshakes invalidos com 401 — nao e
+  uma falha de autenticacao, apenas um vetor de exposicao (logs de acesso) inerente a essa abordagem.
+- **`apiBaseUrl` fixo em `http://localhost:8080/api/v1`** no build de producao do frontend: bate com a
+  topologia de deploy documentada (`docker-compose.yml` publica back e front na mesma maquina/host),
+  entao nao e um bug neste escopo — so se tornaria um problema se o projeto passasse a ser implantado
+  atras de dominios/servidores separados, o que nao esta em escopo agora.
+
+### Qualidade
+
+- Backend: novo `JwtTokenProviderTest` (falha com secret padrao em `prod`, sucesso com secret proprio
+  em `prod`, sucesso com secret padrao em `dev`, emissao/leitura de token). Suite completa (`shared` +
+  `infra` + `core` + `api`) segue verde: 220 testes em `core` e 37 em `api` (29 pulados por exigirem
+  Postgres local, comportamento ja existente).
+- Frontend: `npm run build` e suite completa (305 testes) verdes apos a atualizacao de dependencias e
+  as correcoes de tipagem.
+
 ## [Fase 6] — Dashboards Comercial e Produtividade
 
 Terceira e ultima entrega da Fase 6 (Dashboards por modulo e metas comerciais): dashboards de

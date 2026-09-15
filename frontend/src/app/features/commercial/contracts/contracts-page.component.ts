@@ -200,7 +200,7 @@ export class ContractsPageComponent {
     this.load();
   }
 
-  protected statusSeverity(status: ContractStatus): string {
+  protected statusSeverity(status: ContractStatus): 'secondary' | 'info' | 'success' | 'warn' | 'danger' {
     return STATUS_SEVERITY[status];
   }
 

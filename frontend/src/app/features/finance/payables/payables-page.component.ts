@@ -195,7 +195,7 @@ export class PayablesPageComponent {
     this.load();
   }
 
-  protected statusSeverity(status: PayableStatus): string {
+  protected statusSeverity(status: PayableStatus): 'info' | 'success' | 'secondary' {
     return STATUS_SEVERITY[status];
   }
 

@@ -146,7 +146,7 @@ export class AuditPageComponent {
     this.onFilterChange();
   }
 
-  protected actionSeverity(action: AuditAction): string {
+  protected actionSeverity(action: AuditAction): 'success' | 'info' | 'danger' | 'warn' | 'secondary' {
     return ACTION_SEVERITY[action];
   }
 

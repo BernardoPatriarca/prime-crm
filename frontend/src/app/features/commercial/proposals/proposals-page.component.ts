@@ -194,7 +194,7 @@ export class ProposalsPageComponent {
     this.load();
   }
 
-  protected statusSeverity(status: ProposalStatus): string {
+  protected statusSeverity(status: ProposalStatus): 'secondary' | 'info' | 'success' | 'danger' {
     return STATUS_SEVERITY[status];
   }
 
