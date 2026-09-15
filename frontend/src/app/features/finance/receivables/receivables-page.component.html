@@ -1,0 +1,400 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'receivablesPage.title' | translate }}</h1>
+      <p>{{ 'receivablesPage.description' | translate }}</p>
+    </div>
+    <div class="header-actions">
+      @if (canCreate()) {
+        <p-button
+          icon="pi pi-list"
+          severity="secondary"
+          [outlined]="true"
+          [label]="'receivablesPage.generateButton' | translate"
+          (onClick)="openGenerateDialog()"
+          data-testid="receivables-generate-button"
+        />
+        <p-button
+          icon="pi pi-plus"
+          [label]="'receivablesPage.newButton' | translate"
+          (onClick)="openCreateDialog()"
+          data-testid="receivables-new-button"
+        />
+      }
+    </div>
+  </div>
+
+  <app-generic-table
+    [items]="receivables()"
+    [totalRecords]="total()"
+    [loading]="loading()"
+    [columnsCount]="8"
+    emptyIcon="pi-wallet"
+    emptyMessageKey="receivablesPage.emptyState"
+    searchPlaceholderKey="receivablesPage.searchPlaceholder"
+    (queryChange)="onQueryChange($event)"
+  >
+    <div tableActions class="filter-bar">
+      <p-select
+        appendTo="body"
+        [ngModel]="statusFilter()"
+        (ngModelChange)="statusFilter.set($event); onFilterChange()"
+        [options]="statusOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"
+        [placeholder]="'receivablesPage.filters.status' | translate"
+        data-testid="receivables-status-filter"
+      />
+      <p-select
+        appendTo="body"
+        [ngModel]="overdueFilter()"
+        (ngModelChange)="overdueFilter.set($event); onFilterChange()"
+        [options]="overdueOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"
+        [placeholder]="'receivablesPage.filters.due' | translate"
+        data-testid="receivables-overdue-filter"
+      />
+    </div>
+
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="code">
+          {{ 'receivablesPage.columns.code' | translate }}
+          <p-sortIcon field="code" />
+        </th>
+        <th>{{ 'receivablesPage.columns.customer' | translate }}</th>
+        <th>{{ 'receivablesPage.columns.installment' | translate }}</th>
+        <th pSortableColumn="dueDate">
+          {{ 'receivablesPage.columns.dueDate' | translate }}
+          <p-sortIcon field="dueDate" />
+        </th>
+        <th pSortableColumn="amount">
+          {{ 'receivablesPage.columns.amount' | translate }}
+          <p-sortIcon field="amount" />
+        </th>
+        <th>{{ 'receivablesPage.columns.remaining' | translate }}</th>
+        <th>{{ 'receivablesPage.columns.status' | translate }}</th>
+        <th class="col-actions">{{ 'receivablesPage.columns.actions' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-item>
+      <tr>
+        <td class="cell-muted cell-numeric">{{ item.code }}</td>
+        <td class="cell-strong">{{ item.customer?.name ?? '-' }}</td>
+        <td class="cell-muted">{{ item.installmentNumber }}/{{ item.totalInstallments }}</td>
+        <td class="cell-muted">
+          <span [class.receivable-due--late]="item.overdue">{{ formatDate(item.dueDate) }}</span>
+        </td>
+        <td class="cell-strong">{{ formatAmount(item.amount) }}</td>
+        <td class="cell-muted">{{ formatAmount(item.remainingAmount) }}</td>
+        <td>
+          <div class="chip-list">
+            <p-tag [severity]="statusSeverity(item.status)" [value]="'receivablesPage.status.' + item.status | translate" />
+            @if (item.overdue) {
+              <p-tag severity="danger" icon="pi pi-clock" [value]="'receivablesPage.badges.overdue' | translate" />
+            }
+          </div>
+        </td>
+        <td>
+          <div class="row-actions">
+            @if (canEdit() && item.status === 'PENDING') {
+              <p-button
+                icon="pi pi-dollar"
+                [text]="true"
+                [rounded]="true"
+                severity="success"
+                [pTooltip]="'receivablesPage.actions.pay' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'receivablesPage.actions.pay' | translate"
+                (onClick)="openPayDialog(item)"
+                [attr.data-testid]="'receivable-pay-' + item.id"
+              />
+            }
+            @if (canEdit()) {
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'common.actions.edit' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.edit' | translate"
+                (onClick)="openEditDialog(item)"
+                [attr.data-testid]="'receivable-edit-' + item.id"
+              />
+            }
+            @if (canDelete()) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                [pTooltip]="'common.actions.delete' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.delete' | translate"
+                (onClick)="confirmDelete(item)"
+                [attr.data-testid]="'receivable-delete-' + item.id"
+              />
+            }
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </app-generic-table>
+</div>
+
+<p-dialog
+  appendTo="body"
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '42rem' }"
+  [breakpoints]="{ '1024px': '92vw', '767px': '96vw' }"
+  [header]="(editingReceivable() ? 'receivablesPage.dialog.editTitle' : 'receivablesPage.dialog.newTitle') | translate"
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+    <div class="form-grid">
+      <div class="field field-span-2">
+        <label for="receivable-customer">{{ 'receivablesPage.dialog.customerLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="receivable-customer"
+          formControlName="customerId"
+          [options]="customerOptions()"
+          optionLabel="name"
+          optionValue="id"
+          [filter]="true"
+          filterBy="name"
+          (onFilter)="onCustomerFilter($event.filter)"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+          data-testid="receivable-customer-select"
+        />
+        @if (form.controls.customerId.invalid && form.controls.customerId.touched) {
+          <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+        }
+      </div>
+
+      <div class="field field-span-2">
+        <label for="receivable-order">{{ 'receivablesPage.dialog.orderLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="receivable-order"
+          formControlName="orderId"
+          [options]="orderOptions()"
+          optionLabel="code"
+          optionValue="id"
+          [showClear]="true"
+          [filter]="true"
+          filterBy="code"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="receivable-installment">{{ 'receivablesPage.dialog.installmentLabel' | translate }}</label>
+        <p-inputnumber inputId="receivable-installment" formControlName="installmentNumber" [min]="1" fluid />
+      </div>
+
+      <div class="field">
+        <label for="receivable-total-installments">{{ 'receivablesPage.dialog.totalInstallmentsLabel' | translate }}</label>
+        <p-inputnumber inputId="receivable-total-installments" formControlName="totalInstallments" [min]="1" fluid />
+      </div>
+
+      <div class="field">
+        <label for="receivable-due-date">{{ 'receivablesPage.dialog.dueDateLabel' | translate }}</label>
+        <p-datepicker
+          appendTo="body"
+          inputId="receivable-due-date"
+          formControlName="dueDate"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="receivable-amount">{{ 'receivablesPage.dialog.amountLabel' | translate }}</label>
+        <p-inputnumber
+          inputId="receivable-amount"
+          formControlName="amount"
+          mode="currency"
+          currency="BRL"
+          locale="pt-BR"
+          fluid
+          data-testid="receivable-amount-input"
+        />
+      </div>
+
+      <div class="field field-span-2">
+        <label for="receivable-payment-method">{{ 'receivablesPage.dialog.paymentMethodLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="receivable-payment-method"
+          formControlName="paymentMethodId"
+          [options]="paymentMethods()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field field-span-2">
+        <label for="receivable-description">{{ 'receivablesPage.dialog.descriptionLabel' | translate }}</label>
+        <input id="receivable-description" pInputText type="text" formControlName="description" fluid />
+      </div>
+
+      <div class="field field-span-2">
+        <label for="receivable-notes">{{ 'receivablesPage.dialog.notesLabel' | translate }}</label>
+        <textarea id="receivable-notes" pTextarea formControlName="notes" rows="3" [autoResize]="true" fluid></textarea>
+      </div>
+    </div>
+
+    <div class="dialog-footer">
+      <p-button
+        [label]="'common.actions.cancel' | translate"
+        severity="secondary"
+        [text]="true"
+        type="button"
+        (onClick)="closeDialog()"
+      />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="saving()"
+        data-testid="receivable-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>
+
+<p-dialog
+  appendTo="body"
+  [visible]="payDialogVisible()"
+  (visibleChange)="payDialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '28rem' }"
+  [breakpoints]="{ '1024px': '90vw', '767px': '95vw' }"
+  [header]="'receivablesPage.payDialog.title' | translate"
+>
+  <form [formGroup]="payForm" (ngSubmit)="confirmPay()" class="dialog-form">
+    <p class="pay-dialog-hint">
+      {{ 'receivablesPage.payDialog.remainingHint' | translate }}:
+      <strong>{{ formatAmount(payingReceivable()?.remainingAmount ?? 0) }}</strong>
+    </p>
+
+    <div class="field">
+      <label for="pay-amount">{{ 'receivablesPage.payDialog.amountLabel' | translate }}</label>
+      <p-inputnumber
+        inputId="pay-amount"
+        formControlName="amount"
+        mode="currency"
+        currency="BRL"
+        locale="pt-BR"
+        [placeholder]="'receivablesPage.payDialog.amountPlaceholder' | translate"
+        fluid
+        data-testid="pay-amount-input"
+      />
+    </div>
+
+    <div class="field">
+      <label for="pay-method">{{ 'receivablesPage.payDialog.paymentMethodLabel' | translate }}</label>
+      <p-select
+        appendTo="body"
+        inputId="pay-method"
+        formControlName="paymentMethodId"
+        [options]="paymentMethods()"
+        optionLabel="name"
+        optionValue="id"
+        [showClear]="true"
+        [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+        fluid
+      />
+    </div>
+
+    <div class="dialog-footer">
+      <p-button [label]="'common.actions.cancel' | translate" severity="secondary" [text]="true" type="button" (onClick)="closePayDialog()" />
+      <p-button
+        icon="pi pi-check"
+        [label]="'receivablesPage.payDialog.confirmButton' | translate"
+        type="submit"
+        [loading]="paying()"
+        data-testid="pay-confirm-button"
+      />
+    </div>
+  </form>
+</p-dialog>
+
+<p-dialog
+  appendTo="body"
+  [visible]="generateDialogVisible()"
+  (visibleChange)="generateDialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '28rem' }"
+  [breakpoints]="{ '1024px': '90vw', '767px': '95vw' }"
+  [header]="'receivablesPage.generateDialog.title' | translate"
+>
+  <form [formGroup]="generateForm" (ngSubmit)="confirmGenerate()" class="dialog-form">
+    <div class="field">
+      <label for="generate-order">{{ 'receivablesPage.generateDialog.orderLabel' | translate }}</label>
+      <p-select
+        appendTo="body"
+        inputId="generate-order"
+        formControlName="orderId"
+        [options]="orderOptions()"
+        optionLabel="code"
+        optionValue="id"
+        [filter]="true"
+        filterBy="code"
+        [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+        fluid
+        data-testid="generate-order-select"
+      />
+      @if (generateForm.controls.orderId.invalid && generateForm.controls.orderId.touched) {
+        <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="generate-installments">{{ 'receivablesPage.generateDialog.installmentsLabel' | translate }}</label>
+      <p-inputnumber inputId="generate-installments" formControlName="installments" [min]="1" [max]="60" fluid />
+    </div>
+
+    <div class="field">
+      <label for="generate-first-due-date">{{ 'receivablesPage.generateDialog.firstDueDateLabel' | translate }}</label>
+      <p-datepicker
+        appendTo="body"
+        inputId="generate-first-due-date"
+        formControlName="firstDueDate"
+        dateFormat="dd/mm/yy"
+        [showIcon]="true"
+        fluid
+      />
+    </div>
+
+    <div class="dialog-footer">
+      <p-button [label]="'common.actions.cancel' | translate" severity="secondary" [text]="true" type="button" (onClick)="closeGenerateDialog()" />
+      <p-button
+        icon="pi pi-check"
+        [label]="'receivablesPage.generateDialog.confirmButton' | translate"
+        type="submit"
+        [loading]="generating()"
+        data-testid="generate-confirm-button"
+      />
+    </div>
+  </form>
+</p-dialog>

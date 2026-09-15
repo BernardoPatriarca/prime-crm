@@ -2,6 +2,49 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fase 5] — Contas a Receber
+
+Primeira entrega da Fase 5 (Financeiro e documentos): parcelas de pagamento (contas a receber)
+originadas de Pedidos ou Contratos, com baixa de recebimento total ou parcial.
+
+### Banco de dados
+
+Migrations `V37` a `V39`: novo `domain_type` `PAYMENT_METHOD` (boleto/pix/cartão/transferência/dinheiro,
+mesmo raciocínio de reaproveitar o engine genérico já usado em `UNIT_OF_MEASURE` e `BILLING_CYCLE`),
+tabela `receivables` e as 4 permissões novas (`FINANCEIRO_*`) concedidas ao perfil Administrador. Código
+legível `REC-######`.
+
+**Decisões de modelagem**: cada linha de `receivables` já é uma parcela individual (uma conta = um
+vencimento = um valor), não um título "pai" com parcelas filhas — mais simples de consultar, ordenar e
+dar baixa sem precisar navegar uma relação pai/filho. `paid_amount` é acumulado separado de `amount`,
+permitindo pagamento parcial: a conta só fecha (`status = PAID`) quando `paid_amount >= amount`. Em
+atraso é computado (`status = PENDING` e `due_date` no passado), no mesmo padrão de `overdue`/`expired`
+já usado em Tarefas, Agenda, Propostas e Contratos — sem depender de um job para marcar atraso sozinho.
+
+### Backend
+
+- CRUD completo (`/api/v1/receivables`) com busca textual, filtros (status, cliente, pedido, contrato,
+  período de vencimento, atraso), paginação, RBAC e auditoria.
+- `PATCH /{id}/pay`: registra um pagamento. Sem valor informado, baixa o saldo restante integralmente;
+  com valor menor que o saldo, registra pagamento parcial e a conta permanece pendente.
+- `POST /receivables/from-order/{orderId}`: divide o valor total do pedido em N parcelas mensais iguais
+  (a última parcela absorve o resto da divisão, para a soma das parcelas nunca ficar diferente do valor
+  total por causa de arredondamento).
+
+### Frontend
+
+O item "Financeiro" da sidebar, que desde a Fase 1 existia desabilitado como "em breve", foi finalmente
+ativado. Tela `/financeiro/contas-a-receber` com listagem, diálogo de CRUD, diálogo dedicado de baixa de
+pagamento (mostrando o saldo restante) e diálogo de geração de parcelas a partir de um pedido.
+
+### Qualidade
+
+- Backend: `ReceivableServiceTest` cobrindo status inicial, geração de parcelas (soma bate com o total,
+  datas mensais, arredondamento), pagamento total e parcial, exclusão. Suíte completa do `core` seguiu
+  verde (186 testes).
+- Frontend: `receivables-page.component.spec.ts` cobrindo validação, diálogo de baixa e geração de
+  parcelas. Suíte completa (270 testes) e `npm run build` verdes.
+
 ## [Fase 4] — Contratos
 
 Fecha a Fase 4 (Comercial avançado): Contratos, a vigência formal de uma venda recorrente ou continuada,

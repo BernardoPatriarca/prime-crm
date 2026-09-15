@@ -195,6 +195,12 @@ export class TopbarComponent {
         icon: 'pi pi-verified',
         disabled: !hasPermission('CONTRATOS_CREATE'),
         command: () => this.openCreation('/contratos')
+      },
+      {
+        label: t('topbar.newButton.receivable'),
+        icon: 'pi pi-wallet',
+        disabled: !hasPermission('FINANCEIRO_CREATE'),
+        command: () => this.openCreation('/financeiro/contas-a-receber')
       }
     ];
   });

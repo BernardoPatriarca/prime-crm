@@ -147,12 +147,13 @@ export class SidebarComponent {
       });
     }
 
-    commercialChildren.push({
-      label: t('sidebar.modules.finance'),
-      icon: 'pi pi-wallet',
-      disabled: true,
-      badge: t('sidebar.comingSoon')
-    });
+    if (hasPermission('FINANCEIRO_VIEW')) {
+      commercialChildren.push({
+        label: t('sidebar.modules.finance'),
+        icon: 'pi pi-wallet',
+        routerLink: '/financeiro/contas-a-receber'
+      });
+    }
 
     items.push({
       label: t('sidebar.modules.root'),

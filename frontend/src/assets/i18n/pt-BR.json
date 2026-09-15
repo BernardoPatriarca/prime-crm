@@ -152,7 +152,8 @@
       "product": "Produto",
       "proposal": "Proposta",
       "order": "Pedido",
-      "contract": "Contrato"
+      "contract": "Contrato",
+      "receivable": "Conta a Receber"
     },
     "userMenu": {
       "changePassword": "Alterar Senha",
@@ -1303,6 +1304,76 @@
       "updated": "Contrato atualizado com sucesso",
       "deleted": "Contrato excluido com sucesso",
       "statusChanged": "Status do contrato atualizado"
+    }
+  },
+  "receivablesPage": {
+    "title": "Contas a Receber",
+    "description": "Parcelas de pagamento originadas de pedidos ou contratos, com baixa de recebimento.",
+    "newButton": "Nova Conta",
+    "generateButton": "Gerar a partir de Pedido",
+    "searchPlaceholder": "Buscar por codigo, descricao ou observacoes...",
+    "emptyState": "Nenhuma conta a receber encontrada.",
+    "status": {
+      "PENDING": "Pendente",
+      "PAID": "Paga",
+      "CANCELED": "Cancelada"
+    },
+    "filters": {
+      "status": "Status",
+      "due": "Vencimento",
+      "overdue": "Em atraso",
+      "onTime": "No prazo"
+    },
+    "badges": {
+      "overdue": "Atrasada"
+    },
+    "columns": {
+      "code": "Codigo",
+      "customer": "Cliente",
+      "installment": "Parcela",
+      "dueDate": "Vencimento",
+      "amount": "Valor",
+      "remaining": "Saldo",
+      "status": "Status",
+      "actions": "Acoes"
+    },
+    "actions": {
+      "pay": "Registrar pagamento"
+    },
+    "dialog": {
+      "newTitle": "Nova Conta a Receber",
+      "editTitle": "Editar Conta a Receber",
+      "customerLabel": "Cliente",
+      "orderLabel": "Pedido",
+      "installmentLabel": "Parcela numero",
+      "totalInstallmentsLabel": "Total de parcelas",
+      "dueDateLabel": "Vencimento",
+      "amountLabel": "Valor",
+      "paymentMethodLabel": "Forma de pagamento",
+      "descriptionLabel": "Descricao",
+      "notesLabel": "Observacoes"
+    },
+    "payDialog": {
+      "title": "Registrar Pagamento",
+      "remainingHint": "Saldo restante",
+      "amountLabel": "Valor pago",
+      "amountPlaceholder": "Deixe em branco para baixar o saldo total",
+      "paymentMethodLabel": "Forma de pagamento",
+      "confirmButton": "Confirmar pagamento"
+    },
+    "generateDialog": {
+      "title": "Gerar Parcelas a partir de Pedido",
+      "orderLabel": "Pedido",
+      "installmentsLabel": "Numero de parcelas",
+      "firstDueDateLabel": "Vencimento da 1a parcela",
+      "confirmButton": "Gerar parcelas"
+    },
+    "messages": {
+      "created": "Conta a receber criada com sucesso",
+      "updated": "Conta a receber atualizada com sucesso",
+      "deleted": "Conta a receber excluida com sucesso",
+      "paid": "Pagamento registrado com sucesso",
+      "generated": "Parcelas geradas com sucesso"
     }
   },
   "reportsPage": {

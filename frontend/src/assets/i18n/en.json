@@ -152,7 +152,8 @@
       "product": "Product",
       "proposal": "Proposal",
       "order": "Order",
-      "contract": "Contract"
+      "contract": "Contract",
+      "receivable": "Receivable"
     },
     "userMenu": {
       "changePassword": "Change Password",
@@ -1303,6 +1304,76 @@
       "updated": "Contract updated successfully",
       "deleted": "Contract deleted successfully",
       "statusChanged": "Contract status updated"
+    }
+  },
+  "receivablesPage": {
+    "title": "Accounts Receivable",
+    "description": "Payment installments from orders or contracts, with receipt settlement.",
+    "newButton": "New Receivable",
+    "generateButton": "Generate from Order",
+    "searchPlaceholder": "Search by code, description or notes...",
+    "emptyState": "No receivables found.",
+    "status": {
+      "PENDING": "Pending",
+      "PAID": "Paid",
+      "CANCELED": "Canceled"
+    },
+    "filters": {
+      "status": "Status",
+      "due": "Due",
+      "overdue": "Overdue",
+      "onTime": "On time"
+    },
+    "badges": {
+      "overdue": "Overdue"
+    },
+    "columns": {
+      "code": "Code",
+      "customer": "Customer",
+      "installment": "Installment",
+      "dueDate": "Due date",
+      "amount": "Amount",
+      "remaining": "Remaining",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "actions": {
+      "pay": "Register payment"
+    },
+    "dialog": {
+      "newTitle": "New Receivable",
+      "editTitle": "Edit Receivable",
+      "customerLabel": "Customer",
+      "orderLabel": "Order",
+      "installmentLabel": "Installment number",
+      "totalInstallmentsLabel": "Total installments",
+      "dueDateLabel": "Due date",
+      "amountLabel": "Amount",
+      "paymentMethodLabel": "Payment method",
+      "descriptionLabel": "Description",
+      "notesLabel": "Notes"
+    },
+    "payDialog": {
+      "title": "Register Payment",
+      "remainingHint": "Remaining balance",
+      "amountLabel": "Amount paid",
+      "amountPlaceholder": "Leave blank to settle the full balance",
+      "paymentMethodLabel": "Payment method",
+      "confirmButton": "Confirm payment"
+    },
+    "generateDialog": {
+      "title": "Generate Installments from Order",
+      "orderLabel": "Order",
+      "installmentsLabel": "Number of installments",
+      "firstDueDateLabel": "First installment due date",
+      "confirmButton": "Generate installments"
+    },
+    "messages": {
+      "created": "Receivable created successfully",
+      "updated": "Receivable updated successfully",
+      "deleted": "Receivable deleted successfully",
+      "paid": "Payment registered successfully",
+      "generated": "Installments generated successfully"
     }
   },
   "reportsPage": {

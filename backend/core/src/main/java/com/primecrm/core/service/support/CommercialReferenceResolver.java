@@ -7,13 +7,17 @@ import com.primecrm.infra.entity.commercial.Lead;
 import com.primecrm.infra.entity.commercial.Opportunity;
 import com.primecrm.infra.entity.config.Pipeline;
 import com.primecrm.infra.entity.config.PipelineStage;
+import com.primecrm.infra.entity.contract.Contract;
 import com.primecrm.infra.entity.domain.DomainValue;
+import com.primecrm.infra.entity.order.Order;
 import com.primecrm.infra.entity.product.Product;
 import com.primecrm.infra.repository.ContactRepository;
+import com.primecrm.infra.repository.ContractRepository;
 import com.primecrm.infra.repository.CustomerRepository;
 import com.primecrm.infra.repository.DomainValueRepository;
 import com.primecrm.infra.repository.LeadRepository;
 import com.primecrm.infra.repository.OpportunityRepository;
+import com.primecrm.infra.repository.OrderRepository;
 import com.primecrm.infra.repository.PipelineRepository;
 import com.primecrm.infra.repository.PipelineStageRepository;
 import com.primecrm.infra.repository.ProductRepository;
@@ -38,6 +42,8 @@ public class CommercialReferenceResolver {
     private final LeadRepository leadRepository;
     private final OpportunityRepository opportunityRepository;
     private final ProductRepository productRepository;
+    private final OrderRepository orderRepository;
+    private final ContractRepository contractRepository;
 
     public DomainValue domainValue(UUID id, String label) {
         if (id == null) {
@@ -136,5 +142,21 @@ public class CommercialReferenceResolver {
         }
         return productRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Produto", id));
+    }
+
+    public Order order(UUID id) {
+        if (id == null) {
+            return null;
+        }
+        return orderRepository.findByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido", id));
+    }
+
+    public Contract contract(UUID id) {
+        if (id == null) {
+            return null;
+        }
+        return contractRepository.findByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Contrato", id));
     }
 }

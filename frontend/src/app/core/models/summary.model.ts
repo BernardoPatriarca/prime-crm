@@ -51,6 +51,11 @@ export interface OrderSummary {
   code: string;
 }
 
+export interface ContractSummary {
+  id: string;
+  code: string;
+}
+
 export interface PipelineSummary {
   id: string;
   name: string;

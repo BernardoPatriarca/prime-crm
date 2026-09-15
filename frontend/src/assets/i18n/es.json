@@ -152,7 +152,8 @@
       "product": "Producto",
       "proposal": "Propuesta",
       "order": "Pedido",
-      "contract": "Contrato"
+      "contract": "Contrato",
+      "receivable": "Cuenta por Cobrar"
     },
     "userMenu": {
       "changePassword": "Cambiar Contraseña",
@@ -1303,6 +1304,76 @@
       "updated": "Contrato actualizado con exito",
       "deleted": "Contrato eliminado con exito",
       "statusChanged": "Estado del contrato actualizado"
+    }
+  },
+  "receivablesPage": {
+    "title": "Cuentas por Cobrar",
+    "description": "Cuotas de pago originadas de pedidos o contratos, con liquidacion de cobro.",
+    "newButton": "Nueva Cuenta",
+    "generateButton": "Generar a partir de Pedido",
+    "searchPlaceholder": "Buscar por codigo, descripcion o notas...",
+    "emptyState": "No se encontraron cuentas por cobrar.",
+    "status": {
+      "PENDING": "Pendiente",
+      "PAID": "Pagada",
+      "CANCELED": "Cancelada"
+    },
+    "filters": {
+      "status": "Estado",
+      "due": "Vencimiento",
+      "overdue": "Atrasada",
+      "onTime": "A tiempo"
+    },
+    "badges": {
+      "overdue": "Atrasada"
+    },
+    "columns": {
+      "code": "Codigo",
+      "customer": "Cliente",
+      "installment": "Cuota",
+      "dueDate": "Vencimiento",
+      "amount": "Valor",
+      "remaining": "Saldo",
+      "status": "Estado",
+      "actions": "Acciones"
+    },
+    "actions": {
+      "pay": "Registrar pago"
+    },
+    "dialog": {
+      "newTitle": "Nueva Cuenta por Cobrar",
+      "editTitle": "Editar Cuenta por Cobrar",
+      "customerLabel": "Cliente",
+      "orderLabel": "Pedido",
+      "installmentLabel": "Numero de cuota",
+      "totalInstallmentsLabel": "Total de cuotas",
+      "dueDateLabel": "Vencimiento",
+      "amountLabel": "Valor",
+      "paymentMethodLabel": "Forma de pago",
+      "descriptionLabel": "Descripcion",
+      "notesLabel": "Notas"
+    },
+    "payDialog": {
+      "title": "Registrar Pago",
+      "remainingHint": "Saldo restante",
+      "amountLabel": "Valor pagado",
+      "amountPlaceholder": "Dejar en blanco para liquidar el saldo total",
+      "paymentMethodLabel": "Forma de pago",
+      "confirmButton": "Confirmar pago"
+    },
+    "generateDialog": {
+      "title": "Generar Cuotas a partir de Pedido",
+      "orderLabel": "Pedido",
+      "installmentsLabel": "Numero de cuotas",
+      "firstDueDateLabel": "Vencimiento de la 1a cuota",
+      "confirmButton": "Generar cuotas"
+    },
+    "messages": {
+      "created": "Cuenta por cobrar creada con exito",
+      "updated": "Cuenta por cobrar actualizada con exito",
+      "deleted": "Cuenta por cobrar eliminada con exito",
+      "paid": "Pago registrado con exito",
+      "generated": "Cuotas generadas con exito"
     }
   },
   "reportsPage": {

@@ -1,6 +1,7 @@
 package com.primecrm.core.mapper;
 
 import com.primecrm.core.dto.common.ContactSummaryResponse;
+import com.primecrm.core.dto.common.ContractSummaryResponse;
 import com.primecrm.core.dto.common.CustomerSummaryResponse;
 import com.primecrm.core.dto.common.DomainValueSummaryResponse;
 import com.primecrm.core.dto.common.LeadSummaryResponse;
@@ -18,6 +19,7 @@ import com.primecrm.infra.entity.commercial.Lead;
 import com.primecrm.infra.entity.commercial.Opportunity;
 import com.primecrm.infra.entity.config.Pipeline;
 import com.primecrm.infra.entity.config.PipelineStage;
+import com.primecrm.infra.entity.contract.Contract;
 import com.primecrm.infra.entity.domain.DomainValue;
 import com.primecrm.infra.entity.order.Order;
 import com.primecrm.infra.entity.product.Product;
@@ -51,4 +53,6 @@ public interface CommercialSummaryMapper {
     ProposalSummaryResponse toProposalSummary(Proposal proposal);
 
     OrderSummaryResponse toOrderSummary(Order order);
+
+    ContractSummaryResponse toContractSummary(Contract contract);
 }
