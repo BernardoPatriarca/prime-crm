@@ -47,7 +47,7 @@ export class SidebarComponent {
     this.translate.currentLang();
     const railMode = this.layoutStore.sidebarIconMode();
     const t = (key: string) => this.translate.instant(key);
-    const hasPermission = (code: string) => this.sessionStore.hasPermission(code);
+    const hasPermission = (code: string | string[]) => this.sessionStore.hasPermission(code);
 
     const items: MenuItem[] = [
       {
@@ -89,7 +89,23 @@ export class SidebarComponent {
       });
     }
 
+    if (hasPermission(['TAREFAS_VIEW', 'AGENDA_VIEW'])) {
+      items.push({
+        label: t('sidebar.modules.productivityDashboard'),
+        icon: 'pi pi-chart-bar',
+        routerLink: '/produtividade/dashboard'
+      });
+    }
+
     const commercialChildren: MenuItem[] = [];
+
+    if (hasPermission(['PROPOSTAS_VIEW', 'PEDIDOS_VIEW', 'CONTRATOS_VIEW'])) {
+      commercialChildren.push({
+        label: t('sidebar.modules.commercialDashboard'),
+        icon: 'pi pi-chart-bar',
+        routerLink: '/comercial/dashboard'
+      });
+    }
 
     if (hasPermission('LEADS_VIEW')) {
       commercialChildren.push({

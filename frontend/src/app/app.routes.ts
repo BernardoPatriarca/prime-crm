@@ -54,6 +54,15 @@ export const routes: Routes = [
           )
       },
       {
+        path: 'produtividade/dashboard',
+        canActivate: [permissionGuard],
+        data: { permission: ['TAREFAS_VIEW', 'AGENDA_VIEW'] },
+        loadComponent: () =>
+          import('./features/productivity/dashboard/productivity-dashboard.component').then(
+            (m) => m.ProductivityDashboardComponent
+          )
+      },
+      {
         path: 'tarefas',
         canActivate: [permissionGuard],
         data: { permission: 'TAREFAS_VIEW' },
@@ -71,6 +80,15 @@ export const routes: Routes = [
         data: { permission: 'PRODUTOS_VIEW' },
         loadComponent: () =>
           import('./features/commercial/products/products-page.component').then((m) => m.ProductsPageComponent)
+      },
+      {
+        path: 'comercial/dashboard',
+        canActivate: [permissionGuard],
+        data: { permission: ['PROPOSTAS_VIEW', 'PEDIDOS_VIEW', 'CONTRATOS_VIEW'] },
+        loadComponent: () =>
+          import('./features/commercial/dashboard/commercial-dashboard.component').then(
+            (m) => m.CommercialDashboardComponent
+          )
       },
       {
         path: 'propostas',

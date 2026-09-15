@@ -2,6 +2,58 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fase 6] — Dashboards Comercial e Produtividade
+
+Terceira e ultima entrega da Fase 6 (Dashboards por modulo e metas comerciais): dashboards de
+Comercial (propostas, pedidos, contratos) e Produtividade (tarefas, agenda), fechando a fase.
+
+### Banco de dados
+
+Nenhuma migration nova. Foram adicionadas consultas de agregacao aos repositorios ja existentes:
+`ProposalRepository` e `OrderRepository` ganharam `summarize*Between` (total e por status, dentro de um
+periodo) e `summarize*ByMonth`; `ContractRepository` ganhou `summarizeByStatus` e
+`summarizeExpiringBetween`; `TaskRepository` ganhou `rankAssigneesByCompleted` (ranking de conclusao
+por responsavel); `CalendarEventRepository` ganhou contagens por status/periodo e `countOverdue`.
+Nova projecao `LabeledCountAggregate` (label + contagem, sem valor monetario), companheira das
+projecoes `AmountAggregate`/`LabeledAmountAggregate` ja existentes, usada onde o valor agregado e uma
+contagem simples (conclusao de tarefas) em vez de uma soma financeira.
+
+### Backend
+
+- `GET /api/v1/dashboard/comercial`: propostas e pedidos emitidos no periodo com taxa de conversao
+  (aceita/entregue sobre o total), contratos ativos (valor recorrente total, MRR) e contratos vencendo
+  nos proximos 30 dias, e serie mensal dos ultimos 12 meses de propostas x pedidos. Permissao
+  `hasAnyAuthority('PROPOSTAS_VIEW', 'PEDIDOS_VIEW', 'CONTRATOS_VIEW')`.
+- `GET /api/v1/dashboard/produtividade`: resumo de tarefas (pendentes, em andamento, em atraso,
+  vencendo hoje, concluidas nos ultimos 7 dias — o mesmo calculo ja usado no Dashboard geral), ranking
+  dos 5 responsaveis que mais concluiram tarefas no periodo e resumo da agenda (eventos hoje, na
+  semana e em atraso). Permissao `hasAnyAuthority('TAREFAS_VIEW', 'AGENDA_VIEW')`.
+
+**Decisao de modelagem — sem card de metrica com tendencia no Comercial**: diferente do Dashboard
+geral e do Financeiro, o dashboard Comercial nao compara o periodo atual contra o anterior. Conversao
+proposta→pedido→contrato so faz sentido como uma taxa absoluta do periodo (aceitas sobre emitidas),
+comparar essa taxa contra o periodo anterior adicionaria uma metrica de interpretacao duvidosa sem
+pedido explicito — mantido fora do escopo.
+
+### Frontend
+
+Duas telas novas: `/comercial/dashboard` (cartoes de propostas/pedidos/contratos e grafico de area de
+propostas x pedidos, novo primeiro item do submenu "Comercial" na sidebar) e `/produtividade/dashboard`
+(resumo de tarefas, ranking de conclusao e resumo da agenda, novo item de primeiro nivel na sidebar,
+ao lado de Tarefas e Agenda). Ambas reaproveitam os mesmos componentes/padroes visuais ja usados nos
+dashboards geral e Financeiro (cartoes de metrica, `AreaChartComponent`, ranking com barra de progresso).
+
+### Qualidade
+
+- Backend: `CommercialDashboardServiceTest` (serie mensal com meses zerados, taxa de conversao de
+  propostas e pedidos, taxas zeradas sem dados, contratos ativos/vencendo) e
+  `ProductivityDashboardServiceTest` (contagem de atraso sobre status abertos, ranking com percentuais
+  somando o total, ranking vazio sem dados, resumo de agenda hoje/semana/atraso). Suite completa do
+  `core` seguiu verde (217 testes).
+- Frontend: `commercial-dashboard.component.spec.ts` e `productivity-dashboard.component.spec.ts`
+  cobrindo carregamento por periodo, cartoes de indicadores, serie mensal/ranking e estado de erro.
+  Suite completa (305 testes) e `npm run build` verdes.
+
 ## [Fase 6] — Dashboard Financeiro
 
 Segunda entrega da Fase 6 (Dashboards por modulo e metas comerciais): primeiro dashboard especifico

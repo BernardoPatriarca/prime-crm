@@ -233,7 +233,9 @@
       "receivables": "Receivables",
       "payables": "Payables",
       "salesGoals": "Sales Goals",
-      "financeDashboard": "Dashboard"
+      "financeDashboard": "Dashboard",
+      "commercialDashboard": "Dashboard",
+      "productivityDashboard": "Productivity Dashboard"
     },
     "comingSoon": "Coming soon",
     "reports": {
@@ -1626,6 +1628,90 @@
     },
     "tooltips": {
       "metric": "{{label}}: {{value}} — {{hint}}. {{trend}}"
+    }
+  },
+  "commercialDashboard": {
+    "title": "Commercial Dashboard",
+    "subtitle": "Consolidated indicators for proposals, orders and contracts.",
+    "metrics": {
+      "proposalsTotal": {
+        "label": "Proposals issued",
+        "hint": "{{count}} proposal(s) in the period"
+      },
+      "proposalsConversion": {
+        "label": "Proposal conversion",
+        "hint": "{{closed}} of {{total}} accepted"
+      },
+      "ordersTotal": {
+        "label": "Orders in the period",
+        "hint": "{{count}} order(s) in the period"
+      },
+      "ordersConversion": {
+        "label": "Order conversion",
+        "hint": "{{closed}} of {{total}} delivered"
+      },
+      "contractsActive": {
+        "label": "Active contracts (MRR)",
+        "hint": "{{count}} active contract(s)"
+      },
+      "contractsExpiring": {
+        "label": "Expiring in 30 days",
+        "hint": "{{count}} contract(s) expiring"
+      }
+    },
+    "charts": {
+      "monthlyTitle": "Proposals x Orders",
+      "monthlySubtitle": "Monthly evolution over the last 12 months",
+      "proposals": "Proposals",
+      "orders": "Orders",
+      "monthlyTooltip": "{{month}}: proposals {{proposals}}, orders {{orders}}"
+    },
+    "links": {
+      "proposals": "View proposals",
+      "orders": "View orders",
+      "contracts": "View contracts"
+    },
+    "tooltips": {
+      "metric": "{{label}}: {{value}} — {{hint}}"
+    }
+  },
+  "productivityDashboard": {
+    "title": "Productivity Dashboard",
+    "subtitle": "Consolidated indicators for tasks and agenda.",
+    "tasks": {
+      "title": "Tasks",
+      "subtitle": "Task status summary",
+      "openList": "View tasks",
+      "empty": "No tasks registered.",
+      "overdue": "Overdue",
+      "dueToday": "Due today",
+      "pending": "Pending",
+      "inProgress": "In progress",
+      "completedThisWeek": "Completed (7 days)"
+    },
+    "ranking": {
+      "title": "Completion ranking",
+      "subtitle": "Assignees who completed the most tasks in the period",
+      "empty": "No tasks completed in the period.",
+      "tasks": "{{count}} task(s)"
+    },
+    "agenda": {
+      "title": "Agenda",
+      "subtitle": "Scheduled events",
+      "openAgenda": "View agenda",
+      "scheduledToday": "Today",
+      "scheduledThisWeek": "This week",
+      "overdue": "Overdue"
+    },
+    "tooltips": {
+      "ranking": "{{owner}} completed {{count}} task(s) — {{share}}% of the ranking total.",
+      "tasks": {
+        "overdue": "{{count}} task(s) past their due date and not yet completed.",
+        "dueToday": "{{count}} task(s) due today.",
+        "pending": "{{count}} pending task(s), not yet started.",
+        "inProgress": "{{count}} task(s) in progress.",
+        "completedThisWeek": "{{count}} task(s) completed in the last 7 days."
+      }
     }
   }
 }

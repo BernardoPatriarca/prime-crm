@@ -1,0 +1,131 @@
+<section class="productivity-dashboard">
+  <header class="productivity-dashboard__header">
+    <div class="productivity-dashboard__heading">
+      <h1>{{ 'productivityDashboard.title' | translate }}</h1>
+      <p>{{ 'productivityDashboard.subtitle' | translate }}</p>
+    </div>
+
+    <div class="productivity-dashboard__actions">
+      <p-selectbutton
+        [ngModel]="periodDays()"
+        (ngModelChange)="onPeriodChange($event)"
+        [options]="periodOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [allowEmpty]="false"
+        size="small"
+        data-testid="productivity-dashboard-period"
+      />
+      <p-button
+        icon="pi pi-refresh"
+        severity="secondary"
+        [text]="true"
+        [rounded]="true"
+        [loading]="loading()"
+        [pTooltip]="'dashboard.refresh' | translate"
+        tooltipPosition="left"
+        [ariaLabel]="'dashboard.refresh' | translate"
+        (onClick)="load()"
+        data-testid="productivity-dashboard-refresh"
+      />
+    </div>
+  </header>
+
+  @if (failed()) {
+    <p-card styleClass="productivity-dashboard__empty">
+      <i class="pi pi-exclamation-triangle"></i>
+      <p>{{ 'dashboard.loadError' | translate }}</p>
+      <p-button [label]="'dashboard.retry' | translate" severity="secondary" (onClick)="load()" />
+    </p-card>
+  } @else if (loading() && !data()) {
+    <div class="productivity-dashboard__grid">
+      <p-skeleton height="16rem" />
+      <p-skeleton height="16rem" />
+    </div>
+  } @else if (data(); as dashboard) {
+    <div class="productivity-dashboard__grid">
+      <p-card styleClass="productivity-dashboard__panel">
+        <div class="productivity-dashboard__panel-header">
+          <div>
+            <h2>{{ 'productivityDashboard.tasks.title' | translate }}</h2>
+            <p>{{ 'productivityDashboard.tasks.subtitle' | translate }}</p>
+          </div>
+          <a routerLink="/tarefas" class="productivity-dashboard__link">
+            {{ 'productivityDashboard.tasks.openList' | translate }} <i class="pi pi-arrow-right"></i>
+          </a>
+        </div>
+
+        @if (!hasTasks()) {
+          <p class="productivity-dashboard__empty-text">{{ 'productivityDashboard.tasks.empty' | translate }}</p>
+        } @else {
+          <div class="tasks">
+            @for (card of taskCards(); track card.key) {
+              <div
+                class="tasks__item"
+                [attr.data-variant]="card.variant"
+                [pTooltip]="card.tooltip"
+                tooltipPosition="top"
+                [showDelay]="150"
+              >
+                <span class="tasks__value">{{ card.value }}</span>
+                <span class="tasks__label">{{ 'productivityDashboard.tasks.' + card.key | translate }}</span>
+              </div>
+            }
+          </div>
+        }
+      </p-card>
+
+      <p-card styleClass="productivity-dashboard__panel">
+        <div class="productivity-dashboard__panel-header">
+          <div>
+            <h2>{{ 'productivityDashboard.ranking.title' | translate }}</h2>
+            <p>{{ 'productivityDashboard.ranking.subtitle' | translate }}</p>
+          </div>
+        </div>
+
+        @if (dashboard.taskRanking.length === 0) {
+          <p class="productivity-dashboard__empty-text">{{ 'productivityDashboard.ranking.empty' | translate }}</p>
+        } @else {
+          <ol class="ranking">
+            @for (row of dashboard.taskRanking; track row.owner; let index = $index) {
+              <li class="ranking__row" [pTooltip]="rankingTooltip(row)" tooltipPosition="top" [showDelay]="150">
+                <span class="ranking__position" [class.ranking__position--first]="index === 0">{{ index + 1 }}</span>
+                <div class="ranking__content">
+                  <div class="ranking__head">
+                    <span class="ranking__name">{{ row.owner }}</span>
+                    <strong>{{ 'productivityDashboard.ranking.tasks' | translate: { count: row.completedCount } }}</strong>
+                  </div>
+                  <div class="ranking__track">
+                    <div class="ranking__bar" [style.width.%]="row.share"></div>
+                  </div>
+                  <span class="ranking__meta">{{ row.share }}%</span>
+                </div>
+              </li>
+            }
+          </ol>
+        }
+      </p-card>
+    </div>
+
+    <p-card styleClass="productivity-dashboard__panel">
+      <div class="productivity-dashboard__panel-header">
+        <div>
+          <h2>{{ 'productivityDashboard.agenda.title' | translate }}</h2>
+          <p>{{ 'productivityDashboard.agenda.subtitle' | translate }}</p>
+        </div>
+        <a routerLink="/agenda" class="productivity-dashboard__link">
+          {{ 'productivityDashboard.agenda.openAgenda' | translate }} <i class="pi pi-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="tasks">
+        @for (card of agendaCards(); track card.key) {
+          <div class="tasks__item" [attr.data-variant]="card.variant">
+            <span class="tasks__value">{{ card.value }}</span>
+            <span class="tasks__label">{{ 'productivityDashboard.agenda.' + card.key | translate }}</span>
+          </div>
+        }
+      </div>
+    </p-card>
+  }
+</section>

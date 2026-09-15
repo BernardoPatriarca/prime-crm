@@ -23,4 +23,11 @@ public interface CalendarEventRepository
     List<CalendarEvent> findOverdueByAssignee(
             @Param("assigneeId") UUID assigneeId, @Param("status") CalendarEventStatus status,
             @Param("now") Instant now);
+
+    long countByStatusAndStartAtGreaterThanEqualAndStartAtLessThanAndDeletedAtIsNull(
+            CalendarEventStatus status, Instant from, Instant to);
+
+    @Query("SELECT count(e) FROM CalendarEvent e WHERE e.status = :status AND e.deletedAt IS NULL "
+            + "AND COALESCE(e.endAt, e.startAt) < :now")
+    long countOverdue(@Param("status") CalendarEventStatus status, @Param("now") Instant now);
 }

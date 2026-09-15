@@ -1,0 +1,97 @@
+<section class="commercial-dashboard">
+  <header class="commercial-dashboard__header">
+    <div class="commercial-dashboard__heading">
+      <h1>{{ 'commercialDashboard.title' | translate }}</h1>
+      <p>{{ 'commercialDashboard.subtitle' | translate }}</p>
+    </div>
+
+    <div class="commercial-dashboard__actions">
+      <p-selectbutton
+        [ngModel]="periodDays()"
+        (ngModelChange)="onPeriodChange($event)"
+        [options]="periodOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [allowEmpty]="false"
+        size="small"
+        data-testid="commercial-dashboard-period"
+      />
+      <p-button
+        icon="pi pi-refresh"
+        severity="secondary"
+        [text]="true"
+        [rounded]="true"
+        [loading]="loading()"
+        [pTooltip]="'dashboard.refresh' | translate"
+        tooltipPosition="left"
+        [ariaLabel]="'dashboard.refresh' | translate"
+        (onClick)="load()"
+        data-testid="commercial-dashboard-refresh"
+      />
+    </div>
+  </header>
+
+  @if (failed()) {
+    <p-card styleClass="commercial-dashboard__empty">
+      <i class="pi pi-exclamation-triangle"></i>
+      <p>{{ 'dashboard.loadError' | translate }}</p>
+      <p-button [label]="'dashboard.retry' | translate" severity="secondary" (onClick)="load()" />
+    </p-card>
+  } @else if (loading() && !data()) {
+    <div class="commercial-dashboard__metrics">
+      @for (placeholder of [0, 1, 2, 3, 4, 5]; track placeholder) {
+        <p-skeleton height="7.5rem" />
+      }
+    </div>
+    <p-skeleton height="20rem" />
+  } @else if (data()) {
+    <div class="commercial-dashboard__metrics">
+      @for (card of metricCards(); track card.key) {
+        <p-card styleClass="commercial-dashboard__metric">
+          <div class="commercial-dashboard__metric-body" [pTooltip]="card.tooltip" tooltipPosition="top" [showDelay]="150">
+            <div class="commercial-dashboard__metric-top">
+              <span class="commercial-dashboard__metric-icon" [attr.data-accent]="card.accent">
+                <i [class]="card.icon"></i>
+              </span>
+            </div>
+
+            <p class="commercial-dashboard__metric-value">{{ card.value }}</p>
+            <p class="commercial-dashboard__metric-label">{{ 'commercialDashboard.metrics.' + card.key + '.label' | translate }}</p>
+            <p class="commercial-dashboard__metric-hint">{{ card.hint }}</p>
+          </div>
+        </p-card>
+      }
+    </div>
+
+    <p-card styleClass="commercial-dashboard__panel">
+      <div class="commercial-dashboard__panel-header">
+        <div>
+          <h2>{{ 'commercialDashboard.charts.monthlyTitle' | translate }}</h2>
+          <p>{{ 'commercialDashboard.charts.monthlySubtitle' | translate }}</p>
+        </div>
+        <div class="commercial-dashboard__legend">
+          <span class="commercial-dashboard__legend-item commercial-dashboard__legend-item--solid">
+            {{ 'commercialDashboard.charts.proposals' | translate }}
+          </span>
+          <span class="commercial-dashboard__legend-item commercial-dashboard__legend-item--dashed">
+            {{ 'commercialDashboard.charts.orders' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <app-area-chart [points]="monthlyPoints()" gradientId="commercial-dashboard-monthly" />
+    </p-card>
+
+    <div class="commercial-dashboard__links">
+      <a routerLink="/propostas" class="commercial-dashboard__link">
+        {{ 'commercialDashboard.links.proposals' | translate }} <i class="pi pi-arrow-right"></i>
+      </a>
+      <a routerLink="/pedidos" class="commercial-dashboard__link">
+        {{ 'commercialDashboard.links.orders' | translate }} <i class="pi pi-arrow-right"></i>
+      </a>
+      <a routerLink="/contratos" class="commercial-dashboard__link">
+        {{ 'commercialDashboard.links.contracts' | translate }} <i class="pi pi-arrow-right"></i>
+      </a>
+    </div>
+  }
+</section>

@@ -233,7 +233,9 @@
       "receivables": "Cuentas por Cobrar",
       "payables": "Cuentas por Pagar",
       "salesGoals": "Metas Comerciales",
-      "financeDashboard": "Dashboard"
+      "financeDashboard": "Dashboard",
+      "commercialDashboard": "Dashboard",
+      "productivityDashboard": "Dashboard de Productividad"
     },
     "comingSoon": "Próximamente",
     "reports": {
@@ -1626,6 +1628,90 @@
     },
     "tooltips": {
       "metric": "{{label}}: {{value}} — {{hint}}. {{trend}}"
+    }
+  },
+  "commercialDashboard": {
+    "title": "Dashboard Comercial",
+    "subtitle": "Indicadores consolidados de propuestas, pedidos y contratos.",
+    "metrics": {
+      "proposalsTotal": {
+        "label": "Propuestas emitidas",
+        "hint": "{{count}} propuesta(s) en el período"
+      },
+      "proposalsConversion": {
+        "label": "Conversión de propuestas",
+        "hint": "{{closed}} de {{total}} aceptada(s)"
+      },
+      "ordersTotal": {
+        "label": "Pedidos en el período",
+        "hint": "{{count}} pedido(s) en el período"
+      },
+      "ordersConversion": {
+        "label": "Conversión de pedidos",
+        "hint": "{{closed}} de {{total}} entregado(s)"
+      },
+      "contractsActive": {
+        "label": "Contratos activos (MRR)",
+        "hint": "{{count}} contrato(s) activo(s)"
+      },
+      "contractsExpiring": {
+        "label": "Venciendo en 30 días",
+        "hint": "{{count}} contrato(s) venciendo"
+      }
+    },
+    "charts": {
+      "monthlyTitle": "Propuestas x Pedidos",
+      "monthlySubtitle": "Evolución mensual de los últimos 12 meses",
+      "proposals": "Propuestas",
+      "orders": "Pedidos",
+      "monthlyTooltip": "{{month}}: propuestas {{proposals}}, pedidos {{orders}}"
+    },
+    "links": {
+      "proposals": "Ver propuestas",
+      "orders": "Ver pedidos",
+      "contracts": "Ver contratos"
+    },
+    "tooltips": {
+      "metric": "{{label}}: {{value}} — {{hint}}"
+    }
+  },
+  "productivityDashboard": {
+    "title": "Dashboard de Productividad",
+    "subtitle": "Indicadores consolidados de tareas y agenda.",
+    "tasks": {
+      "title": "Tareas",
+      "subtitle": "Resumen del estado de las tareas",
+      "openList": "Ver tareas",
+      "empty": "Ninguna tarea registrada.",
+      "overdue": "Atrasadas",
+      "dueToday": "Vencen hoy",
+      "pending": "Pendientes",
+      "inProgress": "En curso",
+      "completedThisWeek": "Completadas (7 días)"
+    },
+    "ranking": {
+      "title": "Ranking de finalización",
+      "subtitle": "Responsables que más tareas completaron en el período",
+      "empty": "Ninguna tarea completada en el período.",
+      "tasks": "{{count}} tarea(s)"
+    },
+    "agenda": {
+      "title": "Agenda",
+      "subtitle": "Eventos programados",
+      "openAgenda": "Ver agenda",
+      "scheduledToday": "Hoy",
+      "scheduledThisWeek": "Esta semana",
+      "overdue": "Atrasados"
+    },
+    "tooltips": {
+      "ranking": "{{owner}} completó {{count}} tarea(s) — {{share}}% del total del ranking.",
+      "tasks": {
+        "overdue": "{{count}} tarea(s) con vencimiento pasado y aún no completada(s).",
+        "dueToday": "{{count}} tarea(s) que vencen hoy.",
+        "pending": "{{count}} tarea(s) pendiente(s), aún no iniciada(s).",
+        "inProgress": "{{count}} tarea(s) en curso.",
+        "completedThisWeek": "{{count}} tarea(s) completada(s) en los últimos 7 días."
+      }
     }
   }
 }

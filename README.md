@@ -213,7 +213,7 @@ Histórico de entregas por fase em [CHANGELOG.md](CHANGELOG.md).
 | 3 | Produtividade: tarefas, relatórios, agenda e notificações em tempo real (WebSocket) | ✅ |
 | 4 | Comercial avançado: produtos, propostas, pedidos e contratos | ✅ |
 | 5 | Financeiro e documentos: contas a receber, contas a pagar e geração de PDF (propostas, pedidos, contratos) | ✅ |
-| 6 | Dashboards por módulo e metas comerciais: metas comerciais e dashboard do Financeiro entregues; demais dashboards por módulo pendentes | 🚧 |
+| 6 | Dashboards por módulo e metas comerciais: metas comerciais e dashboards do Financeiro, Comercial e Produtividade | ✅ |
 | 7 | Qualidade e hardening | ⏳ |
 
 Fora de escopo até segunda ordem (dependem de credenciais ou módulos futuros): SMTP real,
