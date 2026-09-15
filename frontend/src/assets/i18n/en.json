@@ -153,7 +153,8 @@
       "proposal": "Proposal",
       "order": "Order",
       "contract": "Contract",
-      "receivable": "Receivable"
+      "receivable": "Receivable",
+      "payable": "Payable"
     },
     "userMenu": {
       "changePassword": "Change Password",
@@ -227,7 +228,9 @@
       "products": "Products",
       "proposals": "Proposals",
       "orders": "Orders",
-      "contracts": "Contracts"
+      "contracts": "Contracts",
+      "receivables": "Receivables",
+      "payables": "Payables"
     },
     "comingSoon": "Coming soon",
     "reports": {
@@ -1487,6 +1490,64 @@
       "newValue": "New value",
       "noChanges": "No additional detail was recorded for this event.",
       "userAgent": "User agent"
+    }
+  },
+  "payablesPage": {
+    "title": "Accounts Payable",
+    "description": "Financial obligations owed to suppliers, with payment settlement.",
+    "newButton": "New Bill",
+    "searchPlaceholder": "Search by code, description or notes...",
+    "emptyState": "No accounts payable found.",
+    "status": {
+      "PENDING": "Pending",
+      "PAID": "Paid",
+      "CANCELED": "Canceled"
+    },
+    "filters": {
+      "status": "Status",
+      "due": "Due date",
+      "overdue": "Overdue",
+      "onTime": "On time"
+    },
+    "badges": {
+      "overdue": "Overdue"
+    },
+    "columns": {
+      "code": "Code",
+      "supplier": "Supplier",
+      "dueDate": "Due date",
+      "amount": "Amount",
+      "remaining": "Balance",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "actions": {
+      "pay": "Register payment"
+    },
+    "dialog": {
+      "newTitle": "New Account Payable",
+      "editTitle": "Edit Account Payable",
+      "supplierLabel": "Supplier",
+      "categoryLabel": "Category",
+      "dueDateLabel": "Due date",
+      "amountLabel": "Amount",
+      "paymentMethodLabel": "Payment method",
+      "descriptionLabel": "Description",
+      "notesLabel": "Notes"
+    },
+    "payDialog": {
+      "title": "Register Payment",
+      "remainingHint": "Remaining balance",
+      "amountLabel": "Amount paid",
+      "amountPlaceholder": "Leave blank to settle the full balance",
+      "paymentMethodLabel": "Payment method",
+      "confirmButton": "Confirm payment"
+    },
+    "messages": {
+      "created": "Account payable created successfully",
+      "updated": "Account payable updated successfully",
+      "deleted": "Account payable deleted successfully",
+      "paid": "Payment registered successfully"
     }
   }
 }

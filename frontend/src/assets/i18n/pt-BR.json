@@ -153,7 +153,8 @@
       "proposal": "Proposta",
       "order": "Pedido",
       "contract": "Contrato",
-      "receivable": "Conta a Receber"
+      "receivable": "Conta a Receber",
+      "payable": "Conta a Pagar"
     },
     "userMenu": {
       "changePassword": "Alterar Senha",
@@ -227,7 +228,9 @@
       "products": "Produtos",
       "proposals": "Propostas",
       "orders": "Pedidos",
-      "contracts": "Contratos"
+      "contracts": "Contratos",
+      "receivables": "Contas a Receber",
+      "payables": "Contas a Pagar"
     },
     "comingSoon": "Em breve",
     "reports": {
@@ -1487,6 +1490,64 @@
       "newValue": "Novo valor",
       "noChanges": "Nenhum detalhe adicional foi registrado para este evento.",
       "userAgent": "Navegador"
+    }
+  },
+  "payablesPage": {
+    "title": "Contas a Pagar",
+    "description": "Despesas e obrigacoes financeiras junto a fornecedores, com baixa de pagamento.",
+    "newButton": "Nova Conta",
+    "searchPlaceholder": "Buscar por codigo, descricao ou observacoes...",
+    "emptyState": "Nenhuma conta a pagar encontrada.",
+    "status": {
+      "PENDING": "Pendente",
+      "PAID": "Paga",
+      "CANCELED": "Cancelada"
+    },
+    "filters": {
+      "status": "Status",
+      "due": "Vencimento",
+      "overdue": "Em atraso",
+      "onTime": "No prazo"
+    },
+    "badges": {
+      "overdue": "Atrasada"
+    },
+    "columns": {
+      "code": "Codigo",
+      "supplier": "Fornecedor",
+      "dueDate": "Vencimento",
+      "amount": "Valor",
+      "remaining": "Saldo",
+      "status": "Status",
+      "actions": "Acoes"
+    },
+    "actions": {
+      "pay": "Registrar pagamento"
+    },
+    "dialog": {
+      "newTitle": "Nova Conta a Pagar",
+      "editTitle": "Editar Conta a Pagar",
+      "supplierLabel": "Fornecedor",
+      "categoryLabel": "Categoria",
+      "dueDateLabel": "Vencimento",
+      "amountLabel": "Valor",
+      "paymentMethodLabel": "Forma de pagamento",
+      "descriptionLabel": "Descricao",
+      "notesLabel": "Observacoes"
+    },
+    "payDialog": {
+      "title": "Registrar Pagamento",
+      "remainingHint": "Saldo restante",
+      "amountLabel": "Valor pago",
+      "amountPlaceholder": "Deixe em branco para baixar o saldo total",
+      "paymentMethodLabel": "Forma de pagamento",
+      "confirmButton": "Confirmar pagamento"
+    },
+    "messages": {
+      "created": "Conta a pagar criada com sucesso",
+      "updated": "Conta a pagar atualizada com sucesso",
+      "deleted": "Conta a pagar excluida com sucesso",
+      "paid": "Pagamento registrado com sucesso"
     }
   }
 }

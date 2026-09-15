@@ -151,7 +151,18 @@ export class SidebarComponent {
       commercialChildren.push({
         label: t('sidebar.modules.finance'),
         icon: 'pi pi-wallet',
-        routerLink: '/financeiro/contas-a-receber'
+        items: [
+          {
+            label: t('sidebar.modules.receivables'),
+            icon: 'pi pi-arrow-down-left',
+            routerLink: '/financeiro/contas-a-receber'
+          },
+          {
+            label: t('sidebar.modules.payables'),
+            icon: 'pi pi-arrow-up-right',
+            routerLink: '/financeiro/contas-a-pagar'
+          }
+        ]
       });
     }
 

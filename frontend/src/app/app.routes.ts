@@ -101,6 +101,13 @@ export const routes: Routes = [
           import('./features/finance/receivables/receivables-page.component').then((m) => m.ReceivablesPageComponent)
       },
       {
+        path: 'financeiro/contas-a-pagar',
+        canActivate: [permissionGuard],
+        data: { permission: 'FINANCEIRO_VIEW' },
+        loadComponent: () =>
+          import('./features/finance/payables/payables-page.component').then((m) => m.PayablesPageComponent)
+      },
+      {
         path: 'relatorios/:report',
         canActivate: [permissionGuard],
         data: { permission: 'RELATORIOS_VIEW' },

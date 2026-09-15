@@ -1,0 +1,319 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'payablesPage.title' | translate }}</h1>
+      <p>{{ 'payablesPage.description' | translate }}</p>
+    </div>
+    <div class="header-actions">
+      @if (canCreate()) {
+        <p-button
+          icon="pi pi-plus"
+          [label]="'payablesPage.newButton' | translate"
+          (onClick)="openCreateDialog()"
+          data-testid="payables-new-button"
+        />
+      }
+    </div>
+  </div>
+
+  <app-generic-table
+    [items]="payables()"
+    [totalRecords]="total()"
+    [loading]="loading()"
+    [columnsCount]="7"
+    emptyIcon="pi-wallet"
+    emptyMessageKey="payablesPage.emptyState"
+    searchPlaceholderKey="payablesPage.searchPlaceholder"
+    (queryChange)="onQueryChange($event)"
+  >
+    <div tableActions class="filter-bar">
+      <p-select
+        appendTo="body"
+        [ngModel]="statusFilter()"
+        (ngModelChange)="statusFilter.set($event); onFilterChange()"
+        [options]="statusOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"
+        [placeholder]="'payablesPage.filters.status' | translate"
+        data-testid="payables-status-filter"
+      />
+      <p-select
+        appendTo="body"
+        [ngModel]="overdueFilter()"
+        (ngModelChange)="overdueFilter.set($event); onFilterChange()"
+        [options]="overdueOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"
+        [placeholder]="'payablesPage.filters.due' | translate"
+        data-testid="payables-overdue-filter"
+      />
+    </div>
+
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="code">
+          {{ 'payablesPage.columns.code' | translate }}
+          <p-sortIcon field="code" />
+        </th>
+        <th>{{ 'payablesPage.columns.supplier' | translate }}</th>
+        <th pSortableColumn="dueDate">
+          {{ 'payablesPage.columns.dueDate' | translate }}
+          <p-sortIcon field="dueDate" />
+        </th>
+        <th pSortableColumn="amount">
+          {{ 'payablesPage.columns.amount' | translate }}
+          <p-sortIcon field="amount" />
+        </th>
+        <th>{{ 'payablesPage.columns.remaining' | translate }}</th>
+        <th>{{ 'payablesPage.columns.status' | translate }}</th>
+        <th class="col-actions">{{ 'payablesPage.columns.actions' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-item>
+      <tr>
+        <td class="cell-muted cell-numeric">{{ item.code }}</td>
+        <td class="cell-strong">{{ item.supplier?.name ?? '-' }}</td>
+        <td class="cell-muted">
+          <span [class.payable-due--late]="item.overdue">{{ formatDate(item.dueDate) }}</span>
+        </td>
+        <td class="cell-strong">{{ formatAmount(item.amount) }}</td>
+        <td class="cell-muted">{{ formatAmount(item.remainingAmount) }}</td>
+        <td>
+          <div class="chip-list">
+            <p-tag [severity]="statusSeverity(item.status)" [value]="'payablesPage.status.' + item.status | translate" />
+            @if (item.overdue) {
+              <p-tag severity="danger" icon="pi pi-clock" [value]="'payablesPage.badges.overdue' | translate" />
+            }
+          </div>
+        </td>
+        <td>
+          <div class="row-actions">
+            @if (canEdit() && item.status === 'PENDING') {
+              <p-button
+                icon="pi pi-dollar"
+                [text]="true"
+                [rounded]="true"
+                severity="success"
+                [pTooltip]="'payablesPage.actions.pay' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'payablesPage.actions.pay' | translate"
+                (onClick)="openPayDialog(item)"
+                [attr.data-testid]="'payable-pay-' + item.id"
+              />
+            }
+            @if (canEdit()) {
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'common.actions.edit' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.edit' | translate"
+                (onClick)="openEditDialog(item)"
+                [attr.data-testid]="'payable-edit-' + item.id"
+              />
+            }
+            @if (canDelete()) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                [pTooltip]="'common.actions.delete' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.delete' | translate"
+                (onClick)="confirmDelete(item)"
+                [attr.data-testid]="'payable-delete-' + item.id"
+              />
+            }
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </app-generic-table>
+</div>
+
+<p-dialog
+  appendTo="body"
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '42rem' }"
+  [breakpoints]="{ '1024px': '92vw', '767px': '96vw' }"
+  [header]="(editingPayable() ? 'payablesPage.dialog.editTitle' : 'payablesPage.dialog.newTitle') | translate"
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+    <div class="form-grid">
+      <div class="field field-span-2">
+        <label for="payable-supplier">{{ 'payablesPage.dialog.supplierLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="payable-supplier"
+          formControlName="supplierId"
+          [options]="supplierOptions()"
+          optionLabel="name"
+          optionValue="id"
+          [filter]="true"
+          filterBy="name"
+          (onFilter)="onSupplierFilter($event.filter)"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+          data-testid="payable-supplier-select"
+        />
+        @if (form.controls.supplierId.invalid && form.controls.supplierId.touched) {
+          <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+        }
+      </div>
+
+      <div class="field field-span-2">
+        <label for="payable-category">{{ 'payablesPage.dialog.categoryLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="payable-category"
+          formControlName="categoryId"
+          [options]="categories()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field field-span-2">
+        <label for="payable-description">{{ 'payablesPage.dialog.descriptionLabel' | translate }}</label>
+        <input id="payable-description" pInputText type="text" formControlName="description" fluid />
+        @if (form.controls.description.invalid && form.controls.description.touched) {
+          <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="payable-due-date">{{ 'payablesPage.dialog.dueDateLabel' | translate }}</label>
+        <p-datepicker
+          appendTo="body"
+          inputId="payable-due-date"
+          formControlName="dueDate"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="payable-amount">{{ 'payablesPage.dialog.amountLabel' | translate }}</label>
+        <p-inputnumber
+          inputId="payable-amount"
+          formControlName="amount"
+          mode="currency"
+          currency="BRL"
+          locale="pt-BR"
+          fluid
+          data-testid="payable-amount-input"
+        />
+      </div>
+
+      <div class="field field-span-2">
+        <label for="payable-payment-method">{{ 'payablesPage.dialog.paymentMethodLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="payable-payment-method"
+          formControlName="paymentMethodId"
+          [options]="paymentMethods()"
+          optionLabel="name"
+          optionValue="id"
+          [showClear]="true"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+        />
+      </div>
+
+      <div class="field field-span-2">
+        <label for="payable-notes">{{ 'payablesPage.dialog.notesLabel' | translate }}</label>
+        <textarea id="payable-notes" pTextarea formControlName="notes" rows="3" [autoResize]="true" fluid></textarea>
+      </div>
+    </div>
+
+    <div class="dialog-footer">
+      <p-button
+        [label]="'common.actions.cancel' | translate"
+        severity="secondary"
+        [text]="true"
+        type="button"
+        (onClick)="closeDialog()"
+      />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="saving()"
+        data-testid="payable-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>
+
+<p-dialog
+  appendTo="body"
+  [visible]="payDialogVisible()"
+  (visibleChange)="payDialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '28rem' }"
+  [breakpoints]="{ '1024px': '90vw', '767px': '95vw' }"
+  [header]="'payablesPage.payDialog.title' | translate"
+>
+  <form [formGroup]="payForm" (ngSubmit)="confirmPay()" class="dialog-form">
+    <p class="pay-dialog-hint">
+      {{ 'payablesPage.payDialog.remainingHint' | translate }}:
+      <strong>{{ formatAmount(payingPayable()?.remainingAmount ?? 0) }}</strong>
+    </p>
+
+    <div class="field">
+      <label for="pay-amount">{{ 'payablesPage.payDialog.amountLabel' | translate }}</label>
+      <p-inputnumber
+        inputId="pay-amount"
+        formControlName="amount"
+        mode="currency"
+        currency="BRL"
+        locale="pt-BR"
+        [placeholder]="'payablesPage.payDialog.amountPlaceholder' | translate"
+        fluid
+        data-testid="pay-amount-input"
+      />
+    </div>
+
+    <div class="field">
+      <label for="pay-method">{{ 'payablesPage.payDialog.paymentMethodLabel' | translate }}</label>
+      <p-select
+        appendTo="body"
+        inputId="pay-method"
+        formControlName="paymentMethodId"
+        [options]="paymentMethods()"
+        optionLabel="name"
+        optionValue="id"
+        [showClear]="true"
+        [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+        fluid
+      />
+    </div>
+
+    <div class="dialog-footer">
+      <p-button [label]="'common.actions.cancel' | translate" severity="secondary" [text]="true" type="button" (onClick)="closePayDialog()" />
+      <p-button
+        icon="pi pi-check"
+        [label]="'payablesPage.payDialog.confirmButton' | translate"
+        type="submit"
+        [loading]="paying()"
+        data-testid="pay-confirm-button"
+      />
+    </div>
+  </form>
+</p-dialog>

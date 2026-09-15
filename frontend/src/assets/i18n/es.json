@@ -153,7 +153,8 @@
       "proposal": "Propuesta",
       "order": "Pedido",
       "contract": "Contrato",
-      "receivable": "Cuenta por Cobrar"
+      "receivable": "Cuenta por Cobrar",
+      "payable": "Cuenta por Pagar"
     },
     "userMenu": {
       "changePassword": "Cambiar Contraseña",
@@ -227,7 +228,9 @@
       "products": "Productos",
       "proposals": "Propuestas",
       "orders": "Pedidos",
-      "contracts": "Contratos"
+      "contracts": "Contratos",
+      "receivables": "Cuentas por Cobrar",
+      "payables": "Cuentas por Pagar"
     },
     "comingSoon": "Próximamente",
     "reports": {
@@ -1487,6 +1490,64 @@
       "newValue": "Nuevo valor",
       "noChanges": "No se registró ningún detalle adicional para este evento.",
       "userAgent": "Navegador"
+    }
+  },
+  "payablesPage": {
+    "title": "Cuentas por Pagar",
+    "description": "Obligaciones financieras con proveedores, con registro de pago.",
+    "newButton": "Nueva Cuenta",
+    "searchPlaceholder": "Buscar por codigo, descripcion u observaciones...",
+    "emptyState": "Ninguna cuenta por pagar encontrada.",
+    "status": {
+      "PENDING": "Pendiente",
+      "PAID": "Pagada",
+      "CANCELED": "Cancelada"
+    },
+    "filters": {
+      "status": "Estado",
+      "due": "Vencimiento",
+      "overdue": "Atrasada",
+      "onTime": "En plazo"
+    },
+    "badges": {
+      "overdue": "Atrasada"
+    },
+    "columns": {
+      "code": "Codigo",
+      "supplier": "Proveedor",
+      "dueDate": "Vencimiento",
+      "amount": "Valor",
+      "remaining": "Saldo",
+      "status": "Estado",
+      "actions": "Acciones"
+    },
+    "actions": {
+      "pay": "Registrar pago"
+    },
+    "dialog": {
+      "newTitle": "Nueva Cuenta por Pagar",
+      "editTitle": "Editar Cuenta por Pagar",
+      "supplierLabel": "Proveedor",
+      "categoryLabel": "Categoria",
+      "dueDateLabel": "Vencimiento",
+      "amountLabel": "Valor",
+      "paymentMethodLabel": "Forma de pago",
+      "descriptionLabel": "Descripcion",
+      "notesLabel": "Observaciones"
+    },
+    "payDialog": {
+      "title": "Registrar Pago",
+      "remainingHint": "Saldo restante",
+      "amountLabel": "Valor pagado",
+      "amountPlaceholder": "Deje en blanco para saldar el total",
+      "paymentMethodLabel": "Forma de pago",
+      "confirmButton": "Confirmar pago"
+    },
+    "messages": {
+      "created": "Cuenta por pagar creada con exito",
+      "updated": "Cuenta por pagar actualizada con exito",
+      "deleted": "Cuenta por pagar eliminada con exito",
+      "paid": "Pago registrado con exito"
     }
   }
 }

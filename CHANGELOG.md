@@ -2,6 +2,45 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fase 5] — Contas a Pagar
+
+Segunda entrega da Fase 5 (Financeiro e documentos): despesas e obrigações financeiras da empresa
+junto a fornecedores, com baixa de pagamento total ou parcial.
+
+### Banco de dados
+
+Migration `V40`: tabela `payables` e as 4 permissões `FINANCEIRO_*` reaproveitadas (as mesmas já
+concedidas ao perfil Administrador na entrega de Contas a Receber — não há RBAC novo). Código legível
+`PAG-######`.
+
+**Decisões de modelagem**: fornecedor não ganhou uma entidade própria — reaproveita a tabela `customers`
+existente, já que `CLIENT_TYPE` inclui `FORNECEDOR` desde a Fase 1. Categoria e forma de pagamento
+reaproveitam os `domain_types` `CATEGORY` e `PAYMENT_METHOD` já existentes. `paid_amount` acumulado
+separado de `amount` (mesmo padrão de Contas a Receber) permite pagamento parcial, e atraso é computado
+(`status = PENDING` e `due_date` no passado) em vez de armazenado. Diferente de Contas a Receber, não há
+endpoint de geração a partir de um documento de origem — uma despesa não nasce de um Pedido ou Proposta
+neste sistema, então esse "generate from" não foi replicado.
+
+### Backend
+
+- CRUD completo (`/api/v1/payables`) com busca textual, filtros (status, fornecedor, categoria, período
+  de vencimento, atraso), paginação, RBAC e auditoria.
+- `PATCH /{id}/pay`: mesmo contrato de Contas a Receber — sem valor informado, baixa o saldo restante
+  integralmente; com valor menor que o saldo, registra pagamento parcial e a conta permanece pendente.
+
+### Frontend
+
+Tela `/financeiro/contas-a-pagar`, com listagem, diálogo de CRUD e diálogo dedicado de baixa de
+pagamento (mostrando o saldo restante). O item "Financeiro" da sidebar e o atalho "+ Novo" do topbar
+viraram submenu com Contas a Receber e Contas a Pagar.
+
+### Qualidade
+
+- Backend: `PayableServiceTest` cobrindo status inicial, pagamento total e parcial, exclusão e busca
+  por id inexistente. Suíte completa do `core` seguiu verde (191 testes).
+- Frontend: `payables-page.component.spec.ts` cobrindo validação e diálogo de baixa. Suíte completa
+  (276 testes) e `npm run build` verdes.
+
 ## [Fase 5] — Contas a Receber
 
 Primeira entrega da Fase 5 (Financeiro e documentos): parcelas de pagamento (contas a receber)

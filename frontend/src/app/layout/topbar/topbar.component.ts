@@ -198,9 +198,15 @@ export class TopbarComponent {
       },
       {
         label: t('topbar.newButton.receivable'),
-        icon: 'pi pi-wallet',
+        icon: 'pi pi-arrow-down-left',
         disabled: !hasPermission('FINANCEIRO_CREATE'),
         command: () => this.openCreation('/financeiro/contas-a-receber')
+      },
+      {
+        label: t('topbar.newButton.payable'),
+        icon: 'pi pi-arrow-up-right',
+        disabled: !hasPermission('FINANCEIRO_CREATE'),
+        command: () => this.openCreation('/financeiro/contas-a-pagar')
       }
     ];
   });
