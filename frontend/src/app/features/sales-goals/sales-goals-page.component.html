@@ -1,0 +1,176 @@
+<div class="settings-page">
+  <div class="settings-page-header">
+    <div>
+      <h1>{{ 'salesGoalsPage.title' | translate }}</h1>
+      <p>{{ 'salesGoalsPage.description' | translate }}</p>
+    </div>
+    <div class="header-actions">
+      @if (canCreate()) {
+        <p-button
+          icon="pi pi-plus"
+          [label]="'salesGoalsPage.newButton' | translate"
+          (onClick)="openCreateDialog()"
+          data-testid="sales-goals-new-button"
+        />
+      }
+    </div>
+  </div>
+
+  <app-generic-table
+    [items]="goals()"
+    [totalRecords]="total()"
+    [loading]="loading()"
+    [columnsCount]="6"
+    emptyIcon="pi-flag"
+    emptyMessageKey="salesGoalsPage.emptyState"
+    searchPlaceholderKey="salesGoalsPage.searchPlaceholder"
+    (queryChange)="onQueryChange($event)"
+  >
+    <ng-template #header>
+      <tr>
+        <th>{{ 'salesGoalsPage.columns.owner' | translate }}</th>
+        <th pSortableColumn="referenceMonth">
+          {{ 'salesGoalsPage.columns.referenceMonth' | translate }}
+          <p-sortIcon field="referenceMonth" />
+        </th>
+        <th>{{ 'salesGoalsPage.columns.targetAmount' | translate }}</th>
+        <th>{{ 'salesGoalsPage.columns.realizedAmount' | translate }}</th>
+        <th>{{ 'salesGoalsPage.columns.achievement' | translate }}</th>
+        <th class="col-actions">{{ 'salesGoalsPage.columns.actions' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-item>
+      <tr>
+        <td class="cell-strong">{{ item.owner?.name ?? '-' }}</td>
+        <td class="cell-muted">{{ formatMonth(item.referenceMonth) }}</td>
+        <td class="cell-strong">{{ formatAmount(item.targetAmount) }}</td>
+        <td class="cell-muted">{{ formatAmount(item.realizedAmount) }}</td>
+        <td>
+          <div class="achievement-cell">
+            <p-progressbar
+              [value]="item.achievementPercent > 100 ? 100 : item.achievementPercent"
+              [showValue]="false"
+              [styleClass]="'achievement-cell__bar achievement-cell__bar--' + achievementSeverity(item.achievementPercent)"
+            />
+            <span class="achievement-cell__value">{{ item.achievementPercent }}%</span>
+          </div>
+        </td>
+        <td>
+          <div class="row-actions">
+            @if (canEdit()) {
+              <p-button
+                icon="pi pi-pencil"
+                [text]="true"
+                [rounded]="true"
+                severity="secondary"
+                [pTooltip]="'common.actions.edit' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.edit' | translate"
+                (onClick)="openEditDialog(item)"
+                [attr.data-testid]="'sales-goal-edit-' + item.id"
+              />
+            }
+            @if (canDelete()) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                [pTooltip]="'common.actions.delete' | translate"
+                tooltipPosition="top"
+                [ariaLabel]="'common.actions.delete' | translate"
+                (onClick)="confirmDelete(item)"
+                [attr.data-testid]="'sales-goal-delete-' + item.id"
+              />
+            }
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </app-generic-table>
+</div>
+
+<p-dialog
+  appendTo="body"
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '32rem' }"
+  [breakpoints]="{ '1024px': '92vw', '767px': '96vw' }"
+  [header]="(editingGoal() ? 'salesGoalsPage.dialog.editTitle' : 'salesGoalsPage.dialog.newTitle') | translate"
+>
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+    <div class="form-grid">
+      <div class="field field-span-2">
+        <label for="sales-goal-owner">{{ 'salesGoalsPage.dialog.ownerLabel' | translate }}</label>
+        <p-select
+          appendTo="body"
+          inputId="sales-goal-owner"
+          formControlName="ownerUserId"
+          [options]="userOptions()"
+          optionLabel="name"
+          optionValue="id"
+          [filter]="true"
+          filterBy="name"
+          [placeholder]="'commercialPages.common.selectPlaceholder' | translate"
+          fluid
+          data-testid="sales-goal-owner-select"
+        />
+        @if (form.controls.ownerUserId.invalid && form.controls.ownerUserId.touched) {
+          <small class="field-error">{{ 'common.validation.required' | translate }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="sales-goal-month">{{ 'salesGoalsPage.dialog.referenceMonthLabel' | translate }}</label>
+        <p-datepicker
+          appendTo="body"
+          inputId="sales-goal-month"
+          formControlName="referenceMonth"
+          view="month"
+          dateFormat="mm/yy"
+          [showIcon]="true"
+          fluid
+        />
+      </div>
+
+      <div class="field">
+        <label for="sales-goal-amount">{{ 'salesGoalsPage.dialog.targetAmountLabel' | translate }}</label>
+        <p-inputnumber
+          inputId="sales-goal-amount"
+          formControlName="targetAmount"
+          mode="currency"
+          currency="BRL"
+          locale="pt-BR"
+          fluid
+          data-testid="sales-goal-amount-input"
+        />
+      </div>
+
+      <div class="field field-span-2">
+        <label for="sales-goal-notes">{{ 'salesGoalsPage.dialog.notesLabel' | translate }}</label>
+        <textarea id="sales-goal-notes" pTextarea formControlName="notes" rows="3" [autoResize]="true" fluid></textarea>
+      </div>
+    </div>
+
+    <div class="dialog-footer">
+      <p-button
+        [label]="'common.actions.cancel' | translate"
+        severity="secondary"
+        [text]="true"
+        type="button"
+        (onClick)="closeDialog()"
+      />
+      <p-button
+        icon="pi pi-check"
+        [label]="'common.actions.save' | translate"
+        type="submit"
+        [loading]="saving()"
+        data-testid="sales-goal-save-button"
+      />
+    </div>
+  </form>
+</p-dialog>

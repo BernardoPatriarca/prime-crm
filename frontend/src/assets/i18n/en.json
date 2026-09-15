@@ -154,7 +154,8 @@
       "order": "Order",
       "contract": "Contract",
       "receivable": "Receivable",
-      "payable": "Payable"
+      "payable": "Payable",
+      "salesGoal": "Sales Goal"
     },
     "userMenu": {
       "changePassword": "Change Password",
@@ -230,7 +231,8 @@
       "orders": "Orders",
       "contracts": "Contracts",
       "receivables": "Receivables",
-      "payables": "Payables"
+      "payables": "Payables",
+      "salesGoals": "Sales Goals"
     },
     "comingSoon": "Coming soon",
     "reports": {
@@ -1551,6 +1553,34 @@
       "updated": "Account payable updated successfully",
       "deleted": "Account payable deleted successfully",
       "paid": "Payment registered successfully"
+    }
+  },
+  "salesGoalsPage": {
+    "title": "Sales Goals",
+    "description": "Monthly sales target per salesperson, tracked against the amount realized in won opportunities.",
+    "newButton": "New Goal",
+    "searchPlaceholder": "Search by notes...",
+    "emptyState": "No sales goals found.",
+    "columns": {
+      "owner": "Salesperson",
+      "referenceMonth": "Month",
+      "targetAmount": "Target",
+      "realizedAmount": "Realized",
+      "achievement": "Achievement",
+      "actions": "Actions"
+    },
+    "dialog": {
+      "newTitle": "New Sales Goal",
+      "editTitle": "Edit Sales Goal",
+      "ownerLabel": "Salesperson",
+      "referenceMonthLabel": "Reference month",
+      "targetAmountLabel": "Target amount",
+      "notesLabel": "Notes"
+    },
+    "messages": {
+      "created": "Sales goal created successfully",
+      "updated": "Sales goal updated successfully",
+      "deleted": "Sales goal deleted successfully"
     }
   }
 }

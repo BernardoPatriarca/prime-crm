@@ -154,7 +154,8 @@
       "order": "Pedido",
       "contract": "Contrato",
       "receivable": "Cuenta por Cobrar",
-      "payable": "Cuenta por Pagar"
+      "payable": "Cuenta por Pagar",
+      "salesGoal": "Meta Comercial"
     },
     "userMenu": {
       "changePassword": "Cambiar Contraseña",
@@ -230,7 +231,8 @@
       "orders": "Pedidos",
       "contracts": "Contratos",
       "receivables": "Cuentas por Cobrar",
-      "payables": "Cuentas por Pagar"
+      "payables": "Cuentas por Pagar",
+      "salesGoals": "Metas Comerciales"
     },
     "comingSoon": "Próximamente",
     "reports": {
@@ -1551,6 +1553,34 @@
       "updated": "Cuenta por pagar actualizada con exito",
       "deleted": "Cuenta por pagar eliminada con exito",
       "paid": "Pago registrado con exito"
+    }
+  },
+  "salesGoalsPage": {
+    "title": "Metas Comerciales",
+    "description": "Meta de ventas por vendedor y mes, con seguimiento del valor realizado en oportunidades ganadas.",
+    "newButton": "Nueva Meta",
+    "searchPlaceholder": "Buscar por observaciones...",
+    "emptyState": "Ninguna meta comercial encontrada.",
+    "columns": {
+      "owner": "Vendedor",
+      "referenceMonth": "Mes",
+      "targetAmount": "Meta",
+      "realizedAmount": "Realizado",
+      "achievement": "Cumplimiento",
+      "actions": "Acciones"
+    },
+    "dialog": {
+      "newTitle": "Nueva Meta Comercial",
+      "editTitle": "Editar Meta Comercial",
+      "ownerLabel": "Vendedor",
+      "referenceMonthLabel": "Mes de referencia",
+      "targetAmountLabel": "Valor de la meta",
+      "notesLabel": "Observaciones"
+    },
+    "messages": {
+      "created": "Meta comercial creada con exito",
+      "updated": "Meta comercial actualizada con exito",
+      "deleted": "Meta comercial eliminada con exito"
     }
   }
 }

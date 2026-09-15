@@ -207,6 +207,12 @@ export class TopbarComponent {
         icon: 'pi pi-arrow-up-right',
         disabled: !hasPermission('FINANCEIRO_CREATE'),
         command: () => this.openCreation('/financeiro/contas-a-pagar')
+      },
+      {
+        label: t('topbar.newButton.salesGoal'),
+        icon: 'pi pi-flag',
+        disabled: !hasPermission('METAS_CREATE'),
+        command: () => this.openCreation('/metas-comerciais')
       }
     ];
   });

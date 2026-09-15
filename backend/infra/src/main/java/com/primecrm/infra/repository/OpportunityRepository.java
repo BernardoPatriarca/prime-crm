@@ -127,4 +127,16 @@ public interface OpportunityRepository
     List<LabeledAmountAggregate> rankOwnersByClosedAmount(@Param("outcome") OpportunityOutcome outcome,
                                                           @Param("from") Instant from, @Param("to") Instant to,
                                                           Pageable pageable);
+
+    @Query("""
+            select count(o) as itemCount, coalesce(sum(o.amount), 0) as totalAmount
+            from Opportunity o
+            where o.deletedAt is null
+              and o.outcome = :outcome
+              and o.owner.id = :ownerId
+              and o.closedAt >= :from and o.closedAt < :to
+            """)
+    AmountAggregate summarizeClosedByOwnerBetween(@Param("ownerId") UUID ownerId,
+                                                  @Param("outcome") OpportunityOutcome outcome,
+                                                  @Param("from") Instant from, @Param("to") Instant to);
 }

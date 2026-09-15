@@ -2,6 +2,49 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fase 6] — Metas comerciais
+
+Primeira entrega da Fase 6 (Dashboards por modulo e metas comerciais): cadastro de metas de vendas
+por vendedor e mes, com acompanhamento automatico do valor realizado e do percentual de atingimento.
+
+### Banco de dados
+
+Migrations `V41` e `V42`: tabela `sales_goals` (vendedor, mes de referencia normalizado para o
+primeiro dia do mes, valor da meta, observacoes) e as 4 permissoes novas (`METAS_*`) concedidas ao
+perfil Administrador.
+
+**Decisoes de modelagem**: `reference_month` e sempre normalizado para o primeiro dia do mes
+(`date_trunc('month', ...)`, com CHECK garantindo isso no banco), permitindo uma unique index simples
+por (vendedor, mes). O valor realizado e o percentual de atingimento **nao sao armazenados** — sao
+calculados a cada consulta somando o `amount` das oportunidades com `outcome = WON` do vendedor
+fechadas dentro do mes da meta (reaproveita o metodo de agregacao ja usado no ranking do Dashboard,
+apenas com um filtro adicional por vendedor), no mesmo espirito dos campos computados (`overdue`,
+`expired`) ja usados em Tarefas, Agenda, Propostas, Contratos e Financeiro — evita que a meta fique
+com um valor realizado desatualizado se uma oportunidade for reaberta ou reatribuida depois.
+
+### Backend
+
+- CRUD completo (`/api/v1/sales-goals`) com busca textual (observacoes), filtros (vendedor, mes de
+  referencia), paginacao, RBAC e auditoria.
+- Validacao de duplicidade: nao e possivel cadastrar duas metas para o mesmo vendedor no mesmo mes
+  (`ConflictException`, mesmo padrao ja usado para documento de cliente, e-mail e login de usuario).
+
+### Frontend
+
+Tela `/metas-comerciais`, novo item de primeiro nivel na sidebar (com atalho no "+ Novo" do topbar),
+com listagem, diálogo de CRUD (vendedor, mes via seletor `p-datepicker` em modo `month`, valor da
+meta, observacoes) e barra de progresso do atingimento (vermelho abaixo de 50%, amarelo entre 50% e
+100%, verde a partir de 100%).
+
+### Qualidade
+
+- Backend: `SalesGoalServiceTest` cobrindo normalizacao do mes de referencia, conflito de meta
+  duplicada, calculo de atingimento a partir do valor realizado, exclusao e busca por id inexistente.
+  Suite completa do `core` seguiu verde (202 testes).
+- Frontend: `sales-goals-page.component.spec.ts` cobrindo validacao, formatacao do mes, classificacao
+  de severidade do atingimento e carregamento de vendedor ao editar. Suite completa (282 testes) e
+  `npm run build` verdes.
+
 ## [Fase 5] — Documentos (PDF)
 
 Terceira e ultima entrega da Fase 5 (Financeiro e documentos): geracao de PDF para Propostas,

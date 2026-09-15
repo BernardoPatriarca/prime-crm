@@ -114,6 +114,13 @@ export const routes: Routes = [
         loadComponent: () => import('./features/reports/reports-page.component').then((m) => m.ReportsPageComponent)
       },
       {
+        path: 'metas-comerciais',
+        canActivate: [permissionGuard],
+        data: { permission: 'METAS_VIEW' },
+        loadComponent: () =>
+          import('./features/sales-goals/sales-goals-page.component').then((m) => m.SalesGoalsPageComponent)
+      },
+      {
         path: 'configuracoes/auditoria',
         canActivate: [permissionGuard],
         data: { permission: 'AUDITORIA_VIEW' },

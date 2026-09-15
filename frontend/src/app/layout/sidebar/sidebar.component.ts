@@ -196,6 +196,14 @@ export class SidebarComponent {
       });
     }
 
+    if (hasPermission('METAS_VIEW')) {
+      items.push({
+        label: t('sidebar.modules.salesGoals'),
+        icon: 'pi pi-flag',
+        routerLink: '/metas-comerciais'
+      });
+    }
+
     const settingsChildren: MenuItem[] = [];
 
     if (hasPermission('DOMINIOS_VIEW')) {
