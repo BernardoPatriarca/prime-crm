@@ -2,6 +2,49 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fase 6] — Dashboard Financeiro
+
+Segunda entrega da Fase 6 (Dashboards por modulo e metas comerciais): primeiro dashboard especifico
+de modulo, consolidando indicadores de Contas a Receber e Contas a Pagar.
+
+### Banco de dados
+
+Nenhuma migration nova. Foram adicionadas consultas de agregacao (`summarizeOpen`, `summarizeOverdue`,
+`summarizePaidBetween`, `summarizePaidByMonth`) aos repositorios `ReceivableRepository` e
+`PayableRepository` ja existentes, no mesmo padrao das agregacoes ja usadas pelo Dashboard geral em
+`OpportunityRepository`.
+
+**Decisao de modelagem — "recebido/pago no periodo" a partir de `paidAt`**: como o modelo atual nao
+mantem um historico de pagamentos (cada conta guarda apenas `paid_amount` acumulado e `paid_at` da
+ultima baixa), o indicador de movimentacao do periodo soma `paid_amount` das contas cuja ultima baixa
+caiu dentro da janela consultada. E uma simplificacao deliberada, coerente com a que ja existe em
+Contas a Receber/Pagar desde a Fase 5 (sem uma tabela de parcelas de pagamento), e funciona bem no caso
+comum de uma conta ser paga uma unica vez.
+
+### Backend
+
+- `GET /api/v1/dashboard/financeiro`: indicadores do periodo (padrao ultimos 30 dias) de Contas a
+  Receber e a Pagar — em aberto, em atraso e movimentado no periodo com variacao contra o periodo
+  anterior — e serie mensal dos ultimos 12 meses de recebido x pago x saldo liquido. Endpoint separado
+  do Dashboard geral (`/api/v1/dashboard`), com sua propria permissao (`FINANCEIRO_VIEW`) em vez de
+  `isAuthenticated()`.
+
+### Frontend
+
+Tela `/financeiro/dashboard`, com cartoes de indicadores (a receber/pagar em aberto e em atraso,
+recebido/pago no periodo com variacao) e grafico de area do recebido x pago dos ultimos 12 meses,
+reaproveitando o `AreaChartComponent` ja usado no Dashboard geral. Novo primeiro item do submenu
+"Financeiro" na sidebar.
+
+### Qualidade
+
+- Backend: `FinanceDashboardServiceTest` cobrindo serie mensal com meses zerados, calculo de saldo
+  liquido por mes, indicadores de aberto/atraso de contas a receber e a pagar, variacao sem periodo
+  anterior e variacao calculada contra o periodo anterior. Suite completa do `core` seguiu verde
+  (208 testes).
+- Frontend: `finance-dashboard.component.spec.ts` cobrindo carregamento por periodo, cartoes de
+  indicadores, serie mensal e estado de erro. Suite completa (290 testes) e `npm run build` verdes.
+
 ## [Fase 6] — Metas comerciais
 
 Primeira entrega da Fase 6 (Dashboards por modulo e metas comerciais): cadastro de metas de vendas

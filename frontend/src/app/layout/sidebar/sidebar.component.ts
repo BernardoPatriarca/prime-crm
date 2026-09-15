@@ -153,6 +153,11 @@ export class SidebarComponent {
         icon: 'pi pi-wallet',
         items: [
           {
+            label: t('sidebar.modules.financeDashboard'),
+            icon: 'pi pi-chart-bar',
+            routerLink: '/financeiro/dashboard'
+          },
+          {
             label: t('sidebar.modules.receivables'),
             icon: 'pi pi-arrow-down-left',
             routerLink: '/financeiro/contas-a-receber'

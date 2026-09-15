@@ -1,0 +1,101 @@
+<section class="finance-dashboard">
+  <header class="finance-dashboard__header">
+    <div class="finance-dashboard__heading">
+      <h1>{{ 'financeDashboard.title' | translate }}</h1>
+      <p>{{ 'financeDashboard.subtitle' | translate }}</p>
+    </div>
+
+    <div class="finance-dashboard__actions">
+      <p-selectbutton
+        [ngModel]="periodDays()"
+        (ngModelChange)="onPeriodChange($event)"
+        [options]="periodOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [allowEmpty]="false"
+        size="small"
+        data-testid="finance-dashboard-period"
+      />
+      <p-button
+        icon="pi pi-refresh"
+        severity="secondary"
+        [text]="true"
+        [rounded]="true"
+        [loading]="loading()"
+        [pTooltip]="'dashboard.refresh' | translate"
+        tooltipPosition="left"
+        [ariaLabel]="'dashboard.refresh' | translate"
+        (onClick)="load()"
+        data-testid="finance-dashboard-refresh"
+      />
+    </div>
+  </header>
+
+  @if (failed()) {
+    <p-card styleClass="finance-dashboard__empty">
+      <i class="pi pi-exclamation-triangle"></i>
+      <p>{{ 'dashboard.loadError' | translate }}</p>
+      <p-button [label]="'dashboard.retry' | translate" severity="secondary" (onClick)="load()" />
+    </p-card>
+  } @else if (loading() && !data()) {
+    <div class="finance-dashboard__metrics">
+      @for (placeholder of [0, 1, 2, 3, 4, 5]; track placeholder) {
+        <p-skeleton height="7.5rem" />
+      }
+    </div>
+    <p-skeleton height="20rem" />
+  } @else if (data()) {
+    <div class="finance-dashboard__metrics">
+      @for (card of metricCards(); track card.key) {
+        <p-card styleClass="finance-dashboard__metric">
+          <div class="finance-dashboard__metric-body" [pTooltip]="card.tooltip" tooltipPosition="top" [showDelay]="150">
+            <div class="finance-dashboard__metric-top">
+              <span class="finance-dashboard__metric-icon" [attr.data-accent]="card.accent">
+                <i [class]="card.icon"></i>
+              </span>
+              @if (card.trend !== null) {
+                <p-tag
+                  [severity]="trendSeverity(card.trend)"
+                  [icon]="trendIcon(card.trend)"
+                  [value]="trendLabel(card.trend)"
+                />
+              }
+            </div>
+
+            <p class="finance-dashboard__metric-value">{{ card.value }}</p>
+            <p class="finance-dashboard__metric-label">{{ 'financeDashboard.metrics.' + card.key + '.label' | translate }}</p>
+            <p class="finance-dashboard__metric-hint">{{ card.hint }}</p>
+          </div>
+        </p-card>
+      }
+    </div>
+
+    <p-card styleClass="finance-dashboard__panel">
+      <div class="finance-dashboard__panel-header">
+        <div>
+          <h2>{{ 'financeDashboard.charts.monthlyTitle' | translate }}</h2>
+          <p>{{ 'financeDashboard.charts.monthlySubtitle' | translate }}</p>
+        </div>
+        <div class="finance-dashboard__legend">
+          <span class="finance-dashboard__legend-item finance-dashboard__legend-item--solid">
+            {{ 'financeDashboard.charts.received' | translate }}
+          </span>
+          <span class="finance-dashboard__legend-item finance-dashboard__legend-item--dashed">
+            {{ 'financeDashboard.charts.paid' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <app-area-chart [points]="monthlyPoints()" gradientId="finance-dashboard-monthly" />
+    </p-card>
+
+    <div class="finance-dashboard__links">
+      <a routerLink="/financeiro/contas-a-receber" class="finance-dashboard__link">
+        {{ 'financeDashboard.links.receivables' | translate }} <i class="pi pi-arrow-right"></i>
+      </a>
+      <a routerLink="/financeiro/contas-a-pagar" class="finance-dashboard__link">
+        {{ 'financeDashboard.links.payables' | translate }} <i class="pi pi-arrow-right"></i>
+      </a>
+    </div>
+  }
+</section>

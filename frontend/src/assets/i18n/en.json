@@ -232,7 +232,8 @@
       "contracts": "Contracts",
       "receivables": "Receivables",
       "payables": "Payables",
-      "salesGoals": "Sales Goals"
+      "salesGoals": "Sales Goals",
+      "financeDashboard": "Dashboard"
     },
     "comingSoon": "Coming soon",
     "reports": {
@@ -1581,6 +1582,50 @@
       "created": "Sales goal created successfully",
       "updated": "Sales goal updated successfully",
       "deleted": "Sales goal deleted successfully"
+    }
+  },
+  "financeDashboard": {
+    "title": "Finance Dashboard",
+    "subtitle": "Consolidated indicators for accounts receivable and payable.",
+    "metrics": {
+      "receivableOpen": {
+        "label": "Open receivables",
+        "hint": "{{count}} pending bill(s)"
+      },
+      "receivableOverdue": {
+        "label": "Overdue receivables",
+        "hint": "{{count}} overdue bill(s)"
+      },
+      "received": {
+        "label": "Received in period",
+        "hint": "{{count}} payment(s) recorded"
+      },
+      "payableOpen": {
+        "label": "Open payables",
+        "hint": "{{count}} pending bill(s)"
+      },
+      "payableOverdue": {
+        "label": "Overdue payables",
+        "hint": "{{count}} overdue bill(s)"
+      },
+      "paid": {
+        "label": "Paid in period",
+        "hint": "{{count}} payment(s) recorded"
+      }
+    },
+    "charts": {
+      "monthlyTitle": "Received x Paid",
+      "monthlySubtitle": "Monthly evolution over the last 12 months",
+      "received": "Received",
+      "paid": "Paid",
+      "monthlyTooltip": "{{month}}: received {{received}}, paid {{paid}}, net {{net}}"
+    },
+    "links": {
+      "receivables": "View receivables",
+      "payables": "View payables"
+    },
+    "tooltips": {
+      "metric": "{{label}}: {{value}} — {{hint}}. {{trend}}"
     }
   }
 }

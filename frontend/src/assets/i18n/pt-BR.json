@@ -232,7 +232,8 @@
       "contracts": "Contratos",
       "receivables": "Contas a Receber",
       "payables": "Contas a Pagar",
-      "salesGoals": "Metas Comerciais"
+      "salesGoals": "Metas Comerciais",
+      "financeDashboard": "Dashboard"
     },
     "comingSoon": "Em breve",
     "reports": {
@@ -1581,6 +1582,50 @@
       "created": "Meta comercial criada com sucesso",
       "updated": "Meta comercial atualizada com sucesso",
       "deleted": "Meta comercial excluida com sucesso"
+    }
+  },
+  "financeDashboard": {
+    "title": "Dashboard Financeiro",
+    "subtitle": "Indicadores consolidados de contas a receber e a pagar.",
+    "metrics": {
+      "receivableOpen": {
+        "label": "A receber em aberto",
+        "hint": "{{count}} conta(s) pendente(s)"
+      },
+      "receivableOverdue": {
+        "label": "A receber em atraso",
+        "hint": "{{count}} conta(s) em atraso"
+      },
+      "received": {
+        "label": "Recebido no período",
+        "hint": "{{count}} pagamento(s) registrado(s)"
+      },
+      "payableOpen": {
+        "label": "A pagar em aberto",
+        "hint": "{{count}} conta(s) pendente(s)"
+      },
+      "payableOverdue": {
+        "label": "A pagar em atraso",
+        "hint": "{{count}} conta(s) em atraso"
+      },
+      "paid": {
+        "label": "Pago no período",
+        "hint": "{{count}} pagamento(s) registrado(s)"
+      }
+    },
+    "charts": {
+      "monthlyTitle": "Recebido x Pago",
+      "monthlySubtitle": "Evolução mensal dos últimos 12 meses",
+      "received": "Recebido",
+      "paid": "Pago",
+      "monthlyTooltip": "{{month}}: recebido {{received}}, pago {{paid}}, saldo {{net}}"
+    },
+    "links": {
+      "receivables": "Ver contas a receber",
+      "payables": "Ver contas a pagar"
+    },
+    "tooltips": {
+      "metric": "{{label}}: {{value}} — {{hint}}. {{trend}}"
     }
   }
 }

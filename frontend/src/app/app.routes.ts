@@ -94,6 +94,15 @@ export const routes: Routes = [
           import('./features/commercial/contracts/contracts-page.component').then((m) => m.ContractsPageComponent)
       },
       {
+        path: 'financeiro/dashboard',
+        canActivate: [permissionGuard],
+        data: { permission: 'FINANCEIRO_VIEW' },
+        loadComponent: () =>
+          import('./features/finance/dashboard/finance-dashboard.component').then(
+            (m) => m.FinanceDashboardComponent
+          )
+      },
+      {
         path: 'financeiro/contas-a-receber',
         canActivate: [permissionGuard],
         data: { permission: 'FINANCEIRO_VIEW' },

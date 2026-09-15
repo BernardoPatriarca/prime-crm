@@ -232,7 +232,8 @@
       "contracts": "Contratos",
       "receivables": "Cuentas por Cobrar",
       "payables": "Cuentas por Pagar",
-      "salesGoals": "Metas Comerciales"
+      "salesGoals": "Metas Comerciales",
+      "financeDashboard": "Dashboard"
     },
     "comingSoon": "Próximamente",
     "reports": {
@@ -1581,6 +1582,50 @@
       "created": "Meta comercial creada con exito",
       "updated": "Meta comercial actualizada con exito",
       "deleted": "Meta comercial eliminada con exito"
+    }
+  },
+  "financeDashboard": {
+    "title": "Dashboard Financiero",
+    "subtitle": "Indicadores consolidados de cuentas por cobrar y por pagar.",
+    "metrics": {
+      "receivableOpen": {
+        "label": "Por cobrar en abierto",
+        "hint": "{{count}} cuenta(s) pendiente(s)"
+      },
+      "receivableOverdue": {
+        "label": "Por cobrar atrasado",
+        "hint": "{{count}} cuenta(s) atrasada(s)"
+      },
+      "received": {
+        "label": "Cobrado en el período",
+        "hint": "{{count}} pago(s) registrado(s)"
+      },
+      "payableOpen": {
+        "label": "Por pagar en abierto",
+        "hint": "{{count}} cuenta(s) pendiente(s)"
+      },
+      "payableOverdue": {
+        "label": "Por pagar atrasado",
+        "hint": "{{count}} cuenta(s) atrasada(s)"
+      },
+      "paid": {
+        "label": "Pagado en el período",
+        "hint": "{{count}} pago(s) registrado(s)"
+      }
+    },
+    "charts": {
+      "monthlyTitle": "Cobrado x Pagado",
+      "monthlySubtitle": "Evolución mensual de los últimos 12 meses",
+      "received": "Cobrado",
+      "paid": "Pagado",
+      "monthlyTooltip": "{{month}}: cobrado {{received}}, pagado {{paid}}, saldo {{net}}"
+    },
+    "links": {
+      "receivables": "Ver cuentas por cobrar",
+      "payables": "Ver cuentas por pagar"
+    },
+    "tooltips": {
+      "metric": "{{label}}: {{value}} — {{hint}}. {{trend}}"
     }
   }
 }
