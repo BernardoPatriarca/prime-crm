@@ -214,7 +214,7 @@ Histórico de entregas por fase em [CHANGELOG.md](CHANGELOG.md).
 | 4 | Comercial avançado: produtos, propostas, pedidos e contratos | ✅ |
 | 5 | Financeiro e documentos: contas a receber, contas a pagar e geração de PDF (propostas, pedidos, contratos) | ✅ |
 | 6 | Dashboards por módulo e metas comerciais: metas comerciais e dashboards do Financeiro, Comercial e Produtividade | ✅ |
-| 7 | Qualidade e hardening | 🔄 (hardening de segurança concluído; cobertura de testes, observabilidade e CI/CD ainda pendentes) |
+| 7 | Qualidade e hardening | 🔄 (hardening de segurança, cobertura de testes e observabilidade concluídos; performance/CI-CD ainda pendente) |
 
 Fora de escopo até segunda ordem (dependem de credenciais ou módulos futuros): SMTP real,
 WhatsApp Business API, Google Calendar/Contacts, Zapier, Meta/Google Ads, webhooks, chaves de API,

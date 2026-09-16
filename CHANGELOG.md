@@ -2,6 +2,31 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fase 7] — Qualidade e hardening (observabilidade)
+
+Terceira entrega da Fase 7. Falta apenas performance/CI-CD (quality gates) para fechar a fase.
+
+- **Actuator + Micrometer**: `spring-boot-starter-actuator` e `micrometer-registry-prometheus`
+  adicionados ao modulo `api`. `/actuator/health`, `/actuator/health/liveness`,
+  `/actuator/health/readiness` e `/actuator/info` continuam publicos (necessarios para health check
+  de orquestracao); `/actuator/metrics` e `/actuator/prometheus` ficam atras do JWT como qualquer
+  outro endpoint da API (nunca estiveram na lista de rotas publicas). Health groups de liveness/
+  readiness habilitados (`management.endpoint.health.probes.enabled`), prontos para uso futuro em
+  Kubernetes.
+- **Logging estruturado com correlacao de requisicao**: novo `RequestCorrelationFilter` (primeiro
+  filtro da cadeia, antes do rate limiting) gera ou reaproveita um `X-Request-Id` por requisicao,
+  populando `requestId`/`tenantId` no MDC do SLF4J e devolvendo o mesmo header na resposta — permite
+  rastrear uma requisicao especifica atraves de toda a stack de logs. `JwtAuthenticationFilter` some
+  o `userId` ao MDC assim que a autenticacao e resolvida. Novo `logback-spring.xml` inclui os tres
+  campos (`requestId`, `tenantId`, `userId`) no padrao de log do console; os niveis por pacote
+  continuam 100% controlados pelas variaveis `APP_LOG_LEVEL`/`SQL_LOG_LEVEL` ja existentes (nenhuma
+  mudanca de comportamento ali).
+- **Log de eventos de seguranca antes silenciosos**: `GlobalExceptionHandler` agora grava `WARN` para
+  `BadCredentialsException` (401) e `AccessDeniedException` (403) — antes esses casos geravam a
+  resposta HTTP correta mas nao deixavam rastro nenhum no log.
+- Corrigido de passagem: `.env.example` nao tinha as variaveis `RATE_LIMIT_*` introduzidas na entrega
+  anterior de hardening — adicionadas agora.
+
 ## [Fase 7] — Qualidade e hardening (cobertura de testes)
 
 Segunda entrega da Fase 7: cobertura de testes, priorizada pelo dono do produto apos o hardening de

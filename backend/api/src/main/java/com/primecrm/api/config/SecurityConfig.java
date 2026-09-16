@@ -1,5 +1,6 @@
 package com.primecrm.api.config;
 
+import com.primecrm.api.logging.RequestCorrelationFilter;
 import com.primecrm.api.security.JwtAuthenticationFilter;
 import com.primecrm.api.security.RateLimitFilter;
 import com.primecrm.api.security.RestAccessDeniedHandler;
@@ -33,13 +34,14 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/swagger-ui.html",
-            "/actuator/health",
+            "/actuator/health/**",
             "/actuator/info",
             "/ws/**"
     };
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final RateLimitFilter rateLimitFilter;
+    private final RequestCorrelationFilter requestCorrelationFilter;
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     private final RestAccessDeniedHandler restAccessDeniedHandler;
     private final AppCorsProperties corsProperties;
@@ -57,7 +59,8 @@ public class SecurityConfig {
                         .authenticationEntryPoint(restAuthenticationEntryPoint)
                         .accessDeniedHandler(restAccessDeniedHandler))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(rateLimitFilter, JwtAuthenticationFilter.class);
+                .addFilterBefore(rateLimitFilter, JwtAuthenticationFilter.class)
+                .addFilterBefore(requestCorrelationFilter, RateLimitFilter.class);
 
         return http.build();
     }

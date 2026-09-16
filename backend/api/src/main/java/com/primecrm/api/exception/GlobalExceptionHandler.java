@@ -65,12 +65,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiErrorResponse> handleBadCredentials(BadCredentialsException ex,
                                                                   HttpServletRequest request) {
+        log.warn("Credenciais invalidas em {} {}", request.getMethod(), request.getRequestURI());
         return build(HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS", "Credenciais invalidas", request, null);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiErrorResponse> handleAccessDenied(AccessDeniedException ex,
                                                                 HttpServletRequest request) {
+        log.warn("Acesso negado em {} {}", request.getMethod(), request.getRequestURI());
         return build(HttpStatus.FORBIDDEN, "ACCESS_DENIED", "Acesso negado", request, null);
     }
 

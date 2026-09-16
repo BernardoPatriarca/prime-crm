@@ -1,5 +1,6 @@
 package com.primecrm.api.security;
 
+import com.primecrm.api.logging.RequestCorrelationFilter;
 import com.primecrm.core.security.AuthenticatedUser;
 import com.primecrm.core.security.JwtTokenProvider;
 import io.jsonwebtoken.JwtException;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.MDC;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -48,6 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(authenticatedUser, null, authorities);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                MDC.put(RequestCorrelationFilter.MDC_USER_ID, authenticatedUser.id().toString());
             } catch (JwtException | IllegalArgumentException ex) {
                 SecurityContextHolder.clearContext();
             }

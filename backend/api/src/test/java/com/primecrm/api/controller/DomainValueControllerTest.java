@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.primecrm.api.config.SecurityConfig;
+import com.primecrm.api.logging.RequestCorrelationFilter;
 import com.primecrm.api.security.InMemoryRateLimiter;
 import com.primecrm.api.security.JwtAuthenticationFilter;
 import com.primecrm.api.security.RateLimitFilter;
@@ -37,7 +38,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = DomainValueController.class)
 @Import({SecurityConfig.class, JwtAuthenticationFilter.class, RateLimitFilter.class, InMemoryRateLimiter.class,
-        RestAuthenticationEntryPoint.class, RestAccessDeniedHandler.class})
+        RequestCorrelationFilter.class, RestAuthenticationEntryPoint.class, RestAccessDeniedHandler.class})
 class DomainValueControllerTest {
 
     @Autowired
