@@ -2,6 +2,27 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fase 7] — Qualidade e hardening (cobertura de testes)
+
+Segunda entrega da Fase 7: cobertura de testes, priorizada pelo dono do produto apos o hardening de
+seguranca. Continuam pendentes observabilidade e performance/CI-CD (quality gates).
+
+- **Backend**: os dois unicos services sem teste unitario (`GlobalSearchService`,
+  `NotificationService`) ganharam suites completas (`GlobalSearchServiceTest`,
+  `NotificationServiceTest`), fechando a cobertura de `core/service/*` em 100% (agora 37 classes de
+  service, todas testadas). `./mvnw verify` passa de 227+37 para 235+37 testes.
+- **Frontend — regressao do bug de "undefined"**: `format.util.ts` (usado por praticamente toda
+  formatacao de valor/data da UI) nunca tinha teste proprio, apesar de ser a peca central do fix do
+  bug anterior — ganhou `format.util.spec.ts` (25 casos, cada funcao testada com `null` **e**
+  `undefined` separadamente, refletindo o comportamento real da API descrito acima).
+  `opportunity-board.component.ts` e `opportunity-detail-drawer.component.ts` (os dois componentes
+  que tiveram o bug do "undefined%" na probabilidade/dias-na-etapa) nunca tinham spec proprio —
+  ganharam specs novos com casos explicitos para probabilidade omitida pela API (nao so `null`), a
+  forma exata como o bug se manifestava em produção. `dashboard.component.spec.ts` e
+  `finance-dashboard.component.spec.ts` ganharam um caso de regressao dedicado, simulando a API
+  omitindo os campos de tendencia (e nao apenas retornando `null`), para travar o fix anterior contra
+  reintroducao futura.
+
 ## [Fase 7] — Qualidade e hardening (hardening de seguranca)
 
 Primeira entrega da Fase 7, com o escopo de hardening de seguranca priorizado pelo dono do produto.

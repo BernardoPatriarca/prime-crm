@@ -109,6 +109,27 @@ describe('FinanceDashboardComponent', () => {
     expect(cards[5].trend).toBeNull();
   });
 
+  it('never renders "undefined%" when movementTrend is omitted by the API (no historical baseline)', async () => {
+    const receivablesWithoutTrend: Record<string, unknown> = { ...financeDashboardFixture.receivables };
+    const payablesWithoutTrend: Record<string, unknown> = { ...financeDashboardFixture.payables };
+    delete receivablesWithoutTrend['movementTrend'];
+    delete payablesWithoutTrend['movementTrend'];
+    financeDashboardServiceStub.load.and.returnValue(
+      of({
+        ...financeDashboardFixture,
+        receivables: receivablesWithoutTrend as unknown as FinanceDashboard['receivables'],
+        payables: payablesWithoutTrend as unknown as FinanceDashboard['payables']
+      })
+    );
+
+    await createComponent();
+
+    const cards = component['metricCards']();
+    expect(cards.every((card) => card.trend === null)).toBeTrue();
+    const text = (fixture.nativeElement as HTMLElement).innerText;
+    expect(text).not.toContain('undefined');
+  });
+
   it('builds a tooltip for every metric', async () => {
     await createComponent();
 

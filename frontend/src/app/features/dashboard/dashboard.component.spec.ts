@@ -188,6 +188,23 @@ describe('DashboardComponent', () => {
     expect(component['trendLabel'](-25)).toBe('-25%');
   });
 
+  it('never renders "undefined%" when trend fields are omitted by the API (no historical baseline)', async () => {
+    const metricsWithoutTrend: Record<string, unknown> = { ...dashboardFixture.metrics };
+    delete metricsWithoutTrend['wonAmountTrend'];
+    delete metricsWithoutTrend['newLeadsTrend'];
+    delete metricsWithoutTrend['newCustomersTrend'];
+    dashboardServiceStub.load.and.returnValue(
+      of({ ...dashboardFixture, metrics: metricsWithoutTrend as unknown as Dashboard['metrics'] })
+    );
+
+    await createComponent();
+
+    const cards = component['metricCards']();
+    expect(cards.every((card) => card.trend === null)).toBeTrue();
+    const text = (fixture.nativeElement as HTMLElement).innerText;
+    expect(text).not.toContain('undefined');
+  });
+
   it('scales the funnel bars against the largest stage and shares against the total', async () => {
     await createComponent();
 
