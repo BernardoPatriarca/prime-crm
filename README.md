@@ -116,9 +116,11 @@ docker compose up --build
 ## Testes
 
 ```bash
-cd backend  && ./mvnw verify   # 182 testes (services + controllers)
-cd frontend && npm test        # 231 testes (componentes, stores, guards, utils)
-cd frontend && npm run build   # build de produção
+cd backend  && ./mvnw verify        # 275 testes (services + controllers) + gate de cobertura do modulo core (JaCoCo)
+cd frontend && npm run lint         # ESLint (angular-eslint), obrigatorio no CI
+cd frontend && npm test             # 337 testes (componentes, stores, guards, utils)
+cd frontend && npm run test:coverage # roda os testes com cobertura e falha se ficar abaixo do minimo
+cd frontend && npm run build        # build de produção
 ```
 
 ## Screenshots
@@ -214,7 +216,7 @@ Histórico de entregas por fase em [CHANGELOG.md](CHANGELOG.md).
 | 4 | Comercial avançado: produtos, propostas, pedidos e contratos | ✅ |
 | 5 | Financeiro e documentos: contas a receber, contas a pagar e geração de PDF (propostas, pedidos, contratos) | ✅ |
 | 6 | Dashboards por módulo e metas comerciais: metas comerciais e dashboards do Financeiro, Comercial e Produtividade | ✅ |
-| 7 | Qualidade e hardening | 🔄 (hardening de segurança, cobertura de testes e observabilidade concluídos; performance/CI-CD ainda pendente) |
+| 7 | Qualidade e hardening | ✅ |
 
 Fora de escopo até segunda ordem (dependem de credenciais ou módulos futuros): SMTP real,
 WhatsApp Business API, Google Calendar/Contacts, Zapier, Meta/Google Ads, webhooks, chaves de API,

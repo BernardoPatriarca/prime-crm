@@ -37,7 +37,6 @@ import { formatInstant } from '../../shared/utils/format.util';
 const CUSTOMER_SEARCH_DEBOUNCE_MS = 300;
 const OPTIONS_PAGE_SIZE = 50;
 const DOMAIN_OPTIONS_SIZE = 200;
-const WEEK_LENGTH = 7;
 const CALENDAR_GRID_SIZE = 42;
 
 const STATUS_SEVERITY: Record<CalendarEventStatus, 'info' | 'success' | 'secondary'> = {

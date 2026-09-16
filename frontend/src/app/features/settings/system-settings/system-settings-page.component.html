@@ -69,8 +69,8 @@
 >
   <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
     <div class="field">
-      <label>{{ 'settingsPages.generalSettings.columns.key' | translate }}</label>
-      <input pInputText type="text" [value]="editingSetting()?.settingKey" disabled fluid />
+      <label for="setting-key">{{ 'settingsPages.generalSettings.columns.key' | translate }}</label>
+      <input id="setting-key" pInputText type="text" [value]="editingSetting()?.settingKey" disabled fluid />
     </div>
 
     <div class="field">

@@ -43,7 +43,11 @@
           class="calendar-day"
           [class.calendar-day--outside]="!day.inCurrentMonth"
           [class.calendar-day--today]="day.isToday"
+          role="button"
+          tabindex="0"
           (click)="canCreate() && openCreateDialog(day.date)"
+          (keydown.enter)="canCreate() && openCreateDialog(day.date)"
+          (keydown.space)="canCreate() && openCreateDialog(day.date)"
         >
           <span class="calendar-day-number">{{ day.date.getDate() }}</span>
           <div class="calendar-day-events">

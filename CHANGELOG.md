@@ -2,6 +2,60 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fase 7] — Qualidade e hardening (performance e quality gates de CI/CD)
+
+Quarta e ultima entrega da Fase 7 — fecha o roadmap planejado ate aqui.
+
+### Indices de performance
+
+Auditoria dos caminhos mais quentes (dashboards e a varredura de notificacoes, que roda a cada
+carregamento do topbar) contra os indices ja existentes (todo indice `tenant_id`/`not_deleted` ja
+existia desde a criacao de cada tabela). Gaps reais encontrados e corrigidos na migration `V45`:
+
+- `tasks (assigned_user_id, status, due_at)` — usado por `NotificationService` (tarefas atrasadas/do
+  dia) e pelos dashboards de produtividade; so existiam indices de coluna unica separados.
+- `opportunities (owner_user_id, outcome, expected_close_date)` — usado pelo ranking de responsaveis
+  e pelo forecast do dashboard comercial.
+- `receivables.paid_at` e `payables.paid_at` — usados por `FinanceDashboardService` para o total
+  recebido/pago no periodo; nao tinham indice algum.
+- `calendar_events (assigned_user_id, status)` — usado pela verificacao de eventos atrasados na
+  agenda e nas notificacoes.
+
+`sales_goals` ficou de fora: a constraint unica existente `(tenant_id, owner_user_id,
+reference_month)` ja cobre as consultas por responsavel/mes como prefixo, entao um indice dedicado
+seria redundante.
+
+### Quality gates no CI/CD
+
+- **Frontend**: projeto nunca teve ESLint configurado. Adicionado via `ng add
+  @angular-eslint/schematics@20` (`eslint.config.js` novo). `@angular-eslint/template/eqeqeq` foi
+  configurado com `allowNullOrUndefined: true` — sem essa opcao, o lint reprovaria exatamente o
+  padrao `!= null` usado para corrigir o bug de "undefined" (Fase 7, entrega 1), que existe
+  justamente para tratar `null` e `undefined` de forma identica. As demais 8 violacoes encontradas
+  (2 de acessibilidade em elementos com `(click)` sem suporte a teclado, 2 de `<label>` sem controle
+  associado, 2 de variavel/import nao utilizados) foram corrigidas nos arquivos correspondentes, nao
+  suprimidas. `npm run lint` agora roda no CI e quebra o pipeline se falhar.
+- **Frontend — cobertura de testes**: `npm run test:coverage` (novo script,
+  `frontend/scripts/check-coverage.js`) roda a suíte com `--code-coverage` e falha se
+  Statements/Branches/Functions/Lines ficarem abaixo de 60/40/42/60% (a baseline atual é
+  64,5/46,7/48/64,4% — a margem existe para não travar o build por flutuação normal, mas qualquer
+  queda real de cobertura quebra o CI). Builder do Angular 20 (`@angular/build:karma`) não aceita bem
+  um `karma.conf.js` customizado para configurar reporters de cobertura (o parser interno quebra o
+  carregamento do Jasmine), então o script optou por reaproveitar o reporter `text-summary` que já
+  vem por padrão em vez de brigar com esse comportamento.
+- **Backend — cobertura de testes**: `jacoco-maven-plugin` adicionado ao pom pai (`prepare-agent` +
+  `report` em todos os módulos) com um gate de `check` (mínimo 35% de cobertura de linha, baseline
+  atual ~39,8%) vinculado à fase `verify` **apenas no módulo `core`** — é onde vive a regra de
+  negócio; aplicar o mesmo mínimo a `shared`/`infra` (majoritariamente entidades/DTOs) ou a `api`
+  (poucos `@WebMvcTest`) geraria um número inflado sem sinal real. `./mvnw verify` já falha
+  automaticamente se a cobertura de `core` cair abaixo do piso.
+
+### Decisão de escopo
+
+CI real (GitHub Actions) roda como usuário não-root com Chrome pré-instalado, então nenhuma mudança
+foi necessária ali por causa do sandbox desta sessão — o wrapper `--no-sandbox` usado para validar
+localmente (usuário root neste ambiente) não faz parte do que foi commitado.
+
 ## [Fase 7] — Qualidade e hardening (observabilidade)
 
 Terceira entrega da Fase 7. Falta apenas performance/CI-CD (quality gates) para fechar a fase.

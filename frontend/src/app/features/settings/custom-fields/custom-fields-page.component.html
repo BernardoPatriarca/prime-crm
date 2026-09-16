@@ -165,8 +165,10 @@
     </div>
 
     @if (showOptionsEditor()) {
-      <div class="field">
-        <label>{{ 'settingsPages.customFields.dialog.optionsLabel' | translate }}</label>
+      <div class="field" role="group" aria-labelledby="cf-options-group-label">
+        <span id="cf-options-group-label" class="field-group-label">{{
+          'settingsPages.customFields.dialog.optionsLabel' | translate
+        }}</span>
         <div class="options-editor">
           @for (control of optionsArray.controls; track $index) {
             <div class="options-editor__row" [formGroup]="control">

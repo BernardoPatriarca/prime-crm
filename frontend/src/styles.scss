@@ -241,7 +241,9 @@ h4 {
 }
 
 .dialog-form .field label,
-.form-grid .field label {
+.form-grid .field label,
+.dialog-form .field .field-group-label,
+.form-grid .field .field-group-label {
   font-weight: 600;
   font-size: var(--pc-text-sm);
   letter-spacing: 0.005em;

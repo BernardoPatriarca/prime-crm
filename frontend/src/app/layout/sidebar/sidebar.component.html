@@ -22,6 +22,7 @@
   @if (layoutStore.sidebarOverlay()) {
     <div
       class="app-sidebar__backdrop"
+      aria-hidden="true"
       (click)="layoutStore.closeTransientSidebar()"
       data-testid="sidebar-backdrop"
     ></div>
