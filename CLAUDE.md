@@ -6,7 +6,7 @@ Contexto persistente do projeto para qualquer sessão de desenvolvimento assisti
 
 Prime CRM é um CRM corporativo genérico e configurável (comércio, indústria, serviços, consultorias, representantes, agências, imobiliárias). Monorepo com backend Spring Boot e frontend Angular no mesmo repositório. Documento de referência completo do produto: histórico da conversa que originou o projeto (guardado como `PLAN.md` de cada fase, se existir, e no `CHANGELOG.md`).
 
-Este projeto é desenvolvido em **fases incrementais** (ver seção "Roadmap" no `README.md` e no `CHANGELOG.md`). Nunca inicie uma fase nova sem concluir os critérios de aceite da anterior, salvo autorização explícita.
+O roadmap inicial (Fases 0 a 7) foi concluído; histórico completo de entregas em `CHANGELOG.md`. Trabalho futuro passa a ser tratado como features/fixes avulsos, não mais como fases sequenciais — ao planejar algo novo, alinhe o escopo explicitamente antes de começar.
 
 ## Stack e versões exatas
 
@@ -116,6 +116,9 @@ Por causa disso, dentro desta sessão:
 - [ ] Sem erros no console do navegador
 - [ ] Build e testes passando (backend `./mvnw verify` e frontend `npm run build` + `npm test`)
 
-## Escopo fora das fases já entregues
+## Escopo fora do produto
 
-Ver `CHANGELOG.md` para o que foi entregue em cada fase e o que fica para depois (integrações externas reais, financeiro, propostas/contratos, dashboards com dados reais, etc.).
+Ver seção "Fora de escopo" do `README.md` para o que depende de integrações externas ainda não
+providas (SMTP real, WhatsApp Business API, Google Calendar/Contacts, Zapier, Meta/Google Ads,
+webhooks, chaves de API, backup automatizado, multi-moeda). Histórico completo de entregas em
+`CHANGELOG.md`.

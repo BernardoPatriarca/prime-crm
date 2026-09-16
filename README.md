@@ -203,22 +203,11 @@ toda entidade de negócio com `tenant_id`, auditoria e soft delete; migrations F
 aditivas; código sem comentários, favorecendo nomes autoexplicativos.
 
 Detalhes completos de arquitetura, convenções e Definition of Done em [CLAUDE.md](CLAUDE.md).
-Histórico de entregas por fase em [CHANGELOG.md](CHANGELOG.md).
+Histórico de entregas em [CHANGELOG.md](CHANGELOG.md).
 
-## Status e roadmap
+## Fora de escopo
 
-| Fase | Escopo | Status |
-|---|---|---|
-| 0 | Fundação: monorepo, JWT, layout base, CI | ✅ |
-| 1 | Parametrização e RBAC | ✅ |
-| 2 | Núcleo comercial: clientes, contatos, leads, funil de oportunidades | ✅ |
-| 3 | Produtividade: tarefas, relatórios, agenda e notificações em tempo real (WebSocket) | ✅ |
-| 4 | Comercial avançado: produtos, propostas, pedidos e contratos | ✅ |
-| 5 | Financeiro e documentos: contas a receber, contas a pagar e geração de PDF (propostas, pedidos, contratos) | ✅ |
-| 6 | Dashboards por módulo e metas comerciais: metas comerciais e dashboards do Financeiro, Comercial e Produtividade | ✅ |
-| 7 | Qualidade e hardening | ✅ |
-
-Fora de escopo até segunda ordem (dependem de credenciais ou módulos futuros): SMTP real,
+Por dependerem de credenciais ou integrações de terceiros que o produto ainda não provê: SMTP real,
 WhatsApp Business API, Google Calendar/Contacts, Zapier, Meta/Google Ads, webhooks, chaves de API,
 backup automatizado e multi-moeda.
 
