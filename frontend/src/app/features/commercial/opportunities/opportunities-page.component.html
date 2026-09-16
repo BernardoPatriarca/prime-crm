@@ -191,7 +191,7 @@
             }
           </td>
           <td class="cell-numeric">{{ currency(item.amount) }}</td>
-          <td class="cell-numeric">{{ item.probability !== null ? item.probability + '%' : '-' }}</td>
+          <td class="cell-numeric">{{ item.probability != null ? item.probability + '%' : '-' }}</td>
           <td class="cell-muted">{{ item.owner?.name ?? '-' }}</td>
           <td class="cell-muted cell-numeric">{{ date(item.expectedCloseDate) }}</td>
           <td>

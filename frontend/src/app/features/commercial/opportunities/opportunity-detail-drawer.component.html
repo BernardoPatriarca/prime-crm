@@ -42,7 +42,7 @@
         </div>
         <div>
           <dt>{{ 'commercialPages.opportunities.columns.probability' | translate }}</dt>
-          <dd class="cell-numeric">{{ item.probability !== null ? item.probability + '%' : '-' }}</dd>
+          <dd class="cell-numeric">{{ item.probability != null ? item.probability + '%' : '-' }}</dd>
         </div>
         <div>
           <dt>{{ 'commercialPages.opportunities.columns.owner' | translate }}</dt>
@@ -112,7 +112,7 @@
                     {{ entry.movedByUser.name }}
                   </span>
                 }
-                @if (entry.daysInPreviousStage !== null) {
+                @if (entry.daysInPreviousStage != null) {
                   <span class="detail__history-meta">
                     <i class="pi pi-clock"></i>
                     {{

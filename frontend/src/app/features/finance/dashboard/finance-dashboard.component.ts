@@ -106,7 +106,7 @@ export class FinanceDashboardComponent {
         icon: 'pi pi-wallet',
         value: formatCurrencyBRL(dashboard.receivables.movementAmount),
         hint: t('received.hint', { count: dashboard.receivables.movementCount }),
-        trend: dashboard.receivables.movementTrend,
+        trend: dashboard.receivables.movementTrend ?? null,
         accent: 'success'
       },
       {
@@ -130,7 +130,7 @@ export class FinanceDashboardComponent {
         icon: 'pi pi-wallet',
         value: formatCurrencyBRL(dashboard.payables.movementAmount),
         hint: t('paid.hint', { count: dashboard.payables.movementCount }),
-        trend: dashboard.payables.movementTrend,
+        trend: dashboard.payables.movementTrend ?? null,
         accent: 'info'
       }
     ];

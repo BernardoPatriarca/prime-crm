@@ -110,7 +110,7 @@ export function reasonRequirementFor(column: BoardColumn | null | undefined): St
   if (column.requiresLossReason) {
     return 'LOSS';
   }
-  if (column.defaultProbability !== null && column.defaultProbability >= WON_PROBABILITY) {
+  if (column.defaultProbability != null && column.defaultProbability >= WON_PROBABILITY) {
     return 'WIN';
   }
   return 'NONE';

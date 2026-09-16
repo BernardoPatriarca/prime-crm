@@ -2,6 +2,40 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fix] — "undefined" em campos de tendencia/probabilidade sem dado historico
+
+Causa raiz: `application.yml` define `jackson.default-property-inclusion: non_null`, entao a API
+**omite** campos nulos da resposta JSON em vez de envia-los como `"campo": null`. Varios pontos do
+frontend, porem, tratavam esses campos com verificacao estrita `=== null` / `!== null`, que nao cobre
+`undefined` (o valor que uma propriedade ausente assume em JavaScript/TypeScript). Resultado: quando
+nao havia dado historico para calcular uma tendencia (ex.: primeiro periodo de uso, sem mes anterior
+para comparar) ou quando um campo numerico opcional nao estava preenchido, a tela renderizava a string
+literal `undefined` em vez do rotulo/traço de "sem dado" esperado.
+
+Reproduzido e corrigido com testes via Playwright (mock da API na camada HTTP, simulando exatamente o
+comportamento do Jackson de omitir campos nulos) nos seguintes pontos:
+
+- **Dashboard principal** (`dashboard.component.ts`): badges de tendencia de receita ganha, novos
+  leads e novos clientes exibiam `undefined%` quando o backend nao retornava `wonAmountTrend`,
+  `newLeadsTrend` ou `newCustomersTrend` por falta de periodo anterior para comparacao.
+- **Dashboard financeiro** (`finance-dashboard.component.ts`): mesmo problema nos badges de tendencia
+  de recebimentos e pagamentos (`movementTrend`).
+- **Oportunidades** (lista, kanban e painel de detalhe): coluna/campo de probabilidade exibia
+  `undefined%` quando a oportunidade nao tinha probabilidade definida; o historico de movimentacao de
+  etapa tinha o mesmo problema em "dias na etapa anterior".
+- **`opportunity-board.util.ts`**: o mesmo padrao de comparacao estrita fazia a deteccao automatica de
+  motivo de ganho (`defaultProbability`) falhar silenciosamente quando a etapa nao tinha probabilidade
+  padrao configurada — corrigido junto por ser a mesma causa raiz.
+
+Todos os pontos corrigidos passaram a usar comparacao frouxa (`== null` / `!= null`) ou normalizacao
+explicita (`?? null`) no limite onde o dado chega da API, tratando `undefined` e `null` de forma
+identica — que e a intencao original de todo o codigo ja revisado (todos os helpers de formatacao
+existentes, como `formatCurrencyBRL`/`formatIsoDate`, ja faziam essa checagem dupla corretamente).
+
+Investigacao adicional (dashboards vazios, linhas de listagem com campos nulos, formularios de edicao
+abertos com dados nulos) nao encontrou outras ocorrencias do mesmo bug — os demais componentes usam
+`??`, `?.` ou os helpers de `format.util.ts`, que ja cobrem `null` e `undefined`.
+
 ## [Fix] — Varredura de seguranca, correcoes e limpeza pos-Fase 6
 
 Varredura completa do projeto (backend e frontend) em busca de falhas de seguranca, bugs, problemas

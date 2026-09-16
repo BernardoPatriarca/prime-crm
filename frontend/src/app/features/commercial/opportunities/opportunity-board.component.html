@@ -80,7 +80,7 @@
 
               <div class="kanban__card-metrics">
                 <strong class="kanban__card-amount">{{ currency(card.amount) }}</strong>
-                @if (card.probability !== null) {
+                @if (card.probability != null) {
                   <span class="domain-chip" [style]="chipStyle(column.color)">{{ card.probability }}%</span>
                 }
               </div>

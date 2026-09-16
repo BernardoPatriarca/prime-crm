@@ -120,7 +120,7 @@ export class DashboardComponent {
         icon: 'pi pi-wallet',
         value: formatCurrencyBRL(metrics.wonAmount),
         hint: t('revenue.hint', { count: metrics.wonOpportunities }),
-        trend: metrics.wonAmountTrend,
+        trend: metrics.wonAmountTrend ?? null,
         accent: 'success'
       },
       {
@@ -152,7 +152,7 @@ export class DashboardComponent {
         icon: 'pi pi-bullseye',
         value: String(metrics.newLeads),
         hint: t('leads.hint', { rate: metrics.leadConversionRate, converted: metrics.convertedLeads }),
-        trend: metrics.newLeadsTrend,
+        trend: metrics.newLeadsTrend ?? null,
         accent: 'warn'
       },
       {
@@ -160,7 +160,7 @@ export class DashboardComponent {
         icon: 'pi pi-building',
         value: String(metrics.activeCustomers),
         hint: t('customers.hint', { count: metrics.newCustomers }),
-        trend: metrics.newCustomersTrend,
+        trend: metrics.newCustomersTrend ?? null,
         accent: 'primary'
       }
     ];
