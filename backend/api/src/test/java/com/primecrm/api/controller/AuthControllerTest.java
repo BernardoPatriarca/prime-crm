@@ -10,7 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.primecrm.api.config.SecurityConfig;
+import com.primecrm.api.security.InMemoryRateLimiter;
 import com.primecrm.api.security.JwtAuthenticationFilter;
+import com.primecrm.api.security.RateLimitFilter;
 import com.primecrm.api.security.RestAccessDeniedHandler;
 import com.primecrm.api.security.RestAuthenticationEntryPoint;
 import com.primecrm.core.dto.auth.LoginRequest;
@@ -32,8 +34,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = AuthController.class)
-@Import({SecurityConfig.class, JwtAuthenticationFilter.class, RestAuthenticationEntryPoint.class,
-        RestAccessDeniedHandler.class})
+@Import({SecurityConfig.class, JwtAuthenticationFilter.class, RateLimitFilter.class, InMemoryRateLimiter.class,
+        RestAuthenticationEntryPoint.class, RestAccessDeniedHandler.class})
 class AuthControllerTest {
 
     @Autowired

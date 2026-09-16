@@ -37,3 +37,6 @@ jobs:
       - run: npm ci
       - run: npm run build -- --configuration production
       - run: npm test -- --watch=false --browsers=ChromeHeadless
+      - name: Dependency vulnerability audit
+        run: npm audit --audit-level=high
+        continue-on-error: true

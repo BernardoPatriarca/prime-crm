@@ -2,6 +2,49 @@
 
 Entregas do projeto, organizadas por fase (roadmap completo no [README.md](README.md)).
 
+## [Fase 7] — Qualidade e hardening (hardening de seguranca)
+
+Primeira entrega da Fase 7, com o escopo de hardening de seguranca priorizado pelo dono do produto.
+As demais frentes da fase (cobertura de testes, observabilidade, performance e quality gates de
+CI/CD) ficam para entregas seguintes.
+
+### Bloqueio por tentativas de login (brute-force lockout)
+
+- `users` ganhou as colunas `failed_login_attempts` e `locked_until` (migration `V43`). Apos 5
+  tentativas de senha invalida seguidas para a mesma conta, ela fica bloqueada por 15 minutos
+  (`LoginLockoutService`), independente do IP de origem — protege contra ataques distribuidos por
+  varios IPs contra uma unica conta.
+- O contador de tentativas e o bloqueio sao persistidos numa transacao propria
+  (`REQUIRES_NEW`), pelo mesmo motivo que o `audit_log` ja funciona assim: o `login()` sempre lanca
+  excecao e faz rollback no caminho de falha, entao a contagem precisa sobreviver a esse rollback.
+- Login com conta bloqueada retorna `401` com o codigo `ACCOUNT_LOCKED` sem sequer verificar a senha
+  informada. Um login bem-sucedido zera o contador e remove o bloqueio. O evento de bloqueio e
+  auditado com uma nova acao `LOGIN_LOCKED` (`AuditAction`, migration `V44` para o `CHECK` do
+  `audit_log`).
+
+### Rate limiting
+
+- Novo filtro `RateLimitFilter` (antes do `JwtAuthenticationFilter` na cadeia do Spring Security)
+  aplica limite de requisicoes por IP com janela fixa em memoria (`InMemoryRateLimiter`, sem
+  dependencia nova): `POST /api/v1/auth/login` a 10 requisicoes/minuto (mitiga credential stuffing) e
+  as demais rotas da API a 300 requisicoes/minuto. `/actuator/**` fica isento para nao quebrar health
+  checks de orquestracao. Limites configuraveis via `app.rate-limit.*` /
+  `RATE_LIMIT_*` (env vars), com a opcao de desligar inteiramente (`RATE_LIMIT_ENABLED=false`).
+  Excesso responde `429` no mesmo formato de erro (`ApiErrorResponse`) usado pelo resto da API.
+
+### Varredura de dependencias vulneraveis no CI
+
+- `.github/dependabot.yml` novo, cobrindo os tres ecossistemas do repositorio (Maven em `backend/`,
+  npm em `frontend/` e as proprias GitHub Actions), com checagem semanal e abertura automatica de PR
+  quando ha atualizacao de seguranca disponivel.
+- CI do frontend ganhou um passo `npm audit --audit-level=high` (nao bloqueia o pipeline —
+  `continue-on-error`, tratado como sinal de alerta e nao gate — mas fica visivel no log de toda PR).
+- Avaliado e deliberadamente deixado de fora desta entrega: OWASP Dependency-Check para o Maven do
+  backend. Sem uma chave de API do NVD (que este ambiente nao possui), o plugin fica sujeito a
+  rate-limit da base de vulnerabilidades e tende a falhar de forma intermitente e sem relacao com o
+  codigo, gerando ruido em vez de sinal. Fica registrado como pendencia caso o dono do produto queira
+  prover uma chave `NVD_API_KEY` futuramente.
+
 ## [Fix] — "undefined" em campos de tendencia/probabilidade sem dado historico
 
 Causa raiz: `application.yml` define `jackson.default-property-inclusion: non_null`, entao a API

@@ -43,6 +43,7 @@ public class AuthService {
 
     private static final String INVALID_CREDENTIALS = "INVALID_CREDENTIALS";
     private static final String USER_NOT_ACTIVE = "USER_NOT_ACTIVE";
+    private static final String ACCOUNT_LOCKED = "ACCOUNT_LOCKED";
     private static final String INVALID_REFRESH_TOKEN = "INVALID_REFRESH_TOKEN";
 
     private final UserRepository userRepository;
@@ -51,6 +52,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserAuthorityResolver authorityResolver;
     private final AuditService auditService;
+    private final LoginLockoutService loginLockoutService;
     private final SecureRandom secureRandom = new SecureRandom();
 
     @Transactional
@@ -61,13 +63,20 @@ public class AuthService {
         if (user == null || user.isDeleted()) {
             throw loginFailure(null, request.usernameOrEmail(), INVALID_CREDENTIALS, "Credenciais invalidas");
         }
+        if (loginLockoutService.isLocked(user)) {
+            throw loginFailure(user, request.usernameOrEmail(), ACCOUNT_LOCKED,
+                    "Conta temporariamente bloqueada por excesso de tentativas invalidas. Tente novamente mais tarde.");
+        }
         if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
+            loginLockoutService.registerFailure(user.getId());
             throw loginFailure(user, request.usernameOrEmail(), INVALID_CREDENTIALS, "Credenciais invalidas");
         }
         if (user.getStatus() != UserStatus.ACTIVE) {
             throw loginFailure(user, request.usernameOrEmail(), USER_NOT_ACTIVE, "Usuario inativo ou bloqueado");
         }
 
+        user.setFailedLoginAttempts(0);
+        user.setLockedUntil(null);
         user.setLastLoginAt(Instant.now());
         userRepository.save(user);
 

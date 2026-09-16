@@ -69,6 +69,12 @@ public class User extends BaseEntity {
     @Column(name = "last_login_at")
     private Instant lastLoginAt;
 
+    @Column(name = "failed_login_attempts", nullable = false)
+    private int failedLoginAttempts = 0;
+
+    @Column(name = "locked_until")
+    private Instant lockedUntil;
+
     @Column(name = "avatar_url", length = 500)
     private String avatarUrl;
 }

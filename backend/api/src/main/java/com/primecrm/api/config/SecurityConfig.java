@@ -1,6 +1,7 @@
 package com.primecrm.api.config;
 
 import com.primecrm.api.security.JwtAuthenticationFilter;
+import com.primecrm.api.security.RateLimitFilter;
 import com.primecrm.api.security.RestAccessDeniedHandler;
 import com.primecrm.api.security.RestAuthenticationEntryPoint;
 import com.primecrm.core.security.JwtProperties;
@@ -21,7 +22,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@EnableConfigurationProperties({JwtProperties.class, AppCorsProperties.class})
+@EnableConfigurationProperties({JwtProperties.class, AppCorsProperties.class, RateLimitProperties.class})
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -38,6 +39,7 @@ public class SecurityConfig {
     };
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final RateLimitFilter rateLimitFilter;
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     private final RestAccessDeniedHandler restAccessDeniedHandler;
     private final AppCorsProperties corsProperties;
@@ -54,7 +56,8 @@ public class SecurityConfig {
                 .exceptionHandling(eh -> eh
                         .authenticationEntryPoint(restAuthenticationEntryPoint)
                         .accessDeniedHandler(restAccessDeniedHandler))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(rateLimitFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }

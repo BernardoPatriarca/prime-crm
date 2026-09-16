@@ -47,6 +47,8 @@ class AuthServiceTest {
     private UserAuthorityResolver authorityResolver;
     @Mock
     private AuditService auditService;
+    @Mock
+    private LoginLockoutService loginLockoutService;
 
     private AuthService authService;
 
@@ -56,7 +58,7 @@ class AuthServiceTest {
     @BeforeEach
     void setUp() {
         authService = new AuthService(userRepository, refreshTokenRepository, passwordEncoder,
-                jwtTokenProvider, authorityResolver, auditService);
+                jwtTokenProvider, authorityResolver, auditService, loginLockoutService);
 
         adminUser = new User();
         adminUser.setId(UUID.randomUUID());
@@ -109,6 +111,41 @@ class AuthServiceTest {
                 .isInstanceOf(UnauthorizedException.class);
 
         verify(userRepository, org.mockito.Mockito.never()).save(any(User.class));
+        verify(loginLockoutService).registerFailure(adminUser.getId());
+    }
+
+    @Test
+    void login_withLockedAccount_throwsUnauthorizedWithoutCheckingPassword() {
+        adminUser.setLockedUntil(Instant.now().plusSeconds(600));
+        when(userRepository.findOne(any(Specification.class))).thenReturn(Optional.of(adminUser));
+        when(loginLockoutService.isLocked(adminUser)).thenReturn(true);
+
+        assertThatThrownBy(() -> authService.login(new LoginRequest("admin", "Admin@123")))
+                .isInstanceOf(UnauthorizedException.class);
+
+        verify(passwordEncoder, org.mockito.Mockito.never()).matches(anyString(), anyString());
+        verify(loginLockoutService, org.mockito.Mockito.never()).registerFailure(any(UUID.class));
+    }
+
+    @Test
+    void login_withCorrectPassword_resetsLockoutState() {
+        adminUser.setFailedLoginAttempts(2);
+        when(userRepository.findOne(any(Specification.class))).thenReturn(Optional.of(adminUser));
+        when(passwordEncoder.matches("Admin@123", adminUser.getPasswordHash())).thenReturn(true);
+        when(authorityResolver.resolveActiveRoles(adminUser.getId())).thenReturn(List.of(adminRole));
+        when(authorityResolver.resolveRoleNames(List.of(adminRole))).thenReturn(List.of("Administrador"));
+        when(authorityResolver.resolvePermissionCodes(List.of(adminRole))).thenReturn(List.of("USUARIOS_VIEW"));
+        when(jwtTokenProvider.generateAccessToken(any(), anyString(), anyString(), anyString(), any(), any()))
+                .thenReturn("fake-access-token");
+        when(jwtTokenProvider.getAccessTokenExpirationSeconds()).thenReturn(900L);
+        when(jwtTokenProvider.getRefreshTokenExpirationDays()).thenReturn(7L);
+        when(userRepository.save(any(User.class))).thenReturn(adminUser);
+        when(refreshTokenRepository.save(any(RefreshToken.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        authService.login(new LoginRequest("admin", "Admin@123"));
+
+        assertThat(adminUser.getFailedLoginAttempts()).isZero();
+        assertThat(adminUser.getLockedUntil()).isNull();
     }
 
     @Test
